@@ -1,0 +1,71 @@
+<section class="aso-character">
+  <div class="box-title">
+    <span>✨</span>
+    <h2 class="title">Lista de Personagens</h2>
+    <span>✨</span>
+  </div>
+  <aso-button
+    icon="pi pi-plus"
+    size="large"
+    label="Criar Personagem"
+    [styleClass]="{ width: '700px' }"
+  />
+  <div class="character-list-container">
+    <div class="filter">
+      <aso-input
+        placeholder="Nome Personagem"
+        icon="pi pi-search"
+        class="col-span-4"
+      ></aso-input>
+
+      <aso-dropdown-input
+        [options]="ancestries"
+        optionLabel="name"
+        [filter]="true"
+        filterBy="name"
+        [showClear]="true"
+        placeholder="Selecione uma raça"
+        class="col-span-1"
+      />
+      <aso-dropdown-input
+        [options]="classes"
+        optionLabel="name"
+        [filter]="true"
+        filterBy="name"
+        [showClear]="true"
+        placeholder="Selecione uma Classe"
+        class="col-span-1"
+      />
+      <aso-dropdown-input
+        [options]="classes"
+        optionLabel="name"
+        [filter]="true"
+        filterBy="name"
+        [showClear]="true"
+        placeholder="Selecione uma Campanha"
+        class="col-span-2"
+      />
+    </div>
+    <div class="character-list">
+      @for (character of paginatedCharacters; track $index) {
+        <aso-character-card
+          [character]="character"
+          (edit)="handleEdit(character)"
+          (delete)="handleDelete(character)"
+        ></aso-character-card>
+      }
+    </div>
+    <div class="mb-8">
+      <p-paginator
+        (onPageChange)="onPageChange($event)"
+        [first]="first"
+        [rows]="rows"
+        [totalRecords]="120"
+        [showCurrentPageReport]="false"
+        [showPageLinks]="true"
+        [showJumpToPageDropdown]="false"
+        currentPageReportTemplate="{first} até {last} de {totalRecords}"
+      />
+    </div>
+  </div>
+</section>

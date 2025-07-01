@@ -1,0 +1,20 @@
+<p-select
+  [options]="options"
+  [placeholder]="placeholder"
+  [optionLabel]="optionLabel"
+  [filter]="filter"
+  [filterBy]="filterBy"
+  [showClear]="showClear"
+  [style]="{ width: '100%' }"
+>
+  <ng-template #selectedItem let-selectedOption>
+    <div class="flex items-center gap-2">
+      <div>{{ selectedOption.name }}</div>
+    </div>
+  </ng-template>
+  <ng-template let-option #item>
+    <div class="flex items-center gap-2">
+      <div>{{ option.name }}</div>
+    </div>
+  </ng-template>
+</p-select>

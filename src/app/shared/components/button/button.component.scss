@@ -1,0 +1,15 @@
+:host {
+  border-radius: 1rem;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  &:hover {
+    box-shadow: var(--shadow-quinary);
+    transform: translateY(-2px);
+  }
+  &:active {
+    transform: translateY(2px);
+    box-shadow: var(--shadow-quaternary);
+  }
+}

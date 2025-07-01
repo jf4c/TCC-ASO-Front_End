@@ -1,0 +1,108 @@
+.aso-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-secondary);
+  border-bottom: 3px solid var(--accent-secondary);
+  height: 100px;
+  padding: 1rem 2rem;
+
+  .logo {
+    display: flex;
+    width: 25%;
+    justify-content: space-evenly;
+    text-align: center;
+    align-items: center;
+
+    img {
+      position: relative;
+      width: 150px;
+      padding: 1.2rem 0.5rem 0.5rem 0.5rem;
+      top: 40px;
+      transition: transform 0.3s ease;
+      border-radius: 100%;
+      border: 2px solid var(--accent-secondary);
+      cursor: pointer;
+      background: var(--bg-gradient);
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+
+    .logo-title {
+      font-family: "Cinzel Decorative", serif;
+      margin: 1rem 0rem 1rem 0;
+      font-size: 4.5rem;
+      font-weight: bold;
+      color: var(--text-primary);
+      text-shadow: var(--shadow-tertiary);
+    }
+  }
+
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.3rem;
+    font-weight: bold;
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      gap: 0.5rem;
+      a {
+        text-decoration: none;
+        display: flex;
+        align-items: end;
+        text-align: center;
+        padding: 0rem 0.5rem 0.5rem 0.5rem;
+        background: transparent;
+        border: 2px solid transparent;
+        color: var(--text-secondary);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        span {
+          font-size: 2rem;
+        }
+        &:hover {
+          color: var(--text-primary);
+          border-color: var(--accent-secondary);
+          background: var(--accent-tertiary);
+          transform: translateY(-2px);
+        }
+        &.active {
+          color: var(--text-primary);
+          border-color: var(--accent-secondary);
+          background: var(--accent-tertiary);
+        }
+      }
+    }
+  }
+
+  .user-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 100%;
+    background: var(--bg-gradient);
+    border-radius: 100%;
+    box-shadow: var(--shadow-primary);
+    transition: all 0.2s ease;
+    margin: 0 1rem;
+    border: 2px solid transparent;
+    .user-button {
+      background: none;
+      border: none;
+      font-size: 2rem;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    &:hover {
+      box-shadow: var(--shadow-secondary);
+      transform: translateY(-2px);
+    }
+  }
+}

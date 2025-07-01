@@ -1,0 +1,55 @@
+:root {
+  --color-primary: #007bff;
+  --color-secondary: #6c757d;
+  --color-success: #28a745;
+}
+// --color-[element]-{Local}-{condition}
+// bg -> background
+// btn -> button
+// txt -> text
+.dark-theme {
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --bg-tertiary: #2d2d2d;
+  --bg-gradient: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 70%);
+
+  --text-primary: #d4af37;
+  --text-secondary: #a0a0a0;
+  --text-tertiary: #ff0000;
+  --text-quaternary: #000000;
+
+  --accent-primary: #d4af37;
+  --accent-secondary: #8b6914;
+  --accent-tertiary: #d4af371a;
+  --accent-quaternary: #80808086;
+  --accent-quinary: #c38420;
+  --accent-senary: #fffbf0b3;
+
+  --accent-danger: #fd2020;
+  --accent-success: #28a745;
+  --accent-warning: #ffc107;
+
+  --accent-danger-active: #c61d1d;
+
+  //button colors
+  --btn: #bababa;
+  --btn-details: #bababa;
+  --btn-delete: #8b6914;
+
+  --shadow-primary: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-secondary: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  --shadow-tertiary: 2px 2px 3px rgba(255, 0, 0, 0.8);
+  --shadow-quaternary: 2px 4px 8px rgba(0, 0, 0, 0.5);
+  --shadow-quinary: 2px 10px 10px rgba(0, 0, 0, 0.9);
+
+  --shadow-insert-primary: inset 0 0px 20px 10px rgb(72, 48, 11);
+
+  //header and footer colors
+
+  --text: #f8f9fa;
+  --footer: #343a40;
+}
+
+// #8b6914 - Cor de ouro envelhecido
+// #d4af37 - Cor de ouro brilhante
+// #d4af371a - Cor de ouro mais suave

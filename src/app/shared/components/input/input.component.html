@@ -1,0 +1,8 @@
+<p-inputgroup>
+  @if (icon !== null) {
+    <p-inputgroup-addon>
+      <i [class]="icon"></i>
+    </p-inputgroup-addon>
+  }
+  <input pInputText [(ngModel)]="text1" [placeholder]="placeholder" />
+</p-inputgroup>
