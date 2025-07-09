@@ -1,8 +1,29 @@
-<p-inputgroup>
-  @if (icon !== null) {
+@if (label !== null) {
+<label [for]="inputId">{{ label }}</label>
+}
+<div class="flex flex-row items-center">
+  <p-inputgroup class="mr-2">
+    @if (icon !== null) {
     <p-inputgroup-addon>
       <i [class]="icon"></i>
     </p-inputgroup-addon>
+    }
+    <input
+      pInputText
+      [id]="inputId"
+      (input)="handleInput($event)"
+      [value]="value"
+      [placeholder]="placeholder"
+      [disabled]="isDisabled"
+    />
+  </p-inputgroup>
+
+  @if (button) {
+  <aso-button
+    [icon]="buttonIcon"
+    [variant]="variant"
+    [severity]="severity"
+    (eventClick)="handleClick($event)"
+  />
   }
-  <input pInputText [(ngModel)]="text1" [placeholder]="placeholder" />
-</p-inputgroup>
+</div>

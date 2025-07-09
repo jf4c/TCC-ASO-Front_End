@@ -1,0 +1,13 @@
+<div class="slider-info">
+  <label [for]="inputId">{{ label }}</label>
+  <div>{{ value }}</div>
+</div>
+<p-slider
+  (onChange)="handleSliderChange($event)"
+  [(ngModel)]="value"
+  [step]="1"
+  [min]="1"
+  [max]="20"
+  class="w-full"
+  [id]="inputId"
+/>

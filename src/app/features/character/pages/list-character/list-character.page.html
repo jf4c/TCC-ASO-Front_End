@@ -5,13 +5,14 @@
     <span>✨</span>
   </div>
   <aso-button
-    icon="pi pi-plus"
+    icon="fas fa-circle-plus"
     size="large"
     label="Criar Personagem"
+    (eventClick)="onNavigateToCreate()"
     [styleClass]="{ width: '700px' }"
   />
-  <div class="character-list-container">
-    <div class="filter">
+  <aso-card [header]="true" class="character-card">
+    <div slot="header" class="filter">
       <aso-input
         placeholder="Nome Personagem"
         icon="pi pi-search"
@@ -19,7 +20,7 @@
       ></aso-input>
 
       <aso-dropdown-input
-        [options]="ancestries"
+        [options]="(ancestries$ | async) ?? []"
         optionLabel="name"
         [filter]="true"
         filterBy="name"
@@ -28,7 +29,7 @@
         class="col-span-1"
       />
       <aso-dropdown-input
-        [options]="classes"
+        [options]="(classes$ | async) ?? []"
         optionLabel="name"
         [filter]="true"
         filterBy="name"
@@ -37,7 +38,7 @@
         class="col-span-1"
       />
       <aso-dropdown-input
-        [options]="classes"
+        [options]="(classes$ | async) ?? []"
         optionLabel="name"
         [filter]="true"
         filterBy="name"
@@ -48,11 +49,11 @@
     </div>
     <div class="character-list">
       @for (character of paginatedCharacters; track $index) {
-        <aso-character-card
-          [character]="character"
-          (edit)="handleEdit(character)"
-          (delete)="handleDelete(character)"
-        ></aso-character-card>
+      <aso-character-card
+        [character]="character"
+        (edit)="onEditCharacter(character)"
+        (delete)="onDeleteCharacter(character)"
+      ></aso-character-card>
       }
     </div>
     <div class="mb-8">
@@ -67,5 +68,5 @@
         currentPageReportTemplate="{first} até {last} de {totalRecords}"
       />
     </div>
-  </div>
+  </aso-card>
 </section>

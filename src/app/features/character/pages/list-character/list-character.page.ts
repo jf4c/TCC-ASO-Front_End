@@ -1,18 +1,16 @@
-import { Component, inject, OnInit } from '@angular/core'
-import { CharacterCardComponent } from '@features/character/components/character-card/character-card.component'
-import { Character } from '@features/character/interface/character.model'
+import { Component, inject, OnInit, OnDestroy } from '@angular/core'
 import { CommonModule } from '@angular/common'
+import { Router } from '@angular/router'
+import { Subscription } from 'rxjs'
+import { PaginatorModule, PaginatorState } from 'primeng/paginator'
+import { Character } from '@characters/interface/character.model'
+import { AncestryService } from '@characters/services/ancestry.service'
+import { ClassService } from '@characters/services/class.service'
+import { CharacterCardComponent } from '@characters/components/character-card/character-card.component'
 import { InputComponent } from '@shared/components/input/input.component'
 import { DropdownInputComponent } from '@shared/components/dropdown-input/dropdown-input.component'
-import { ButtonComponent } from '@app/shared/components/button/button.component'
-import {
-  Ancestries,
-  Ancestry,
-} from '@features/character/interface/ancestry.model'
-import { Class, Classes } from '@features/character/interface/class.model'
-import { AncestryService } from '@features/character/services/ancestry.service'
-import { ClassService } from '@features/character/services/class.service'
-import { PaginatorModule } from 'primeng/paginator'
+import { ButtonComponent } from '@shared/components/button/button.component'
+import { CardComponent } from '@shared/components/card/card.component'
 
 @Component({
   selector: 'aso-list-character',
@@ -24,32 +22,29 @@ import { PaginatorModule } from 'primeng/paginator'
     DropdownInputComponent,
     ButtonComponent,
     PaginatorModule,
+    CardComponent,
   ],
-  templateUrl: './list-character.component.html',
-  styleUrl: './list-character.component.scss',
+  templateUrl: './list-character.page.html',
+  styleUrl: './list-character.page.scss',
 })
-export class ListCharacterComponent implements OnInit {
-  private ancestryService = inject(AncestryService)
-  private classService = inject(ClassService)
-  ancestries: Ancestry[] = []
-  classes: Class[] = []
-  isLoading = true
+export class ListCharacterPage implements OnInit, OnDestroy {
+  private readonly ancestryService = inject(AncestryService)
+  private readonly classService = inject(ClassService)
+  private readonly router = inject(Router)
+  private subscriptions = new Subscription()
+
+  ancestries$ = this.ancestryService.getAncestries$()
+  classes$ = this.classService.getClasses$()
+  isLoading$ = this.ancestryService.getLoading$()
+
   selectedAncestry: string | null = null
   charactersPerPage = 6
   currentPage = 0
   paginatedCharacters: Character[] = []
-
-  ngOnInit(): void {
-    this.isLoading = true
-    this.loadCharacters()
-    this.getAllancestry()
-    this.getAllClasses()
-  }
-
   first = 0
-
   rows = 10
 
+  // Mock Data
   myCharacters: Character[] = [
     {
       name: 'Artemis',
@@ -188,53 +183,42 @@ export class ListCharacterComponent implements OnInit {
     },
   ]
 
-  private getAllancestry() {
-    this.ancestryService.getAncestries().subscribe({
-      next: (data: Ancestries) => {
-        console.log('Ancestries loaded:', data.ancestries)
-        this.ancestries = data.ancestries as Ancestry[]
-        // this.isLoading = false
-      },
-      error: (error: unknown) => {
-        console.error('Erro ao carregar as raças:', error)
-      },
-    })
+  ngOnInit(): void {
+    this.initializeComponent()
   }
 
-  private getAllClasses() {
-    this.classService.getClasses().subscribe({
-      next: (data: Classes) => {
-        console.log('Classes loaded:', data.classes)
-        this.classes = data.classes as Class[]
-        // this.isLoading = false
-      },
-      error: (error: unknown) => {
-        console.error('Erro ao carregar as classes:', error)
-      },
-    })
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe()
   }
 
-  loadCharacters() {
-    // aqui você carrega todos os personagens
-    // exemplo fictício:
-    this.updatePaginatedCharacters()
+  private initializeComponent(): void {
+    this.ancestryService.loadAncestries()
+    this.classService.loadClasses()
+    this.loadCharacters()
   }
 
-  handleEdit(character: Character) {
-    // faça algo com o personagem editado
+  onEditCharacter(character: Character): void {
     console.log('Editando personagem:', character)
   }
 
-  handleDelete(character: Character) {
+  onDeleteCharacter(character: Character): void {
     console.log('Delete character:', character.name)
   }
 
-  onPageChange(event: any) {
-    this.currentPage = event.page
+  onPageChange(event: PaginatorState): void {
+    this.currentPage = event.page || 0
     this.updatePaginatedCharacters()
   }
 
-  updatePaginatedCharacters() {
+  onNavigateToCreate(): void {
+    this.router.navigate(['/personagens/criar'])
+  }
+
+  private loadCharacters(): void {
+    this.updatePaginatedCharacters()
+  }
+
+  private updatePaginatedCharacters(): void {
     const startIndex = this.currentPage * this.charactersPerPage
     const endIndex = startIndex + this.charactersPerPage
     this.paginatedCharacters = this.myCharacters.slice(startIndex, endIndex)

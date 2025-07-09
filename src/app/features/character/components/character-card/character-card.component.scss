@@ -1,4 +1,4 @@
-:host{
+:host {
   border: 1px solid var(--accent-primary);
   border-radius: 10px;
   margin: 1rem;
@@ -24,13 +24,13 @@
   opacity: 0;
 }
 
-.character-header{
+.character-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 3px solid var(--accent-primary);
   padding: 1rem;
-  background-color: rgb(13, 13, 13)	;
+  background-color: rgb(13, 13, 13);
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 
@@ -41,7 +41,6 @@
 
   .character-name {
     font-size: 1.5rem;
-    font-weight: bold;
     color: var(--text-primary);
   }
 
@@ -65,7 +64,6 @@
       left: 50%;
       transform: translate(-50%, -55%);
       font-size: 16px;
-      font-weight: bold;
       color: black;
       pointer-events: none;
     }
@@ -78,7 +76,7 @@
     }
   }
 
-  .character-level:hover  {
+  .character-level:hover {
     cursor: pointer;
 
     .tooltip-level {
@@ -86,16 +84,15 @@
       opacity: 1;
     }
   }
-
 }
 
-.character-details{
+.character-details {
   display: flex;
   padding: 1rem;
   justify-content: space-between;
 
-  .character-image{
-    width: 220px;
+  .character-image {
+    width: 82%;
     height: 220px;
     background-size: cover;
     background-position: center;
@@ -124,11 +121,10 @@
     }
 
     .character-health-value {
-      font-weight: bold;
       color: var(--text-secondary);
     }
   }
-  .tooltip-health{
+  .tooltip-health {
     transform: translateX(100%);
     white-space: nowrap;
   }
@@ -136,7 +132,7 @@
   .character-health:hover .tooltip-health {
     visibility: visible;
     opacity: 1;
-  } 
+  }
 
   .character-mana {
     display: flex;
@@ -153,12 +149,11 @@
     }
 
     .character-mana-value {
-      font-weight: bold;
       color: var(--text-secondary);
     }
   }
 
-  .tooltip-mana{
+  .tooltip-mana {
     transform: translateX(100%);
     white-space: nowrap;
   }
@@ -168,7 +163,7 @@
   }
 }
 
-.character-actions{
+.character-actions {
   display: flex;
   justify-content: space-between;
   padding: 1rem;
@@ -182,9 +177,11 @@
     border-radius: 5px;
     background-color: var(--btn);
     color: var(--text-quaternary);
-    font-weight: bold;
     text-decoration: none;
-    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    transition:
+      background-color 0.2s ease,
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
     box-shadow: var(--shadow-primary);
     cursor: pointer;
     .icon {

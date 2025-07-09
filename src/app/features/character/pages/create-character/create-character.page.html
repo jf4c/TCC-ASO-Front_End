@@ -1,0 +1,173 @@
+<div class="box-title">
+  <span>✨</span>
+  <h2 class="title headline">Criar Personagem</h2>
+  <span>✨</span>
+</div>
+<div class="box-subtitle">
+  <p class="subtitle body">
+    Forje o destino. Molde seu herói e transforme-o em lenda.
+  </p>
+</div>
+<div class="back-button-container flex justify-between items-center">
+  <aso-button
+    class="button-back"
+    [icon]="'fas fa-arrow-left'"
+    [label]="'Voltar'"
+    [variant]="'outlined'"
+    [severity]="'secondary'"
+    (eventClick)="onReturnToList()"
+  />
+  <aso-button
+    class="button-Generate-random"
+    [icon]="'fas fa-random'"
+    [label]="'Gerar Personagem Aleatório'"
+    [variant]="'outlined'"
+    (eventClick)="onGenerateRandomCharacter()"
+  />
+</div>
+
+<div class="identy-container">
+  <form [formGroup]="characterForm" class="identy-form">
+    <aso-card class="card identy">
+      <div class="w-full text-left">
+        <h3 class="card-title headline">Identidade</h3>
+        <p class="subtitle">Defina a essência do seu personagem.</p>
+      </div>
+      <aso-input
+        formControlName="name"
+        placeholder="Ex. Zaratras Tempestuoso"
+        class="input input-name"
+        name="name"
+        inputId="name"
+        label="Nome do Personagem"
+        [button]="true"
+        buttonIcon="fas fa-dice"
+        variant="outlined"
+        severity="secondary"
+        (eventClick)="onGenerateRandomName()"
+      ></aso-input>
+
+      <div class="grid grid-cols-2 gap-4 w-full">
+        <aso-dropdown-input
+          [options]="ancestries"
+          class="input"
+          optionLabel="name"
+          [filter]="true"
+          filterBy="name"
+          [showClear]="true"
+          [placeholder]="getPlaceholder('Selecione uma Raça')"
+          label="Raça"
+          [loading]="loading"
+          formControlName="ancestry"
+        />
+        <aso-dropdown-input
+          [options]="classes"
+          optionLabel="name"
+          [filter]="true"
+          filterBy="name"
+          [showClear]="true"
+          [placeholder]="getPlaceholder('Selecione uma Classe')"
+          class="input"
+          label="Classe"
+          [loading]="loading"
+          formControlName="charClass"
+        />
+      </div>
+
+      <aso-dropdown-input
+        [options]="classes"
+        optionLabel="name"
+        [filter]="true"
+        filterBy="name"
+        [showClear]="true"
+        [placeholder]="getPlaceholder('Selecione uma Campanha')"
+        class="input"
+        label="Campanha"
+        [loading]="loading"
+      />
+    </aso-card>
+
+    <aso-card formGroupName="attributes" class="card attributes">
+      <div class="w-full text-left">
+        <h3 class="card-title headline">Atributos</h3>
+        <p class="subtitle">
+          Defina os atributos principais do seu personagem.
+        </p>
+      </div>
+
+      <aso-slider label="força" formControlName="strength" />
+      <aso-slider label="destreza" formControlName="dexterity" />
+      <aso-slider label="constituição" formControlName="constitution" />
+      <aso-slider label="inteligência" formControlName="intelligence" />
+      <aso-slider label="sabedoria" formControlName="wisdom" />
+      <aso-slider label="carisma" formControlName="charisma" />
+    </aso-card>
+
+    <aso-card class="card backstory">
+      <div class="w-full text-left">
+        <h3 class="card-title headline">Historia do Personagem</h3>
+        <p class="subtitle">Desvende o passado do seu personagem.</p>
+      </div>
+      <aso-textarea formControlName="backstory" class="backstory-textarea" />
+      <aso-button
+        label="Gerar descrição por IA"
+        class="w-full headline"
+        [styleClass]="{ width: '100%' }"
+        icon="fa-solid fa-wand-magic-sparkles"
+      />
+    </aso-card>
+  </form>
+
+  <aso-card class="character-sheet">
+    <div class="w-full text-center">
+      <h3 class="card-title headline">Ficha de Personagem</h3>
+    </div>
+    <div class="character-name">{{ displayName }}</div>
+    <!-- <label for="">{{ displayAncestry }} | {{ displayClass }}</label> -->
+    <h4 class="attributes-title">Atributos</h4>
+    <div class="attributes-container">
+      <label class="attribute-label" for="strength">Força</label>
+      <div class="attribute-value">{{ getAttributeModifier('strength') }}</div>
+    </div>
+    <div class="attributes-container">
+      <label class="attribute-label" for="dexterity">Destreza</label>
+      <div class="attribute-value">{{ getAttributeModifier('dexterity') }}</div>
+    </div>
+    <div class="attributes-container">
+      <label class="attribute-label" for="constitution">Constituição</label>
+      <div class="attribute-value">
+        {{ getAttributeModifier('constitution') }}
+      </div>
+    </div>
+    <div class="attributes-container">
+      <label class="attribute-label" for="intelligence">Inteligência</label>
+      <div class="attribute-value">
+        {{ getAttributeModifier('intelligence') }}
+      </div>
+    </div>
+    <div class="attributes-container">
+      <label class="attribute-label" for="wisdom">Sabedoria</label>
+      <div class="attribute-value">{{ getAttributeModifier('wisdom') }}</div>
+    </div>
+    <div class="attributes-container">
+      <label class="attribute-label" for="charisma">Carisma</label>
+      <div class="attribute-value">{{ getAttributeModifier('charisma') }}</div>
+    </div>
+
+    <div class="backstory-container">
+      <h4 class="attributes-title">Historia do Personagem</h4>
+      <div class="backstory-value">
+        {{ characterForm.get('backstory')?.value || '' }}
+      </div>
+    </div>
+
+    <aso-button
+      class="button-create w-full mt-5 font-semibold"
+      [label]="'Salvar Personagem'"
+      [icon]="'fas fa-save'"
+      [severity]="'info'"
+      (eventClick)="onSaveCharacter()"
+      [styleClass]="{ width: '100%' }"
+    />
+  </aso-card>
+</div>

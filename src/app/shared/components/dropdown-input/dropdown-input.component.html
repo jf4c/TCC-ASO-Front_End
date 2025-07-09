@@ -1,3 +1,6 @@
+@if (label !== null) {
+<label [for]="inputId">{{ label }}</label>
+}
 <p-select
   [options]="options"
   [placeholder]="placeholder"
@@ -6,6 +9,11 @@
   [filterBy]="filterBy"
   [showClear]="showClear"
   [style]="{ width: '100%' }"
+  [inputId]="inputId"
+  [loading]="loading"
+  [disabled]="isDisabled"
+  [(ngModel)]="value"
+  (ngModelChange)="handleSelectionChange($event)"
 >
   <ng-template #selectedItem let-selectedOption>
     <div class="flex items-center gap-2">

@@ -22,8 +22,11 @@
       "@env/*": ["./src/environments/*"],
       "@assets/*": ["./src/assets/*"],
       "@core/*": ["./src/app/core/*"],
-      "@features/*": ["./src/app/features/*"],
       "@shared/*": ["./src/app/shared/*"],
+      "@features/*": ["./src/app/features/*"],
+
+      // Feature-specific paths
+      "@characters/*": ["./src/app/features/character/*"],
     }
   },
   "angularCompilerOptions": {

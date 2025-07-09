@@ -1,0 +1,22 @@
+:host {
+  border: 1px solid var(--p-content-border-color);
+  background-color: var(--p-content-background);
+  margin: 1rem auto;
+  border-radius: 8px;
+
+  .card-header {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--p-content-border-color);
+    padding: 1rem;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 1200px;
+    width: 100%;
+    padding: 1rem;
+  }
+}
