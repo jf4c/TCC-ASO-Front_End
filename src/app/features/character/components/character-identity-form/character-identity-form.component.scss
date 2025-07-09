@@ -1,0 +1,28 @@
+.card {
+  display: flex;
+  margin: 1rem;
+}
+
+.card-title {
+  text-align: left;
+  font-size: 2rem;
+  color: var(--text-tertiary);
+}
+
+.identy {
+  .input {
+    margin-top: 1rem;
+  }
+  .input-ancestry {
+    width: 50%;
+  }
+}
+
+.input {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  color: var(--p-text-color);
+  border-radius: 4px;
+}

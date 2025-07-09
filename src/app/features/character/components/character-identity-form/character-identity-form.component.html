@@ -1,0 +1,60 @@
+<div [formGroup]="characterForm">
+  <aso-card class="card identy">
+    <div class="w-full text-left">
+      <h3 class="card-title headline">Identidade</h3>
+      <p class="subtitle">Defina a essência do seu personagem.</p>
+    </div>
+    <aso-input
+      formControlName="name"
+      placeholder="Ex. Zaratras Tempestuoso"
+      class="input input-name"
+      name="name"
+      inputId="name"
+      label="Nome do Personagem"
+      [button]="true"
+      buttonIcon="fas fa-dice"
+      variant="outlined"
+      severity="secondary"
+      (eventClick)="onGenerateRandomName()"
+    ></aso-input>
+
+    <div class="grid grid-cols-2 gap-4 w-full">
+      <aso-dropdown-input
+        [options]="ancestries"
+        class="input"
+        optionLabel="name"
+        [filter]="true"
+        filterBy="name"
+        [showClear]="true"
+        [placeholder]="getPlaceholder('Selecione uma Raça')"
+        label="Raça"
+        [loading]="loading"
+        formControlName="ancestry"
+      />
+      <aso-dropdown-input
+        [options]="classes"
+        optionLabel="name"
+        [filter]="true"
+        filterBy="name"
+        [showClear]="true"
+        [placeholder]="getPlaceholder('Selecione uma Classe')"
+        class="input"
+        label="Classe"
+        [loading]="loading"
+        formControlName="charClass"
+      />
+    </div>
+
+    <aso-dropdown-input
+      [options]="classes"
+      optionLabel="name"
+      [filter]="true"
+      filterBy="name"
+      [showClear]="true"
+      [placeholder]="getPlaceholder('Selecione uma Campanha')"
+      class="input"
+      label="Campanha"
+      [loading]="loading"
+    />
+  </aso-card>
+</div>
