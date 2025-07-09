@@ -13,6 +13,7 @@ import { AncestryService } from '@characters/services/ancestry.service'
 import { ClassService } from '@characters/services/class.service'
 import { FormFactoryService } from '@characters/services/form-factory.service'
 import { Message } from 'primeng/message'
+import { CharacterCreateHeaderComponent } from '@characters/components/character-create-header/character-create-header.component'
 
 @Component({
   selector: 'aso-create-character',
@@ -26,6 +27,7 @@ import { Message } from 'primeng/message'
     SliderComponent,
     TextareaComponent,
     Message,
+    CharacterCreateHeaderComponent,
   ],
   templateUrl: './create-character.page.html',
   styleUrl: './create-character.page.scss',

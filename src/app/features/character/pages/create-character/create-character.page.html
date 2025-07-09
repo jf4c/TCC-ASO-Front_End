@@ -1,30 +1,7 @@
-<div class="box-title">
-  <span>✨</span>
-  <h2 class="title headline">Criar Personagem</h2>
-  <span>✨</span>
-</div>
-<div class="box-subtitle">
-  <p class="subtitle body">
-    Forje o destino. Molde seu herói e transforme-o em lenda.
-  </p>
-</div>
-<div class="back-button-container flex justify-between items-center">
-  <aso-button
-    class="button-back"
-    [icon]="'fas fa-arrow-left'"
-    [label]="'Voltar'"
-    [variant]="'outlined'"
-    [severity]="'secondary'"
-    (eventClick)="onReturnToList()"
-  />
-  <aso-button
-    class="button-Generate-random"
-    [icon]="'fas fa-random'"
-    [label]="'Gerar Personagem Aleatório'"
-    [variant]="'outlined'"
-    (eventClick)="onGenerateRandomCharacter()"
-  />
-</div>
+<aso-character-create-header
+  (returnToList)="onReturnToList()"
+  (generateRandomCharacter)="onGenerateRandomCharacter()"
+></aso-character-create-header>
 
 <div class="identy-container">
   <form [formGroup]="characterForm" class="identy-form">
