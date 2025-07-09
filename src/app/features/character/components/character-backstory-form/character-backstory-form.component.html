@@ -1,0 +1,16 @@
+<div [formGroup]="characterForm">
+  <aso-card class="card backstory">
+    <div class="w-full text-left">
+      <h3 class="card-title headline">Historia do Personagem</h3>
+      <p class="subtitle">Desvende o passado do seu personagem.</p>
+    </div>
+    <aso-textarea formControlName="backstory" class="backstory-textarea" />
+    <aso-button
+      label="Gerar descrição por IA"
+      class="w-full headline"
+      [styleClass]="{ width: '100%' }"
+      icon="fa-solid fa-wand-magic-sparkles"
+      (eventClick)="onGenerateBackstory()"
+    />
+  </aso-card>
+</div>

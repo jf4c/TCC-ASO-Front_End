@@ -17,71 +17,17 @@
       [characterForm]="characterForm"
     ></aso-character-attributes-form>
 
-    <aso-card class="card backstory">
-      <div class="w-full text-left">
-        <h3 class="card-title headline">Historia do Personagem</h3>
-        <p class="subtitle">Desvende o passado do seu personagem.</p>
-      </div>
-      <aso-textarea formControlName="backstory" class="backstory-textarea" />
-      <aso-button
-        label="Gerar descrição por IA"
-        class="w-full headline"
-        [styleClass]="{ width: '100%' }"
-        icon="fa-solid fa-wand-magic-sparkles"
-      />
-    </aso-card>
+    <aso-character-backstory-form
+      [characterForm]="characterForm"
+      (generateBackstory)="onGenerateBackstory()"
+    ></aso-character-backstory-form>
   </form>
 
-  <aso-card class="character-sheet">
-    <div class="w-full text-center">
-      <h3 class="card-title headline">Ficha de Personagem</h3>
-    </div>
-    <div class="character-name">{{ displayName }}</div>
-    <!-- <label for="">{{ displayAncestry }} | {{ displayClass }}</label> -->
-    <h4 class="attributes-title">Atributos</h4>
-    <div class="attributes-container">
-      <label class="attribute-label" for="strength">Força</label>
-      <div class="attribute-value">{{ getAttributeModifier('strength') }}</div>
-    </div>
-    <div class="attributes-container">
-      <label class="attribute-label" for="dexterity">Destreza</label>
-      <div class="attribute-value">{{ getAttributeModifier('dexterity') }}</div>
-    </div>
-    <div class="attributes-container">
-      <label class="attribute-label" for="constitution">Constituição</label>
-      <div class="attribute-value">
-        {{ getAttributeModifier('constitution') }}
-      </div>
-    </div>
-    <div class="attributes-container">
-      <label class="attribute-label" for="intelligence">Inteligência</label>
-      <div class="attribute-value">
-        {{ getAttributeModifier('intelligence') }}
-      </div>
-    </div>
-    <div class="attributes-container">
-      <label class="attribute-label" for="wisdom">Sabedoria</label>
-      <div class="attribute-value">{{ getAttributeModifier('wisdom') }}</div>
-    </div>
-    <div class="attributes-container">
-      <label class="attribute-label" for="charisma">Carisma</label>
-      <div class="attribute-value">{{ getAttributeModifier('charisma') }}</div>
-    </div>
-
-    <div class="backstory-container">
-      <h4 class="attributes-title">Historia do Personagem</h4>
-      <div class="backstory-value">
-        {{ characterForm.get('backstory')?.value || '' }}
-      </div>
-    </div>
-
-    <aso-button
-      class="button-create w-full mt-5 font-semibold"
-      [label]="'Salvar Personagem'"
-      [icon]="'fas fa-save'"
-      [severity]="'info'"
-      (eventClick)="onSaveCharacter()"
-      [styleClass]="{ width: '100%' }"
-    />
-  </aso-card>
+  <aso-character-sheet-preview
+    [characterForm]="characterForm"
+    [displayName]="displayName"
+    [displayAncestry]="displayAncestry"
+    [displayClass]="displayClass"
+    (saveCharacter)="onSaveCharacter()"
+  ></aso-character-sheet-preview>
 </div>

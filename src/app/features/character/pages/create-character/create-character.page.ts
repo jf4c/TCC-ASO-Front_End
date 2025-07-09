@@ -1,9 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core'
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms'
 import { Router } from '@angular/router'
-import { ButtonComponent } from '@shared/components/button/button.component'
-import { CardComponent } from '@shared/components/card/card.component'
-import { TextareaComponent } from '@shared/components/textarea/textarea.component'
 import { Ancestry } from '@characters/interface/ancestry.model'
 import { Class } from '@characters/interface/class.model'
 import { AncestryService } from '@characters/services/ancestry.service'
@@ -12,18 +9,19 @@ import { FormFactoryService } from '@characters/services/form-factory.service'
 import { CharacterCreateHeaderComponent } from '@characters/components/character-create-header/character-create-header.component'
 import { CharacterIdentityFormComponent } from '@characters/components/character-identity-form/character-identity-form.component'
 import { CharacterAttributesFormComponent } from '@characters/components/character-attributes-form/character-attributes-form.component'
+import { CharacterBackstoryFormComponent } from '@characters/components/character-backstory-form/character-backstory-form.component'
+import { CharacterSheetPreviewComponent } from '@characters/components/character-sheet-preview/character-sheet-preview.component'
 
 @Component({
   selector: 'aso-create-character',
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    CardComponent,
-    ButtonComponent,
-    TextareaComponent,
     CharacterCreateHeaderComponent,
     CharacterIdentityFormComponent,
     CharacterAttributesFormComponent,
+    CharacterBackstoryFormComponent,
+    CharacterSheetPreviewComponent,
   ],
   templateUrl: './create-character.page.html',
   styleUrl: './create-character.page.scss',
@@ -74,13 +72,6 @@ export class CreateCharacterPage implements OnInit {
     return this.loading ? this.loadingText : defaultText
   }
 
-  getAttributeModifier(attributeName: string): number {
-    const attribute =
-      this.characterForm.get(`attributes.${attributeName}`)?.value || 0
-    const mod = (attribute - 10) / 2
-    return Math.trunc(mod)
-  }
-
   onReturnToList(): void {
     this.router.navigate(['/personagens'])
   }
@@ -97,6 +88,11 @@ export class CreateCharacterPage implements OnInit {
     this.characterForm.patchValue({
       name: this.formFactoryService.onGenerateRandomName(),
     })
+  }
+
+  onGenerateBackstory(): void {
+    // TODO: Implementar geração de backstory por IA
+    console.log('Generate backstory clicked')
   }
 
   onSaveCharacter(): void {
