@@ -3,7 +3,6 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms'
 import { Router } from '@angular/router'
 import { ButtonComponent } from '@shared/components/button/button.component'
 import { CardComponent } from '@shared/components/card/card.component'
-import { SliderComponent } from '@shared/components/slider/slider.component'
 import { TextareaComponent } from '@shared/components/textarea/textarea.component'
 import { Ancestry } from '@characters/interface/ancestry.model'
 import { Class } from '@characters/interface/class.model'
@@ -12,6 +11,7 @@ import { ClassService } from '@characters/services/class.service'
 import { FormFactoryService } from '@characters/services/form-factory.service'
 import { CharacterCreateHeaderComponent } from '@characters/components/character-create-header/character-create-header.component'
 import { CharacterIdentityFormComponent } from '@characters/components/character-identity-form/character-identity-form.component'
+import { CharacterAttributesFormComponent } from '@characters/components/character-attributes-form/character-attributes-form.component'
 
 @Component({
   selector: 'aso-create-character',
@@ -20,10 +20,10 @@ import { CharacterIdentityFormComponent } from '@characters/components/character
     ReactiveFormsModule,
     CardComponent,
     ButtonComponent,
-    SliderComponent,
     TextareaComponent,
     CharacterCreateHeaderComponent,
     CharacterIdentityFormComponent,
+    CharacterAttributesFormComponent,
   ],
   templateUrl: './create-character.page.html',
   styleUrl: './create-character.page.scss',

@@ -13,21 +13,9 @@
       (generateRandomName)="onGenerateRandomName()"
     ></aso-character-identity-form>
 
-    <aso-card formGroupName="attributes" class="card attributes">
-      <div class="w-full text-left">
-        <h3 class="card-title headline">Atributos</h3>
-        <p class="subtitle">
-          Defina os atributos principais do seu personagem.
-        </p>
-      </div>
-
-      <aso-slider label="força" formControlName="strength" />
-      <aso-slider label="destreza" formControlName="dexterity" />
-      <aso-slider label="constituição" formControlName="constitution" />
-      <aso-slider label="inteligência" formControlName="intelligence" />
-      <aso-slider label="sabedoria" formControlName="wisdom" />
-      <aso-slider label="carisma" formControlName="charisma" />
-    </aso-card>
+    <aso-character-attributes-form
+      [characterForm]="characterForm"
+    ></aso-character-attributes-form>
 
     <aso-card class="card backstory">
       <div class="w-full text-left">

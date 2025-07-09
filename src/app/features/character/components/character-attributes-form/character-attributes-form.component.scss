@@ -1,0 +1,14 @@
+.card {
+  display: flex;
+  margin: 1rem;
+}
+
+.card-title {
+  text-align: left;
+  font-size: 2rem;
+  color: var(--text-tertiary);
+}
+
+.subtitle {
+  color: var(--text-secondary);
+}
