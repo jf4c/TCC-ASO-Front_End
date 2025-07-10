@@ -1,8 +1,10 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { Router } from '@angular/router'
+import { Router, ActivatedRoute } from '@angular/router'
 import { Subscription } from 'rxjs'
 import { PaginatorModule, PaginatorState } from 'primeng/paginator'
+import { Toast } from 'primeng/toast'
+import { MessageService } from 'primeng/api'
 import { Character } from '@characters/interface/character.model'
 import { AncestryService } from '@characters/services/ancestry.service'
 import { ClassService } from '@characters/services/class.service'
@@ -23,14 +25,18 @@ import { CardComponent } from '@shared/components/card/card.component'
     ButtonComponent,
     PaginatorModule,
     CardComponent,
+    Toast,
   ],
   templateUrl: './list-character.page.html',
   styleUrl: './list-character.page.scss',
+  providers: [MessageService],
 })
 export class ListCharacterPage implements OnInit, OnDestroy {
   private readonly ancestryService = inject(AncestryService)
   private readonly classService = inject(ClassService)
   private readonly router = inject(Router)
+  private readonly route = inject(ActivatedRoute)
+  private readonly messageService = inject(MessageService)
   private subscriptions = new Subscription()
 
   ancestries$ = this.ancestryService.getAncestries$()
@@ -184,11 +190,30 @@ export class ListCharacterPage implements OnInit, OnDestroy {
   ]
 
   ngOnInit(): void {
+    this.scrollToTop()
     this.initializeComponent()
+    this.checkForSuccessMessage()
   }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe()
+  }
+
+  private checkForSuccessMessage(): void {
+    this.route.queryParams.subscribe((params) => {
+      if (params['success'] === 'character-created') {
+        // Remove o query parameter da URL primeiro
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: {},
+          replaceUrl: true,
+        })
+
+        setTimeout(() => {
+          this.showSuccess()
+        }, 200)
+      }
+    })
   }
 
   private initializeComponent(): void {
@@ -198,6 +223,7 @@ export class ListCharacterPage implements OnInit, OnDestroy {
   }
 
   onEditCharacter(character: Character): void {
+    this.showSuccess()
     console.log('Editando personagem:', character)
   }
 
@@ -214,6 +240,14 @@ export class ListCharacterPage implements OnInit, OnDestroy {
     this.router.navigate(['/personagens/criar'])
   }
 
+  showSuccess() {
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: 'Personagem Criado com sucesso!',
+    })
+  }
+
   private loadCharacters(): void {
     this.updatePaginatedCharacters()
   }
@@ -222,5 +256,9 @@ export class ListCharacterPage implements OnInit, OnDestroy {
     const startIndex = this.currentPage * this.charactersPerPage
     const endIndex = startIndex + this.charactersPerPage
     this.paginatedCharacters = this.myCharacters.slice(startIndex, endIndex)
+  }
+
+  private scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }
 }

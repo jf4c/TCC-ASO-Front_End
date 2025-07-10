@@ -15,6 +15,9 @@
       [value]="value"
       [placeholder]="placeholder"
       [disabled]="isDisabled"
+      [attr.invalid]="isInvalid ? 'true' : null"
+      [class.ng-invalid]="isInvalid"
+      [class.ng-touched]="isInvalid"
     />
   </p-inputgroup>
 

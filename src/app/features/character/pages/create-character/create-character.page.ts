@@ -11,6 +11,8 @@ import { CharacterIdentityFormComponent } from '@characters/components/character
 import { CharacterAttributesFormComponent } from '@characters/components/character-attributes-form/character-attributes-form.component'
 import { CharacterBackstoryFormComponent } from '@characters/components/character-backstory-form/character-backstory-form.component'
 import { CharacterSheetPreviewComponent } from '@characters/components/character-sheet-preview/character-sheet-preview.component'
+import { Toast } from 'primeng/toast'
+import { MessageService } from 'primeng/api'
 
 @Component({
   selector: 'aso-create-character',
@@ -22,9 +24,11 @@ import { CharacterSheetPreviewComponent } from '@characters/components/character
     CharacterAttributesFormComponent,
     CharacterBackstoryFormComponent,
     CharacterSheetPreviewComponent,
+    Toast,
   ],
   templateUrl: './create-character.page.html',
   styleUrl: './create-character.page.scss',
+  providers: [MessageService],
 })
 export class CreateCharacterPage implements OnInit {
   private readonly ancestryService = inject(AncestryService)
@@ -32,10 +36,12 @@ export class CreateCharacterPage implements OnInit {
   private readonly formBuilder = inject(FormBuilder)
   private readonly formFactoryService = inject(FormFactoryService)
   private readonly router = inject(Router)
+  private readonly messageService = inject(MessageService)
 
   ancestries: Ancestry[] = []
   classes: Class[] = []
   loading = false
+  formSubmitted = false
 
   protected readonly characterForm =
     this.formFactoryService.createCharacterForm()
@@ -82,6 +88,7 @@ export class CreateCharacterPage implements OnInit {
       this.ancestries,
       this.classes,
     )
+    this.showInfoRandom()
   }
 
   onGenerateRandomName(): void {
@@ -96,7 +103,44 @@ export class CreateCharacterPage implements OnInit {
   }
 
   onSaveCharacter(): void {
-    console.log('Character saved:', this.characterForm.value)
+    this.formSubmitted = true
+    if (this.characterForm.valid) {
+      this.characterForm.reset()
+      this.formSubmitted = false
+
+      // Navega para listagem com parâmetro de sucesso
+      this.router.navigate(['/personagens'], {
+        queryParams: { success: 'character-created' },
+      })
+    } else {
+      this.showError()
+    }
+  }
+
+  onSubmit() {
+    this.onSaveCharacter()
+  }
+
+  showSuccess() {
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: 'Personagem Criado com sucesso!',
+    })
+  }
+  showError() {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Erro',
+      detail: 'Ocorreu um erro ao criar o personagem. Tente novamente.',
+    })
+  }
+  showInfoRandom() {
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Atenção',
+      detail: 'Personagem randomicamente gerado.',
+    })
   }
 
   private initializeComponent(): void {

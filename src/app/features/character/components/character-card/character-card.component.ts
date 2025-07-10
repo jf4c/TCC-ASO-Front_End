@@ -15,12 +15,12 @@ export class CharacterCardComponent {
   @Input() character!: Character
 
   @Output() edit = new EventEmitter<void>()
-  @Output() delete = new EventEmitter<void>()
+  @Output() view = new EventEmitter<void>()
 
   onView() {
-    console.log('View character:', this.character)
+    this.view.emit()
   }
   onEdit() {
-    console.log('Edit character:', this.character)
+    this.edit.emit()
   }
 }

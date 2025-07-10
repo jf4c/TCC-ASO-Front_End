@@ -1,15 +1,17 @@
+<p-toast />
 <aso-character-create-header
   (returnToList)="onReturnToList()"
   (generateRandomCharacter)="onGenerateRandomCharacter()"
 ></aso-character-create-header>
 
 <div class="identy-container">
-  <form [formGroup]="characterForm" class="identy-form">
+  <form [formGroup]="characterForm" (ngSubmit)="onSubmit()" class="identy-form">
     <aso-character-identity-form
       [characterForm]="characterForm"
       [ancestries]="ancestries"
       [classes]="classes"
       [loading]="loading"
+      [formSubmitted]="formSubmitted"
       (generateRandomName)="onGenerateRandomName()"
     ></aso-character-identity-form>
 

@@ -16,7 +16,18 @@
       variant="outlined"
       severity="secondary"
       (eventClick)="onGenerateRandomName()"
+      [isInvalid]="isInvalid('name')"
     ></aso-input>
+    @if (isInvalid('name')) {
+    <p-message
+      class="w-full text-left"
+      severity="error"
+      size="small"
+      variant="simple"
+    >
+      Nome é obrigatório.
+    </p-message>
+    }
 
     <div class="grid grid-cols-2 gap-4 w-full">
       <aso-dropdown-input

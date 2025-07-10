@@ -44,7 +44,7 @@ export class InputComponent implements ControlValueAccessor {
   @Input() button = false
   @Input() buttonIcon: string | undefined
   @Input() variant: 'outlined' | 'text' | undefined
-  @Input() isInvalid = false
+  @Input() isInvalid: boolean | undefined = false
   @Input() severity:
     | 'success'
     | 'info'

@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core'
-import { FormBuilder, FormGroup } from '@angular/forms'
+import { FormBuilder, FormGroup, Validators } from '@angular/forms'
 import { Ancestry } from '../interface/ancestry.model'
 import { Class } from '../interface/class.model'
 
@@ -13,7 +13,7 @@ export class FormFactoryService {
 
   createCharacterForm(): FormGroup {
     return this.formBuilder.group({
-      name: [''],
+      name: ['', [Validators.required, Validators.minLength(3)]],
       ancestry: [null],
       charClass: [null],
       campaign: [null],
