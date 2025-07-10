@@ -13,9 +13,9 @@ export class FormFactoryService {
 
   createCharacterForm(): FormGroup {
     return this.formBuilder.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
-      ancestry: [null],
-      charClass: [null],
+      name: ['', [Validators.required, Validators.minLength(1)]],
+      ancestry: [null, [Validators.required]],
+      charClass: [null, [Validators.required]],
       campaign: [null],
       attributes: this.formBuilder.group({
         strength: [10],

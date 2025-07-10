@@ -32,6 +32,7 @@ export class DropdownInputComponent implements ControlValueAccessor {
   @Input() label: string | null = null
   @Input() inputId = 'dropdown-input'
   @Input() loading = false
+  @Input() isInvalid = false
 
   value: Ancestry | null = null
   isDisabled = false

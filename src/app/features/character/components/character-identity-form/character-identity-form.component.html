@@ -30,30 +30,57 @@
     }
 
     <div class="grid grid-cols-2 gap-4 w-full">
-      <aso-dropdown-input
-        [options]="ancestries"
-        class="input"
-        optionLabel="name"
-        [filter]="true"
-        filterBy="name"
-        [showClear]="true"
-        [placeholder]="getPlaceholder('Selecione uma Raça')"
-        label="Raça"
-        [loading]="loading"
-        formControlName="ancestry"
-      />
-      <aso-dropdown-input
-        [options]="classes"
-        optionLabel="name"
-        [filter]="true"
-        filterBy="name"
-        [showClear]="true"
-        [placeholder]="getPlaceholder('Selecione uma Classe')"
-        class="input"
-        label="Classe"
-        [loading]="loading"
-        formControlName="charClass"
-      />
+      <div class="w-full">
+        <aso-dropdown-input
+          [options]="ancestries"
+          class="input"
+          optionLabel="name"
+          [filter]="true"
+          filterBy="name"
+          [showClear]="true"
+          [placeholder]="getPlaceholder('Selecione uma Raça')"
+          label="Raça"
+          [loading]="loading"
+          formControlName="ancestry"
+          [isInvalid]="isInvalid('ancestry')"
+        />
+        @if (isInvalid('ancestry')) {
+        <p-message
+          class="w-full text-left"
+          severity="error"
+          size="small"
+          variant="simple"
+        >
+          Ancestralidade é obrigatória.
+        </p-message>
+        }
+      </div>
+
+      <div class="w-full">
+        <aso-dropdown-input
+          [options]="classes"
+          optionLabel="name"
+          [filter]="true"
+          filterBy="name"
+          [showClear]="true"
+          [placeholder]="getPlaceholder('Selecione uma Classe')"
+          class="input"
+          label="Classe"
+          [loading]="loading"
+          formControlName="charClass"
+          [isInvalid]="isInvalid('charClass')"
+        />
+        @if (isInvalid('charClass')) {
+        <p-message
+          class="w-full text-left"
+          severity="error"
+          size="small"
+          variant="simple"
+        >
+          Classe é obrigatório.
+        </p-message>
+        }
+      </div>
     </div>
 
     <aso-dropdown-input

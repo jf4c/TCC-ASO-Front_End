@@ -7,3 +7,21 @@ label {
   color: var(--p-text-color);
   color: var(--text-primary);
 }
+
+// Estilos para estado inválido usando atributo
+p-select[invalid="true"] {
+  border-color: var(--p-red-500) !important;
+}
+
+p-select[invalid="true"]:focus {
+  border-color: var(--p-red-500) !important;
+}
+
+// Estilos alternativos usando classes CSS
+p-select.ng-invalid.ng-touched {
+  border-color: var(--p-red-500) !important;
+}
+
+p-select.ng-invalid.ng-touched:focus {
+  border-color: var(--p-red-500) !important;
+}
