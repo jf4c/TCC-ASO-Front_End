@@ -104,15 +104,16 @@ export class CreateCharacterPage implements OnInit {
 
   onSaveCharacter(): void {
     this.formSubmitted = true
+    console.log('Form Submitted:', this.characterForm.value)
     if (this.characterForm.valid) {
       this.characterForm.reset()
       this.formSubmitted = false
 
-      // Navega para listagem com parâmetro de sucesso
       this.router.navigate(['/personagens'], {
         queryParams: { success: 'character-created' },
       })
     } else {
+      this.scrollToTop()
       this.showError()
     }
   }
@@ -141,6 +142,10 @@ export class CreateCharacterPage implements OnInit {
       summary: 'Atenção',
       detail: 'Personagem randomicamente gerado.',
     })
+  }
+
+  private scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   private initializeComponent(): void {

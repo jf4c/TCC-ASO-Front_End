@@ -1,0 +1,31 @@
+.radio-button-group {
+  .radio-label {
+    label {
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+  }
+
+  .field-checkbox {
+    display: flex;
+    align-items: center;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .p-radiobutton {
+      margin-right: 0.5rem;
+    }
+
+    label {
+      color: var(--text-primary);
+      cursor: pointer;
+      user-select: none;
+
+      &:hover {
+        color: var(--primary-color);
+      }
+    }
+  }
+}

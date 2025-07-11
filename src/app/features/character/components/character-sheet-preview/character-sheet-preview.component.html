@@ -2,8 +2,8 @@
   <div class="w-full text-center">
     <h3 class="card-title headline">Ficha de Personagem</h3>
   </div>
-  <div class="character-name">{{ displayName }}</div>
-  <!-- <label for="">{{ displayAncestry }} | {{ displayClass }}</label> -->
+  <div class="character-name">{{ getCharacterName() }}</div>
+  <label class="red-line w-full text-left">{{ getAncestryAndClass() }}</label>
   <h4 class="attributes-title">Atributos</h4>
   <div class="attributes-container">
     <label class="attribute-label" for="strength">Força</label>

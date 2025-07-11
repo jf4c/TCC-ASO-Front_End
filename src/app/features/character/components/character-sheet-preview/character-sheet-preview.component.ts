@@ -35,4 +35,30 @@ export class CharacterSheetPreviewComponent {
     const mod = (attribute - 10) / 2
     return Math.floor(mod)
   }
+
+  getCharacterName(): string {
+    return this.characterForm.get('name')?.value || '...'
+  }
+
+  getAncestryAndClass(): string {
+    const ancestry = this.getAncestry()
+    const charClass = this.getClass()
+
+    const ancestryWithEmoji = ancestry ? `🧬 ${ancestry}` : ''
+    const classWithEmoji = charClass ? `⚔️ ${charClass}` : ''
+
+    return `${ancestryWithEmoji}${ancestryWithEmoji && classWithEmoji ? ' | ' : ''}${classWithEmoji}`
+  }
+
+  getAncestry(): string {
+    return this.characterForm.get('ancestry')?.value?.name || ''
+  }
+
+  getClass(): string {
+    return this.characterForm.get('charClass')?.value?.name || ''
+  }
+
+  getBackstory(): string {
+    return this.characterForm.get('backstory')?.value || ''
+  }
 }

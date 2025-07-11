@@ -17,8 +17,13 @@
     font-size: 2rem;
     color: var(--text-primary);
     width: 100%;
+    height: 4rem;
+  }
+  .red-line {
+    padding-bottom: 0.5rem;
+    font-size: 1.2rem;
+    color: var(--text-secondary);
     border-bottom: 1px solid var(--accent-danger);
-    height: 6rem;
   }
 
   .attributes-title {

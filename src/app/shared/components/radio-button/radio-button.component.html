@@ -1,0 +1,23 @@
+<div class="radio-button-group" [class]="styleClass">
+  <div *ngIf="label" class="radio-label">
+    <label class="text-sm font-medium text-gray-700">
+      {{ label }}
+      <span *ngIf="required" class="text-red-500 ml-1">*</span>
+    </label>
+  </div>
+
+  <div class="flex flex-row gap-6 justify-center">
+    <div *ngFor="let option of options" class="field-checkbox">
+      <p-radiobutton
+        [inputId]="option.key"
+        [name]="name"
+        [value]="option.value"
+        [(ngModel)]="selectedValue"
+        (onClick)="onSelectionChange(option.value)"
+      />
+      <label [for]="option.key" class="ml-2 cursor-pointer">
+        {{ option.name }}
+      </label>
+    </div>
+  </div>
+</div>

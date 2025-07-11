@@ -26,6 +26,7 @@ export class FormFactoryService {
         charisma: [10],
       }),
       backstory: [''],
+      characterType: ['player', [Validators.required]],
     })
   }
 
@@ -48,6 +49,7 @@ export class FormFactoryService {
         charisma: this.generateRandomAttributeValue(),
       },
       backstory: this.generateRandomBackstory(),
+      characterType: 'player',
     })
   }
 
