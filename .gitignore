@@ -42,5 +42,8 @@ testem.log
 Thumbs.db
 
 # Documentation - ignore everything except features
-/Doc/
 !/Doc/features/
+/Doc/components
+/Doc/modules
+/Doc/geral
+
