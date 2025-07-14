@@ -1,0 +1,29 @@
+<div class="image-selector-container">
+  <h2 class="text-xl font-bold mb-4 text-center">Selecione uma Imagem</h2>
+  
+  <div class="grid grid-cols-3 gap-4 max-h-96 overflow-y-auto">
+    <div
+      *ngFor="let image of images; let i = index"
+      class="image-option cursor-pointer border-2 rounded-lg overflow-hidden transition-all duration-200 hover:scale-105"
+      [class.selected]="selectedImageIndex === i"
+      (click)="selectImage(i)"
+    >
+      <img
+        [src]="image"
+        [alt]="'Opção de imagem ' + (i + 1)"
+        class="w-full h-24 object-cover"
+        loading="lazy"
+      />
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-3 mt-6 pt-4 border-t">
+    <aso-button label="Cancelar" (eventClick)="cancel()"></aso-button>
+
+    <aso-button
+      label="Confirmar"
+      [disabled]="selectedImageIndex === null"
+      (eventClick)="confirm()"
+    ></aso-button>
+  </div>
+</div>

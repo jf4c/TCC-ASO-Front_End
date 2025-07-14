@@ -25,7 +25,6 @@ export class ClassService {
     this.loading$.next(true)
     this.getClasses().subscribe({
       next: (data: Classes) => {
-        console.log('Classes loaded:', data.classes)
         this.classes$.next(data.classes as Class[])
         this.loading$.next(false)
       },

@@ -1,0 +1,20 @@
+<div
+  class="checkbox-group"
+  [class.horizontal]="orientation === 'horizontal'"
+  [class.vertical]="orientation === 'vertical'"
+>
+  @for (option of options; track option.value; let i = $index) {
+  <div class="checkbox-item">
+    <p-checkbox
+      [inputId]="getInputId(option, i)"
+      [value]="option.value"
+      [disabled]="disabled || !!option.disabled"
+      [(ngModel)]="selectedValues"
+      (ngModelChange)="onSelectionChange($event)"
+    />
+    <label [for]="getInputId(option, i)" class="checkbox-label">
+      {{ option.label }}
+    </label>
+  </div>
+  }
+</div>

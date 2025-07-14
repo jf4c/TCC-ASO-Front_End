@@ -10,6 +10,7 @@ import {
   RadioButtonComponent,
   RadioOption,
 } from '@shared/components/radio-button/radio-button.component'
+import { ButtonComponent } from '@app/shared/components/button/button.component'
 
 @Component({
   selector: 'aso-character-identity-form',
@@ -21,6 +22,7 @@ import {
     InputComponent,
     Message,
     RadioButtonComponent,
+    ButtonComponent,
   ],
   templateUrl: './character-identity-form.component.html',
   styleUrl: './character-identity-form.component.scss',
@@ -32,6 +34,11 @@ export class CharacterIdentityFormComponent {
   @Input() loading = false
   @Input() formSubmitted = false
 
+  characterImages: string[] = [
+    './assets/Character/mage1.png',
+    './assets/Character/mage2.png',
+    './assets/Character/mage3.png',
+  ]
   characterTypeOptions: RadioOption[] = [
     { key: 'player', value: 'player', name: 'Player' },
     { key: 'npc', value: 'npc', name: 'NPC' },
@@ -53,4 +60,13 @@ export class CharacterIdentityFormComponent {
     return control.invalid && this.formSubmitted
   }
   selectedCharacterType: string | null = null
+
+  ShowImageSelector() {
+    // TODO: Implementar seletor de imagens
+    console.log('Image selector clicked')
+    // Implementação temporária - selecionar primeira imagem
+    this.characterForm.patchValue({
+      image: this.characterImages[0],
+    })
+  }
 }

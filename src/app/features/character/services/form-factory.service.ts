@@ -27,6 +27,7 @@ export class FormFactoryService {
       }),
       backstory: [''],
       characterType: ['player', [Validators.required]],
+      skills: [[], [Validators.required]],
     })
   }
 
@@ -70,7 +71,6 @@ export class FormFactoryService {
   }
 
   private getRandomItem<T>(items: T[]): T {
-    console.log('Available items:', items)
     return items[Math.floor(Math.random() * items.length)]
   }
 

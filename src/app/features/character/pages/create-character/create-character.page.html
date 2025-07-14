@@ -19,6 +19,12 @@
       [characterForm]="characterForm"
     ></aso-character-attributes-form>
 
+    <aso-character-skills-form
+      [characterForm]="characterForm"
+      [formSubmitted]="formSubmitted"
+      [skills]="skills"
+    ></aso-character-skills-form>
+
     <aso-character-backstory-form
       [characterForm]="characterForm"
       (generateBackstory)="onGenerateBackstory()"

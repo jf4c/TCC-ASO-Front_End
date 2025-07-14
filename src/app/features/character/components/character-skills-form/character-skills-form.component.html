@@ -1,0 +1,36 @@
+<div [formGroup]="characterForm">
+  <aso-card class="card backstory">
+    <div class="w-full text-left mb-5">
+      <h3 class="card-title headline">Perícias</h3>
+      <p class="subtitle">Selecione as perícias do seu personagem.</p>
+    </div>
+
+    @if (skills.length > 0) {
+    <aso-checkbox
+      [options]="skills"
+      orientation="horizontal"
+      [formControl]="skillsFormControl"
+    />
+
+    @if (selectedSkills.length > 0) {
+    <div class="skills-actions mt-4">
+      <button
+        type="button"
+        class="clear-button"
+        (click)="onClearSkills()"
+        title="Limpar seleção de perícias"
+      >
+        Limpar Seleção
+      </button>
+    </div>
+    } } @else {
+    <div class="loading-message">
+      <p class="text-gray-600 text-sm">Carregando perícias...</p>
+    </div>
+    } @if (isInvalid()) {
+    <div class="error-message">
+      <p>Selecione as perícias de seu personagem.</p>
+    </div>
+    }
+  </aso-card>
+</div>

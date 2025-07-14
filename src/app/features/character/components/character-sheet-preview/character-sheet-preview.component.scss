@@ -57,6 +57,28 @@
     }
   }
 
+  .skills-container {
+    width: 100%;
+    .skills-list {
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      justify-content: flex-start;
+
+      .skill-value {
+        background-color: var(--bg-primary);
+        font-size: 1rem;
+        padding: 0.5rem;
+        border-radius: 1rem;
+        color: var(--text-secondary);
+        border: 1px solid var(--p-content-border-color);
+      }
+    }
+  }
+
   .backstory-container {
     width: 100%;
 

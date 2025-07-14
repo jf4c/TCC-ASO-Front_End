@@ -26,7 +26,6 @@ export class AncestryService {
     this.loading$.next(true)
     this.getAncestries().subscribe({
       next: (data: Ancestries) => {
-        console.log('Ancestries loaded:', data.ancestries)
         this.ancestries$.next(data.ancestries as Ancestry[])
         this.loading$.next(false)
       },

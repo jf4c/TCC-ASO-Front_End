@@ -34,8 +34,19 @@
     <div class="attribute-value">{{ getAttributeModifier('charisma') }}</div>
   </div>
 
+  <div class="skills-container">
+    <h4 class="attributes-title w-full text-left">Perícias</h4>
+    <div class="skills-list">
+      @for (skill of getSkills(); track skill) {
+      <span class="skill-value">{{ skill }}</span>
+      } @empty {
+      <span class="skill-value">Nenhuma perícia selecionada</span>
+      }
+    </div>
+  </div>
+
   <div class="backstory-container">
-    <h4 class="attributes-title">Historia do Personagem</h4>
+    <h4 class="backstory-title">Historia do Personagem</h4>
     <div class="backstory-value">
       {{ characterForm.get('backstory')?.value || '' }}
     </div>

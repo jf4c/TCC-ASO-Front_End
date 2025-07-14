@@ -61,4 +61,23 @@ export class CharacterSheetPreviewComponent {
   getBackstory(): string {
     return this.characterForm.get('backstory')?.value || ''
   }
+
+  getSkills(): string[] {
+    const skills = this.characterForm.get('skills')?.value || []
+
+    if (Array.isArray(skills)) {
+      return skills
+        .filter((skill) => skill && skill.name)
+        .map((skill: { name: string }) => skill.name)
+    }
+
+    return []
+  }
+
+  getSkillsDisplay(): string {
+    const skillNames = this.getSkills()
+    return skillNames.length > 0
+      ? skillNames.join(', ')
+      : 'Nenhuma perícia selecionada'
+  }
 }

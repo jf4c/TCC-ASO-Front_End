@@ -19,3 +19,13 @@ export interface CharacterForm {
   charClass: Class
   campaign: string | null
 }
+
+export interface CreateCharacterRequest {
+  name: string
+  ancestryId: string
+  classId: string
+  skillsIds: string[]
+  attributes: Attributes
+  backstory?: string
+  campaignId?: string | null
+}

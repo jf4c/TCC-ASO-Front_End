@@ -5,12 +5,17 @@ import { Ancestry } from '@characters/interface/ancestry.model'
 import { Class } from '@characters/interface/class.model'
 import { AncestryService } from '@characters/services/ancestry.service'
 import { ClassService } from '@characters/services/class.service'
+import { SkillService } from '@characters/services/skill.service'
 import { FormFactoryService } from '@characters/services/form-factory.service'
 import { CharacterCreateHeaderComponent } from '@characters/components/character-create-header/character-create-header.component'
 import { CharacterIdentityFormComponent } from '@characters/components/character-identity-form/character-identity-form.component'
 import { CharacterAttributesFormComponent } from '@characters/components/character-attributes-form/character-attributes-form.component'
 import { CharacterBackstoryFormComponent } from '@characters/components/character-backstory-form/character-backstory-form.component'
 import { CharacterSheetPreviewComponent } from '@characters/components/character-sheet-preview/character-sheet-preview.component'
+import { CharacterSkillsFormComponent } from '@characters/components/character-skills-form/character-skills-form.component'
+import { CreateCharacterRequest } from '@characters/interface/character.model'
+import { CharacterService } from '../../services/character.service'
+import { CheckboxOption } from '@shared/components/checkbox/checkbox.component'
 import { Toast } from 'primeng/toast'
 import { MessageService } from 'primeng/api'
 
@@ -25,6 +30,7 @@ import { MessageService } from 'primeng/api'
     CharacterBackstoryFormComponent,
     CharacterSheetPreviewComponent,
     Toast,
+    CharacterSkillsFormComponent,
   ],
   templateUrl: './create-character.page.html',
   styleUrl: './create-character.page.scss',
@@ -33,6 +39,8 @@ import { MessageService } from 'primeng/api'
 export class CreateCharacterPage implements OnInit {
   private readonly ancestryService = inject(AncestryService)
   private readonly classService = inject(ClassService)
+  private readonly skillService = inject(SkillService)
+  private readonly characterService = inject(CharacterService)
   private readonly formBuilder = inject(FormBuilder)
   private readonly formFactoryService = inject(FormFactoryService)
   private readonly router = inject(Router)
@@ -40,8 +48,10 @@ export class CreateCharacterPage implements OnInit {
 
   ancestries: Ancestry[] = []
   classes: Class[] = []
+  skills: CheckboxOption<string>[] = []
   loading = false
   formSubmitted = false
+  isCreating = false
 
   protected readonly characterForm =
     this.formFactoryService.createCharacterForm()
@@ -106,11 +116,25 @@ export class CreateCharacterPage implements OnInit {
     this.formSubmitted = true
     console.log('Form Submitted:', this.characterForm.value)
     if (this.characterForm.valid) {
-      this.characterForm.reset()
-      this.formSubmitted = false
+      const characterPayload: CreateCharacterRequest = this.createPayload()
 
-      this.router.navigate(['/personagens'], {
-        queryParams: { success: 'character-created' },
+      this.isCreating = true
+      this.characterService.createCharacter(characterPayload).subscribe({
+        next: () => {
+          this.showSuccess()
+          this.characterForm.reset()
+          this.formSubmitted = false
+          this.router.navigate(['/personagens'], {
+            queryParams: { success: 'character-created' },
+          })
+        },
+        error: (error) => {
+          console.error('Error creating character:', error)
+          this.showError()
+        },
+        complete: () => {
+          this.isCreating = false
+        },
       })
     } else {
       this.scrollToTop()
@@ -147,10 +171,10 @@ export class CreateCharacterPage implements OnInit {
   private scrollToTop(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
-
   private initializeComponent(): void {
     this.ancestryService.loadAncestries()
     this.classService.loadClasses()
+    this.skillService.loadSkills()
 
     this.ancestryService.getAncestries$().subscribe((ancestries) => {
       this.ancestries = ancestries
@@ -160,8 +184,31 @@ export class CreateCharacterPage implements OnInit {
       this.classes = classes
     })
 
+    this.skillService.getSkills$().subscribe((skills) => {
+      this.skills = (skills || []).map((skill) => ({
+        label: skill.name,
+        value: skill.id,
+      }))
+      console.log('Mapped skills for checkbox:', this.skills)
+    })
+
     this.ancestryService.getLoading$().subscribe((loading) => {
       this.loading = loading
     })
+  }
+
+  private createPayload(): CreateCharacterRequest {
+    return {
+      name: this.characterForm.get('name')?.value,
+      ancestryId: this.characterForm.get('ancestry')?.value.id,
+      classId: this.characterForm.get('charClass')?.value.id,
+      campaignId: this.characterForm.get('campaign')?.value?.id || null,
+      attributes: this.characterForm.get('attributes')?.value || {},
+      backstory: this.characterForm.get('backstory')?.value || '',
+      skillsIds:
+        this.characterForm
+          .get('skills')
+          ?.value.map((skill: { id: string; name: string }) => skill.id) || [],
+    }
   }
 }
