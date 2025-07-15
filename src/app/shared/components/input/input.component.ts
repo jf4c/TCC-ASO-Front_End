@@ -14,7 +14,6 @@ import {
 import { InputGroupModule } from 'primeng/inputgroup'
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon'
 import { ButtonComponent } from '../button/button.component'
-import { Message } from 'primeng/message'
 @Component({
   selector: 'aso-input',
   standalone: true,
@@ -24,7 +23,6 @@ import { Message } from 'primeng/message'
     InputGroupModule,
     InputGroupAddonModule,
     ButtonComponent,
-    Message,
   ],
   templateUrl: './input.component.html',
   styleUrl: './input.component.scss',

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core'
 
 import { ButtonModule } from 'primeng/button'
+import { UploadEvent } from 'primeng/fileupload'
 
 @Component({
   selector: 'aso-button',
@@ -30,9 +31,14 @@ export class ButtonComponent {
 
   // Propriedades de saída
   @Output() eventClick = new EventEmitter<MouseEvent>()
+  @Output() UploadEvent = new EventEmitter<File>()
 
   // Métodos públicos (handlers)
   handleClick(event: MouseEvent) {
     this.eventClick.emit(event)
+  }
+
+  handleUpload(event: File) {
+    this.UploadEvent.emit(event)
   }
 }

@@ -8,11 +8,11 @@ import {
 import { FormGroup } from '@angular/forms'
 import { ButtonComponent } from '@shared/components/button/button.component'
 import { CardComponent } from '@shared/components/card/card.component'
-
+import { ImageModule } from 'primeng/image'
 @Component({
   selector: 'aso-character-sheet-preview',
   standalone: true,
-  imports: [ButtonComponent, CardComponent],
+  imports: [ButtonComponent, CardComponent, ImageModule],
   templateUrl: './character-sheet-preview.component.html',
   styleUrl: './character-sheet-preview.component.scss',
   encapsulation: ViewEncapsulation.None,

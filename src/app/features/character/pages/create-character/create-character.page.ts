@@ -117,7 +117,6 @@ export class CreateCharacterPage implements OnInit {
     console.log('Form Submitted:', this.characterForm.value)
     if (this.characterForm.valid) {
       const characterPayload: CreateCharacterRequest = this.createPayload()
-
       this.isCreating = true
       this.characterService.createCharacter(characterPayload).subscribe({
         next: () => {

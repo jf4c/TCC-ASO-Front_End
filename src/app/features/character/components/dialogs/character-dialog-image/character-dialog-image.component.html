@@ -1,0 +1,42 @@
+<p-tabs [value]="activeTab">
+  <p-tablist>
+    <p-tab value="0">ASO | Imagens</p-tab>
+    <p-tab value="1" disabled>Minhas Imagens</p-tab>
+  </p-tablist>
+  <p-tabpanels>
+    <p-tabpanel value="0">
+      <div class="character-images-list">
+        @for (image of characterImages; track $index) {
+        <div
+          class="character-image-item"
+          [class.selected]="selectedImageIndex === $index"
+          (click)="selectImage($index)"
+        >
+          <img
+            [src]="image"
+            class="character-image"
+            alt="Character Image {{ $index }}"
+          />
+        </div>
+        }
+      </div>
+    </p-tabpanel>
+    <p-tabpanel value="1">
+      <div class="character-images-list"></div>
+    </p-tabpanel>
+  </p-tabpanels>
+</p-tabs>
+<p-toast></p-toast>
+<aso-dialog-footer (eventClose)="onClose()" (eventSave)="onSave()">
+  <p-fileupload
+    mode="basic"
+    [auto]="true"
+    chooseLabel="Escolher Imagem"
+    chooseIcon="pi pi-upload"
+    accept="image/*"
+    maxFileSize="1000000"
+    (onSelect)="onImageSelect($event)"
+    [showUploadButton]="false"
+    [showCancelButton]="false"
+  />
+</aso-dialog-footer>

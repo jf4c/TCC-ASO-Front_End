@@ -1,0 +1,34 @@
+.character-images-list {
+  width: 100%;
+  margin: 0rem auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 0.5rem;
+  max-height: 550px;
+  min-height: 550px;
+  overflow-y: auto;
+}
+
+.character-image-item {
+  cursor: pointer;
+}
+
+.character-image-item img {
+  width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  transition: transform 0.2s;
+}
+
+.character-image-item:hover img {
+  transform: scale(1.05);
+}
+
+.character-image-item.selected img {
+  border: 2px solid var(--accent-primary);
+  box-shadow: 0 0 10px var(--accent-primary);
+}

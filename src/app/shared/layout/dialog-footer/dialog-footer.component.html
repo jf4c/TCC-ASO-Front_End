@@ -1,0 +1,22 @@
+<div class="flex w-full justify-between mt-4">
+  <ng-content class="dialog-footer-content"></ng-content>
+  <div class="flex items-center">
+    <aso-button
+      icon="fas fa-times"
+      label="Fechar"
+      severity="danger"
+      variant="outlined"
+      [styleClass]="{ fontSize: '1.2rem'}"
+      (eventClick)="onClose()"
+    />
+    <aso-button
+      [icon]="'fas fa-save'"
+      label="Salvar"
+      severity="success"
+      variant="outlined"
+      class="ml-2"
+      [styleClass]="{ fontSize: '1.2rem'}"
+      (eventClick)="onSave()"
+    />
+  </div>
+</div>
