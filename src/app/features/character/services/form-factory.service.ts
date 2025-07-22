@@ -41,7 +41,7 @@ export class FormFactoryService {
       name: this.onGenerateRandomName(),
       ancestry: this.getRandomItem(ancestries),
       charClass: this.getRandomItem(classes),
-      image: this.getRandomCharacterImage(),
+      // image: this.getRandomCharacterImage(),
       // campaign: this.getRandomItem(this.campaigns),
       attributes: {
         strength: this.generateRandomAttributeValue(),
@@ -89,33 +89,6 @@ export class FormFactoryService {
       'Um mago em busca de conhecimento proibido.',
     ]
     return this.getRandomItem(backstories)
-  }
-
-  private getRandomCharacterImage(): string {
-    const characterImages = [
-      './assets/Character/assassin1.png',
-      './assets/Character/assassin2.png',
-      './assets/Character/bard.png',
-      './assets/Character/bard2.png',
-      './assets/Character/mage1.png',
-      './assets/Character/mage2.png',
-      './assets/Character/mage3.png',
-      './assets/Character/mage4.png',
-      './assets/Character/mage5.png',
-      './assets/Character/mage6.png',
-      './assets/Character/monk1.png',
-      './assets/Character/orch.png',
-      './assets/Character/orch1.png',
-      './assets/Character/priest1.png',
-      './assets/Character/priest2.png',
-      './assets/Character/rogue1.png',
-      './assets/Character/unknown.png',
-      './assets/Character/warrior1.png',
-      './assets/Character/warrior2.png',
-      './assets/Character/warrior3.png',
-      './assets/Character/warrior4.png',
-    ]
-    return this.getRandomItem(characterImages)
   }
 
   displayName(formGroup: FormGroup): string {

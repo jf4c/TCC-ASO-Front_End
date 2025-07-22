@@ -4,7 +4,7 @@
   </div>
   <div class="character-image">
     <p-image
-      [src]="characterForm.get('image')?.value || 'assets/Character/unknown.png'"
+      [src]="characterForm.get('image')?.value?.url || 'assets/Character/unknown.png'"
       alt="Imagem do Personagem"
       class="character-image-preview"
     />

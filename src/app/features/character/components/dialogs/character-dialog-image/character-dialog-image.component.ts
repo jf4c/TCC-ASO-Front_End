@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, OnInit, OnDestroy } from '@angular/core'
 import { ButtonModule } from 'primeng/button'
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { inject } from '@angular/core'
@@ -8,6 +8,10 @@ import { FileUploadModule } from 'primeng/fileupload'
 import { MessageService } from 'primeng/api'
 import { ToastModule } from 'primeng/toast'
 import { TabsModule } from 'primeng/tabs'
+import { SkeletonModule } from 'primeng/skeleton'
+import { ImageService } from '@characters/services/image.service'
+import { Image } from '@characters/interface/image.model'
+import { Subject, takeUntil } from 'rxjs'
 
 @Component({
   selector: 'aso-character-dialog-image',
@@ -19,72 +23,68 @@ import { TabsModule } from 'primeng/tabs'
     FileUploadModule,
     ToastModule,
     TabsModule,
+    SkeletonModule,
   ],
   styleUrl: './character-dialog-image.component.scss',
   templateUrl: './character-dialog-image.component.html',
   providers: [DialogService, MessageService],
 })
-export class CharacterDialogImageComponent {
+export class CharacterDialogImageComponent implements OnInit, OnDestroy {
   private readonly dialogService = inject(DialogService)
   private readonly dialogRef = inject(DynamicDialogRef)
   private readonly messageService = inject(MessageService)
+  private readonly imageService = inject(ImageService)
+  private readonly destroy$ = new Subject<void>()
 
-  characterImages: string[] = [
-    './assets/Character/assassin1.png',
-    './assets/Character/assassin2.png',
-    './assets/Character/bard.png',
-    './assets/Character/bard2.png',
-    './assets/Character/mage1.png',
-    './assets/Character/mage2.png',
-    './assets/Character/mage3.png',
-    './assets/Character/mage4.png',
-    './assets/Character/mage5.png',
-    './assets/Character/mage6.png',
-    './assets/Character/monk1.png',
-    './assets/Character/orch.png',
-    './assets/Character/orch1.png',
-    './assets/Character/priest1.png',
-    './assets/Character/priest2.png',
-    './assets/Character/rogue1.png',
-    './assets/Character/warrior1.png',
-    './assets/Character/warrior2.png',
-    './assets/Character/warrior3.png',
-    './assets/Character/warrior4.png',
-  ]
+  skeletonItems = Array.from({ length: 9 }, (_, i) => i)
+  apiImages: Image[] = []
+  imagesLoading = false
 
   selectedImageIndex: number | null = null
   activeTab = '0'
 
+  ngOnInit(): void {
+    this.imagesLoading = true
+
+    this.imageService.loadImages()
+
+    this.imageService
+      .getLoading$()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((loading) => {
+        this.imagesLoading = loading
+      })
+
+    this.imageService
+      .getImages$()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((images) => {
+        this.apiImages = images
+      })
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next()
+    this.destroy$.complete()
+  }
+
+  get isImagesLoading(): boolean {
+    return this.imagesLoading
+  }
+
+  get hasApiImages(): boolean {
+    return this.apiImages && this.apiImages.length > 0
+  }
+
   selectImage(index: number): void {
     this.selectedImageIndex = index
-    // Aqui você pode emitir um evento para o componente pai
-    // ou armazenar a imagem selecionada
   }
 
-  onImageSelect(event: { files: File[] }): void {
-    const file = event.files[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (e: ProgressEvent<FileReader>) => {
-        const imageUrl = e.target?.result as string
-        // Adiciona a nova imagem à lista
-        this.characterImages.push(imageUrl)
-        // Seleciona automaticamente a nova imagem
-        this.selectedImageIndex = this.characterImages.length - 1
-
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Imagem adicionada com sucesso',
-        })
-      }
-      reader.readAsDataURL(file)
-    }
-  }
-
-  getSelectedImage(): string | null {
-    return this.selectedImageIndex !== null
-      ? this.characterImages[this.selectedImageIndex]
+  getSelectedImage(): Image | null {
+    return this.selectedImageIndex !== null &&
+      this.apiImages &&
+      this.apiImages[this.selectedImageIndex]
+      ? this.apiImages[this.selectedImageIndex]
       : null
   }
 
@@ -99,7 +99,6 @@ export class CharacterDialogImageComponent {
     const selectedImage = this.getSelectedImage()
 
     if (selectedImage) {
-      // Fecha o dialog e retorna a imagem selecionada
       this.dialogRef.close(selectedImage)
 
       this.messageService.add({

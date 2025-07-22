@@ -5,24 +5,42 @@
   </p-tablist>
   <p-tabpanels>
     <p-tabpanel value="0">
+      <!-- Loading state -->
+      @if (imagesLoading) {
       <div class="character-images-list">
-        @for (image of characterImages; track $index) {
+        @for (item of skeletonItems; track $index) {
+        <div class="character-image-item">
+          <p-skeleton size="100%" class="mr-2" />
+        </div>
+        }
+      </div>
+      } @else if (hasApiImages) {
+      <div class="character-images-list">
+        @for (image of apiImages; track image.id) {
         <div
           class="character-image-item"
           [class.selected]="selectedImageIndex === $index"
           (click)="selectImage($index)"
         >
-          <img
-            [src]="image"
-            class="character-image"
-            alt="Character Image {{ $index }}"
-          />
+          <img [src]="image.url" class="character-image" [alt]="image.name" />
         </div>
         }
       </div>
+      }
+      <!-- No images available -->
+      @else {
+      <div class="empty-state-container">
+        <div class="empty-state">
+          <p>Nenhuma imagem disponível</p>
+        </div>
+      </div>
+      }
     </p-tabpanel>
+
     <p-tabpanel value="1">
-      <div class="character-images-list"></div>
+      <div class="character-images-list">
+        <p>Funcionalidade em desenvolvimento</p>
+      </div>
     </p-tabpanel>
   </p-tabpanels>
 </p-tabs>
@@ -35,7 +53,7 @@
     chooseIcon="pi pi-upload"
     accept="image/*"
     maxFileSize="1000000"
-    (onSelect)="onImageSelect($event)"
+    disabled="true"
     [showUploadButton]="false"
     [showCancelButton]="false"
   />

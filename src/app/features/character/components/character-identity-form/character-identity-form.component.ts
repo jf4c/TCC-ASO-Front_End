@@ -43,12 +43,6 @@ export class CharacterIdentityFormComponent {
 
   ref: DynamicDialogRef | undefined
 
-  characterImages: string[] = [
-    './assets/Character/mage1.png',
-    './assets/Character/mage2.png',
-    './assets/Character/mage3.png',
-  ]
-
   characterTypeOptions: RadioOption[] = [
     { key: 'player', value: 'player', name: 'Player' },
     { key: 'npc', value: 'npc', name: 'NPC' },

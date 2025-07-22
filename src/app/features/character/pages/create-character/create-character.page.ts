@@ -13,7 +13,10 @@ import { CharacterAttributesFormComponent } from '@characters/components/charact
 import { CharacterBackstoryFormComponent } from '@characters/components/character-backstory-form/character-backstory-form.component'
 import { CharacterSheetPreviewComponent } from '@characters/components/character-sheet-preview/character-sheet-preview.component'
 import { CharacterSkillsFormComponent } from '@characters/components/character-skills-form/character-skills-form.component'
-import { CreateCharacterRequest } from '@characters/interface/character.model'
+import {
+  CreateCharacterRequest,
+  Modifiers,
+} from '@characters/interface/character.model'
 import { CharacterService } from '../../services/character.service'
 import { CheckboxOption } from '@shared/components/checkbox/checkbox.component'
 import { Toast } from 'primeng/toast'
@@ -118,6 +121,7 @@ export class CreateCharacterPage implements OnInit {
     if (this.characterForm.valid) {
       const characterPayload: CreateCharacterRequest = this.createPayload()
       this.isCreating = true
+      console.log('Creating character with payload:', characterPayload)
       this.characterService.createCharacter(characterPayload).subscribe({
         next: () => {
           this.showSuccess()
@@ -203,11 +207,32 @@ export class CreateCharacterPage implements OnInit {
       classId: this.characterForm.get('charClass')?.value.id,
       campaignId: this.characterForm.get('campaign')?.value?.id || null,
       attributes: this.characterForm.get('attributes')?.value || {},
+      modifiers: this.getModifiers(),
       backstory: this.characterForm.get('backstory')?.value || '',
       skillsIds:
         this.characterForm
           .get('skills')
           ?.value.map((skill: { id: string; name: string }) => skill.id) || [],
+      imageId: this.characterForm.get('image')?.value?.id || null,
     }
+  }
+
+  private getModifiers(): Modifiers {
+    return {
+      modStrength: this.getModAttribute('strength'),
+      modDexterity: this.getModAttribute('dexterity'),
+      modConstitution: this.getModAttribute('constitution'),
+      modIntelligence: this.getModAttribute('intelligence'),
+      modWisdom: this.getModAttribute('wisdom'),
+      modCharisma: this.getModAttribute('charisma'),
+    }
+  }
+
+  private getModAttribute(attributeName: string): number {
+    const formPath = `attributes.${attributeName}`
+    const attribute = this.characterForm.get(formPath)?.value || 0
+    const mod = (attribute - 10) / 2
+
+    return Math.floor(mod)
   }
 }
