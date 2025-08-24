@@ -1,0 +1,46 @@
+:host {
+  display: flex;
+  justify-content: center;
+  margin: 0.5rem;
+}
+
+.historic-card {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.historic-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.historic-header h4 {
+  font-size: 1.2rem;
+}
+
+.date {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.historic-card p {
+  color: #a0a0a0;
+  margin-bottom: 15px;
+}
+
+.read-more {
+  text-align: end;
+  color: var(--accent-primary);
+  cursor: pointer;
+  font-weight: bold;
+  transition: color 0.3s ease;
+  text-decoration: none;
+  font-size: 1rem;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: block;
+}

@@ -8,8 +8,6 @@ import { Class } from '../interface/class.model'
 })
 export class FormFactoryService {
   private formBuilder = inject(FormBuilder)
-  private ancestries: Ancestry[] = []
-  private classes: Class[] = []
 
   createCharacterForm(): FormGroup {
     return this.formBuilder.group({

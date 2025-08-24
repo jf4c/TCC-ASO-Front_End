@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core'
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms'
+import { ReactiveFormsModule } from '@angular/forms'
 import { Router } from '@angular/router'
 import { Ancestry } from '@characters/interface/ancestry.model'
 import { Class } from '@characters/interface/class.model'
@@ -44,7 +44,6 @@ export class CreateCharacterPage implements OnInit {
   private readonly classService = inject(ClassService)
   private readonly skillService = inject(SkillService)
   private readonly characterService = inject(CharacterService)
-  private readonly formBuilder = inject(FormBuilder)
   private readonly formFactoryService = inject(FormFactoryService)
   private readonly router = inject(Router)
   private readonly messageService = inject(MessageService)

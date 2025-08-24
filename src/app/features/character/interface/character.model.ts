@@ -3,6 +3,7 @@ import { Attributes } from '@features/character/interface/attribute.model'
 import { Ancestry } from '@features/character/interface/ancestry.model'
 
 export interface Character {
+  id: string
   name: string
   class: string
   ancestry: string
@@ -39,4 +40,25 @@ export interface CreateCharacterRequest {
   backstory?: string
   campaignId?: string | null
   imageId?: string | null
+}
+
+export interface GetPaginatedCharacterRequest {
+  name?: string
+  ancestryId?: string
+  classId?: string
+  campaignId?: string
+  page?: number
+  pageSize?: number
+}
+
+export interface GetPaginatedCharacterResponse {
+  results: Character[]
+  currentPage: number
+  pageCount: number
+  pageSize: number
+  rowCount: number
+  firstRowOnPage: number
+  lastRowOnPage: number
+  hasNextPage: boolean
+  hasPreviousPage: boolean
 }

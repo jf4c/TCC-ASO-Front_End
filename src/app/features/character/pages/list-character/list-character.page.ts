@@ -2,24 +2,33 @@ import { Component, inject, OnInit, OnDestroy } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { Router, ActivatedRoute } from '@angular/router'
 import { Subscription } from 'rxjs'
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { PaginatorModule, PaginatorState } from 'primeng/paginator'
 import { Toast } from 'primeng/toast'
 import { MessageService } from 'primeng/api'
-import { Character } from '@characters/interface/character.model'
+import {
+  Character,
+  GetPaginatedCharacterResponse,
+} from '@characters/interface/character.model'
 import { AncestryService } from '@characters/services/ancestry.service'
 import { ClassService } from '@characters/services/class.service'
+import { CharacterService } from '@characters/services/character.service'
 import { CharacterCardComponent } from '@characters/components/character-card/character-card.component'
 import { InputComponent } from '@shared/components/input/input.component'
 import { DropdownInputComponent } from '@shared/components/dropdown-input/dropdown-input.component'
 import { ButtonComponent } from '@shared/components/button/button.component'
 import { CardComponent } from '@shared/components/card/card.component'
+import { FilterFormFactoryService } from '../../services/filter-form-factory.service'
 
 @Component({
   selector: 'aso-list-character',
   standalone: true,
   imports: [
     CharacterCardComponent,
+    ReactiveFormsModule,
     CommonModule,
+    FormsModule,
     InputComponent,
     DropdownInputComponent,
     ButtonComponent,
@@ -34,160 +43,27 @@ import { CardComponent } from '@shared/components/card/card.component'
 export class ListCharacterPage implements OnInit, OnDestroy {
   private readonly ancestryService = inject(AncestryService)
   private readonly classService = inject(ClassService)
+  private readonly characterService = inject(CharacterService)
   private readonly router = inject(Router)
   private readonly route = inject(ActivatedRoute)
   private readonly messageService = inject(MessageService)
+  private readonly filterFormFactoryService = inject(FilterFormFactoryService)
   private subscriptions = new Subscription()
 
   ancestries$ = this.ancestryService.getAncestries$()
   classes$ = this.classService.getClasses$()
   isLoading$ = this.ancestryService.getLoading$()
 
-  selectedAncestry: string | null = null
   charactersPerPage = 6
   currentPage = 0
+  totalRecords = 0
   paginatedCharacters: Character[] = []
   first = 0
-  rows = 10
+  pageSize = 3
+  isLoadingCharacters = false
 
-  // Mock Data
-  myCharacters: Character[] = [
-    {
-      name: 'Artemis',
-      class: 'Mage',
-      ancestry: 'Elf',
-      level: 5,
-      health: 40,
-      mana: 80,
-      image: 'mage1.png',
-    },
-    {
-      name: 'Ares',
-      class: 'Warrior',
-      ancestry: 'Human',
-      level: 10,
-      health: 100,
-      mana: 0,
-      image: 'warrior1.png',
-    },
-    {
-      name: 'Athena',
-      class: 'Rogue',
-      ancestry: 'Halfling',
-      level: 8,
-      health: 60,
-      mana: 40,
-      image: 'rogue1.png',
-    },
-    {
-      name: 'Hades',
-      class: 'Priest',
-      ancestry: 'Dwarf',
-      level: 12,
-      health: 80,
-      mana: 120,
-      image: 'priest1.png',
-    },
-    {
-      name: 'Zeus',
-      class: 'Paladin',
-      ancestry: 'Half-Orc',
-      level: 15,
-      health: 100,
-      mana: 50,
-      image: 'warrior2.png',
-    },
-    {
-      name: 'Hades',
-      class: 'Priest',
-      ancestry: 'Dwarf',
-      level: 12,
-      health: 80,
-      mana: 120,
-      image: 'priest1.png',
-    },
-    {
-      name: 'Zeus',
-      class: 'Paladin',
-      ancestry: 'Half-Orc',
-      level: 15,
-      health: 100,
-      mana: 50,
-      image: 'warrior2.png',
-    },
-    {
-      name: 'Hades',
-      class: 'Priest',
-      ancestry: 'Dwarf',
-      level: 12,
-      health: 80,
-      mana: 120,
-      image: 'priest1.png',
-    },
-    {
-      name: 'Zeus',
-      class: 'Paladin',
-      ancestry: 'Half-Orc',
-      level: 15,
-      health: 100,
-      mana: 50,
-      image: 'warrior2.png',
-    },
-    {
-      name: 'Hades',
-      class: 'Priest',
-      ancestry: 'Dwarf',
-      level: 12,
-      health: 80,
-      mana: 120,
-      image: 'priest1.png',
-    },
-    {
-      name: 'Zeus',
-      class: 'Paladin',
-      ancestry: 'Half-Orc',
-      level: 15,
-      health: 100,
-      mana: 50,
-      image: 'warrior2.png',
-    },
-    {
-      name: 'Hades',
-      class: 'Priest',
-      ancestry: 'Dwarf',
-      level: 12,
-      health: 80,
-      mana: 120,
-      image: 'priest1.png',
-    },
-    {
-      name: 'Zeus',
-      class: 'Paladin',
-      ancestry: 'Half-Orc',
-      level: 15,
-      health: 100,
-      mana: 50,
-      image: 'warrior2.png',
-    },
-    {
-      name: 'Hades',
-      class: 'Priest',
-      ancestry: 'Dwarf',
-      level: 12,
-      health: 80,
-      mana: 120,
-      image: 'priest1.png',
-    },
-    {
-      name: 'Zeus',
-      class: 'Paladin',
-      ancestry: 'Half-Orc',
-      level: 15,
-      health: 100,
-      mana: 50,
-      image: 'warrior2.png',
-    },
-  ]
+  protected readonly filterForm =
+    this.filterFormFactoryService.createFilterForm()
 
   ngOnInit(): void {
     this.scrollToTop()
@@ -220,6 +96,19 @@ export class ListCharacterPage implements OnInit, OnDestroy {
     this.ancestryService.loadAncestries()
     this.classService.loadClasses()
     this.loadCharacters()
+    this.subscribeToFilterChanges()
+  }
+
+  private subscribeToFilterChanges(): void {
+    const subscription = this.filterForm.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe(() => {
+        this.currentPage = 0
+        this.first = 0
+        this.loadCharacters()
+      })
+
+    this.subscriptions.add(subscription)
   }
 
   onEditCharacter(character: Character): void {
@@ -233,7 +122,9 @@ export class ListCharacterPage implements OnInit, OnDestroy {
 
   onPageChange(event: PaginatorState): void {
     this.currentPage = event.page || 0
-    this.updatePaginatedCharacters()
+    this.first = event.first || 0
+    this.pageSize = event.rows || 6
+    this.loadCharacters()
   }
 
   onNavigateToCreate(): void {
@@ -249,13 +140,37 @@ export class ListCharacterPage implements OnInit, OnDestroy {
   }
 
   private loadCharacters(): void {
-    this.updatePaginatedCharacters()
-  }
+    this.isLoadingCharacters = true
 
-  private updatePaginatedCharacters(): void {
-    const startIndex = this.currentPage * this.charactersPerPage
-    const endIndex = startIndex + this.charactersPerPage
-    this.paginatedCharacters = this.myCharacters.slice(startIndex, endIndex)
+    const formValues = this.filterForm.value
+    const request = {
+      page: this.currentPage + 1,
+      pageSize: this.pageSize,
+      name: formValues.name || undefined,
+      ancestryName: formValues.ancestry?.name || undefined,
+      className: formValues.class?.name || undefined,
+    }
+
+    const subscription = this.characterService
+      .getPaginatedCharacter(request)
+      .subscribe({
+        next: (response: GetPaginatedCharacterResponse) => {
+          this.paginatedCharacters = response.results
+          this.totalRecords = response.rowCount
+          this.isLoadingCharacters = false
+        },
+        error: (error) => {
+          console.error('Erro ao carregar personagens:', error)
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Falha ao carregar personagens',
+          })
+          this.isLoadingCharacters = false
+        },
+      })
+
+    this.subscriptions.add(subscription)
   }
 
   private scrollToTop(): void {

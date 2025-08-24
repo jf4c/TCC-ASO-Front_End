@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 70%;
+  // width: 100%;
   margin: 1rem auto;
   .box-title {
     display: flex;
@@ -42,5 +42,21 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
     margin-bottom: 1rem;
+  }
+
+  .empty-list {
+    grid-column: span 3;
+    text-align: center;
+    padding: 2rem;
+    margin: 1rem auto;
+    color: var(--text-secondary);
+    & i {
+      font-size: 2rem;
+      color: var(--text-secondary);
+    }
+    & p {
+      font-size: 1.5rem;
+      margin-top: 1rem;
+    }
   }
 }

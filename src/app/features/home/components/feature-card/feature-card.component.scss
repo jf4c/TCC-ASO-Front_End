@@ -1,0 +1,36 @@
+:host {
+  width: 30%;
+  background-color: var(--bg-secondary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  font-weight: bold;
+  border-radius: 8px;
+  padding: 30px;
+  text-align: center;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  box-shadow: var(--shadow-quaternary);
+  cursor: pointer;
+}
+:host:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-quinary);
+}
+
+.feature-icon {
+  font-size: 3rem;
+  color: var(--accent-primary);
+  margin-bottom: 20px;
+  font-style: normal;
+}
+
+.feature-card h3 {
+  font-size: 1.5rem;
+}
+
+.feature-card p {
+  color: #a0a0a0;
+}

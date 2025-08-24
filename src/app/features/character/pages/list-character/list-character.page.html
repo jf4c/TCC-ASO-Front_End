@@ -12,62 +12,82 @@
     (eventClick)="onNavigateToCreate()"
     [styleClass]="{ width: '700px' }"
   />
-  <aso-card [header]="true" class="character-card">
-    <div slot="header" class="filter">
-      <aso-input
-        placeholder="Nome Personagem"
-        icon="pi pi-search"
-        class="col-span-4"
-      ></aso-input>
+  <form [formGroup]="filterForm" class="flex w-2/3">
+    <aso-card [header]="true" class="character-card">
+      <div slot="header" class="filter">
+        <aso-input
+          placeholder="Nome Personagem"
+          icon="pi pi-search"
+          class="col-span-4"
+          formControlName="name"
+        ></aso-input>
 
-      <aso-dropdown-input
-        [options]="(ancestries$ | async) ?? []"
-        optionLabel="name"
-        [filter]="true"
-        filterBy="name"
-        [showClear]="true"
-        placeholder="Selecione uma raça"
-        class="col-span-1"
-      />
-      <aso-dropdown-input
-        [options]="(classes$ | async) ?? []"
-        optionLabel="name"
-        [filter]="true"
-        filterBy="name"
-        [showClear]="true"
-        placeholder="Selecione uma Classe"
-        class="col-span-1"
-      />
-      <aso-dropdown-input
-        [options]="(classes$ | async) ?? []"
-        optionLabel="name"
-        [filter]="true"
-        filterBy="name"
-        [showClear]="true"
-        placeholder="Selecione uma Campanha"
-        class="col-span-2"
-      />
-    </div>
-    <div class="character-list">
-      @for (character of paginatedCharacters; track $index) {
-      <aso-character-card
-        [character]="character"
-        (edit)="onEditCharacter(character)"
-        (delete)="onDeleteCharacter(character)"
-      ></aso-character-card>
-      }
-    </div>
-    <div class="mb-8">
-      <p-paginator
-        (onPageChange)="onPageChange($event)"
-        [first]="first"
-        [rows]="rows"
-        [totalRecords]="120"
-        [showCurrentPageReport]="false"
-        [showPageLinks]="true"
-        [showJumpToPageDropdown]="false"
-        currentPageReportTemplate="{first} até {last} de {totalRecords}"
-      />
-    </div>
-  </aso-card>
+        <aso-dropdown-input
+          [options]="(ancestries$ | async) ?? []"
+          optionLabel="name"
+          [filter]="true"
+          filterBy="name"
+          [showClear]="true"
+          placeholder="Selecione uma raça"
+          class="col-span-1"
+          formControlName="ancestry"
+        />
+        <aso-dropdown-input
+          [options]="(classes$ | async) ?? []"
+          optionLabel="name"
+          [filter]="true"
+          filterBy="name"
+          [showClear]="true"
+          placeholder="Selecione uma Classe"
+          class="col-span-1"
+          formControlName="class"
+        />
+        <aso-dropdown-input
+          [options]="(classes$ | async) ?? []"
+          optionLabel="name"
+          [filter]="true"
+          filterBy="name"
+          [showClear]="true"
+          placeholder="Selecione uma Campanha"
+          class="col-span-2"
+          formControlName="campaign"
+        />
+      </div>
+      <div class="character-list">
+        @if (isLoadingCharacters) {
+        <div class="flex justify-center items-center py-8">
+          <div class="text-center">
+            <i class="pi pi-spin pi-spinner text-4xl text-primary"></i>
+            <p class="mt-4 text-lg">Carregando personagens...</p>
+          </div>
+        </div>
+        } @else { @for (character of paginatedCharacters; track character.id) {
+        <aso-character-card
+          [character]="character"
+          (edit)="onEditCharacter(character)"
+          (delete)="onDeleteCharacter(character)"
+        ></aso-character-card>
+        } @empty {
+        <div class="empty-list">
+          <div class="text-center">
+            <i class="pi pi-inbox"></i>
+            <p class="">Nenhum personagem encontrado</p>
+          </div>
+        </div>
+        } }
+      </div>
+      <div class="mb-8">
+        <p-paginator
+          (onPageChange)="onPageChange($event)"
+          [first]="first"
+          [rows]="pageSize"
+          [totalRecords]="totalRecords"
+          [showCurrentPageReport]="false"
+          [showPageLinks]="true"
+          [showJumpToPageDropdown]="false"
+          currentPageReportTemplate="{first} até {last} de {totalRecords}"
+        />
+      </div>
+    </aso-card>
+  </form>
 </section>
