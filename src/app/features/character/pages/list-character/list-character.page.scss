@@ -26,14 +26,18 @@
   .character-card {
     width: 80%;
   }
-  .filter {
-    display: grid;
-    align-items: center;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-    width: 100%;
-    max-width: 1200px;
-    min-width: 300px;
+  .form-character {
+    display: flex;
+    width: 80%;
+    .filter {
+      display: grid;
+      align-items: center;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      width: 100%;
+      max-width: 1200px;
+      min-width: 300px;
+    }
   }
   .character-list {
     display: grid;

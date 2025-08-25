@@ -1,0 +1,18 @@
+<!-- Coluna lateral esquerda -->
+<div class="sidebar">
+  <!-- Card do Mestre -->
+  @if (master()) {
+  <aso-campaign-master-card [master]="master()!" />
+  }
+
+  <!-- Lista de Jogadores -->
+  @if (players().length > 0) {
+  <aso-campaign-players-card [players]="players()" />
+  }
+
+  <!-- Seção de Personagens -->
+  <aso-campaign-characters-card
+    [players]="players()"
+    (characterClick)="onCharacterSelected($event)"
+  />
+</div>

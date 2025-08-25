@@ -6,6 +6,8 @@
   border-bottom: 3px solid var(--accent-secondary);
   height: 100px;
   padding: 1rem 2rem;
+  position: relative;
+  z-index: 100;
 
   .logo {
     display: flex;

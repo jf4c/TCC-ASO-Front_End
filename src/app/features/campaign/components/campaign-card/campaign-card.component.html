@@ -1,4 +1,4 @@
-<div class="campaign-card" (click)="onViewCampaign()">
+<div class="campaign-card">
   <!-- Imagem placeholder -->
   <div class="campaign-image relative">
     <div class="image-placeholder">
@@ -43,6 +43,11 @@
 
     <!-- Botões de ação -->
     <div class="campaign-actions">
+      <button class="action-btn view-btn primary" (click)="onViewCampaign()">
+        <i class="pi pi-eye"></i>
+        Ver Detalhes
+      </button>
+
       @if (campaign.userRole === UserRole.MASTER) {
       <button
         class="action-btn edit-btn outlined"

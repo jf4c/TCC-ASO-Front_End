@@ -1,0 +1,18 @@
+<!-- Card do Mestre -->
+<div class="master-card">
+  <div class="card-header">
+    <i class="pi pi-crown"></i>
+    <span class="header-title">MESTRE DO JOGO</span>
+  </div>
+  <div class="master-info">
+    <img
+      [src]="master().userAvatar || 'assets/Character/unknown.png'"
+      [alt]="master().userName"
+      class="master-avatar"
+    />
+    <div class="master-details">
+      <h3 class="master-name">{{ master().userName }}</h3>
+      <span class="master-title">Dungeon Master</span>
+    </div>
+  </div>
+</div>

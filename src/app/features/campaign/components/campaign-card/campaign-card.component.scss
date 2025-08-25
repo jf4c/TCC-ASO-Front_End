@@ -149,6 +149,7 @@
 
   .campaign-actions {
     display: flex;
+    gap: 0.5rem;
     justify-content: flex-end;
 
     .action-btn {
@@ -162,6 +163,17 @@
       cursor: pointer;
       transition: all 0.3s ease;
       border: 2px solid;
+
+      &.primary {
+        background-color: var(--accent-primary);
+        border-color: var(--accent-primary);
+        color: white;
+
+        &:hover {
+          background-color: var(--accent-primary-hover, #c19a6b);
+          border-color: var(--accent-primary-hover, #c19a6b);
+        }
+      }
 
       &.outlined {
         background-color: transparent;

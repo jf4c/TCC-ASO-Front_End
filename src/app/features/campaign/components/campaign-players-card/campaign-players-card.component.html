@@ -1,0 +1,21 @@
+<!-- Lista de Jogadores -->
+@if (players().length > 0) {
+<div class="players-card">
+  <div class="card-header">
+    <i class="pi pi-users"></i>
+    <span class="header-title">JOGADORES</span>
+  </div>
+  <div class="players-list">
+    @for (player of players(); track player.id) {
+    <div class="player-item">
+      <img
+        [src]="player.userAvatar || 'assets/Character/unknown.png'"
+        [alt]="player.userName"
+        class="player-avatar"
+      />
+      <span class="player-name">{{ player.userName }}</span>
+    </div>
+    }
+  </div>
+</div>
+}

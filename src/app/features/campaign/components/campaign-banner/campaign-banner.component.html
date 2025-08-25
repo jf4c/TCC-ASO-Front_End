@@ -1,0 +1,15 @@
+<!-- Header da campanha com imagem de fundo -->
+<div class="campaign-header">
+  <div class="header-background">
+    <img
+      [src]="campaign().image || 'assets/d20.jpg'"
+      [alt]="campaign().title"
+      class="header-image"
+    />
+    <div class="header-overlay"></div>
+  </div>
+  <div class="header-content">
+    <h1 class="campaign-title">{{ campaign().title }}</h1>
+    <p class="campaign-description">{{ campaign().description }}</p>
+  </div>
+</div>

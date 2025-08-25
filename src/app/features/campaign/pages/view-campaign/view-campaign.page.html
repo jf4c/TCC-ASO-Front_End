@@ -1,0 +1,54 @@
+<div class="view-campaign-container">
+  @if (isLoading()) {
+  <div class="loading-state">
+    <i class="pi pi-spinner pi-spin"></i>
+    <p>Carregando detalhes da campanha...</p>
+  </div>
+  } @else if (error()) {
+  <div class="error-state">
+    <i class="pi pi-exclamation-triangle"></i>
+    <h3>Erro ao carregar campanha</h3>
+    <p>{{ error() }}</p>
+    <button class="back-button" (click)="onBackToList()">
+      Voltar para lista
+    </button>
+  </div>
+  } @else if (campaign()) {
+  <!-- Header da campanha com imagem de fundo -->
+  <aso-campaign-banner [campaign]="campaign()!" />
+
+  <!-- Layout principal com duas colunas -->
+  <div class="campaign-layout">
+    <!-- Coluna lateral esquerda -->
+    <aso-campaign-sidebar
+      [master]="master()"
+      [players]="players()"
+      (characterSelected)="onCharacterSelected($event)"
+    />
+
+    <!-- Área de conteúdo principal -->
+    <div class="main-content">
+      <!-- Seção O Mundo da Campanha -->
+      <aso-campaign-world [world]="campaign()!.world || null" />
+
+      <!-- Seção de Diário e Planejamento -->
+      <aso-campaign-journal [campaignId]="campaignId()" />
+    </div>
+  </div>
+
+  <!-- Dialog de Personagem -->
+  <aso-character-detail-dialog
+    [character]="selectedCharacter()"
+    (closeDialog)="onCloseDialog()"
+  />
+  } @else {
+  <div class="not-found-state">
+    <i class="pi pi-search"></i>
+    <h3>Campanha não encontrada</h3>
+    <p>A campanha solicitada não foi encontrada.</p>
+    <button class="back-button" (click)="onBackToList()">
+      Voltar para lista
+    </button>
+  </div>
+  }
+</div>

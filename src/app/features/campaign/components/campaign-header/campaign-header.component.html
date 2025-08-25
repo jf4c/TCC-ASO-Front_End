@@ -1,0 +1,86 @@
+<div class="campaign-header">
+  <div class="header-grid">
+    <!-- Imagem da Campanha -->
+    <div class="campaign-image">
+      <img src="assets/d20.jpg" alt="Campaign Image" class="image" />
+    </div>
+
+    <!-- Informações da Campanha -->
+    <div class="campaign-info">
+      <!-- Título e Status -->
+      <div class="title-section">
+        <h1 class="campaign-title">{{ campaign.title }}</h1>
+        <span class="status-badge" [ngClass]="getStatusClass()">
+          {{ getStatusText() }}
+        </span>
+      </div>
+
+      <!-- Descrição -->
+      <p class="campaign-description">{{ campaign.description }}</p>
+
+      <!-- Metadados -->
+      <div class="metadata-grid">
+        <div class="metadata-item">
+          <i class="pi pi-crown"></i>
+          <span>Mestre: {{ campaign.masterName }}</span>
+        </div>
+        <div class="metadata-item">
+          <i class="pi pi-users"></i>
+          <span>
+            {{ campaign.playersCount }}/{{ campaign.maxPlayers }} Jogadores
+          </span>
+        </div>
+        <div class="metadata-item">
+          <i class="pi pi-calendar"></i>
+          <span>Criada em {{ formatDate(campaign.createdAt) }}</span>
+        </div>
+        <div class="metadata-item">
+          <i class="pi pi-chart-line"></i>
+          <span>{{ campaign.statistics.totalSessions }} Sessões</span>
+        </div>
+        <div class="metadata-item">
+          <i class="pi pi-cog"></i>
+          <span>Sistema: {{ campaign.settings.system }}</span>
+        </div>
+        <div class="metadata-item">
+          <i class="pi pi-clock"></i>
+          <span>Último acesso: {{ formatDate(campaign.lastActivity) }}</span>
+        </div>
+      </div>
+
+      <!-- Botões de Ação -->
+      <div class="action-buttons">
+        @if (campaign.userRole === UserRole.MASTER) {
+        <aso-button
+          label="Editar Campanha"
+          icon="pi pi-pencil"
+          variant="outlined"
+          severity="secondary"
+          (eventClick)="onEditCampaign()"
+        />
+        <aso-button
+          label="Convidar Jogadores"
+          icon="pi pi-user-plus"
+          variant="outlined"
+          severity="info"
+          (eventClick)="onInvitePlayer()"
+        />
+        } @else {
+        <aso-button
+          label="Criar Personagem"
+          icon="pi pi-plus"
+          severity="success"
+          (eventClick)="onCreateCharacter()"
+        />
+        <aso-button
+          label="Sair da Campanha"
+          icon="pi pi-sign-out"
+          variant="outlined"
+          severity="danger"
+          (eventClick)="onLeaveCampaign()"
+        />
+        }
+      </div>
+    </div>
+  </div>
+</div>

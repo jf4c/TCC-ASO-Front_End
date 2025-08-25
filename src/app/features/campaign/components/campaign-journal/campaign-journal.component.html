@@ -1,0 +1,403 @@
+<!-- Diário e Planejamento da Campanha -->
+<div class="campaign-journal-section">
+  <p-tabView styleClass="journal-tabs">
+    <!-- Aba Diário de Aventuras -->
+    <p-tabPanel header="Diário de Aventuras">
+      <ng-template pTemplate="header">
+        <i class="pi pi-book"></i>
+        <span>Diário de Aventuras</span>
+      </ng-template>
+
+      <div class="journal-content">
+        <!-- Seção A SAGA ATÉ AGORA -->
+        <div class="saga-header">
+          <h2 class="saga-title">A SAGA ATÉ AGORA</h2>
+          <button
+            pButton
+            type="button"
+            label="Adicionar Ato"
+            icon="pi pi-plus"
+            class="p-button-warning add-entry-btn"
+            (click)="addJournalEntry()"
+          ></button>
+        </div>
+
+        <!-- Lista de entradas do diário -->
+        <div class="journal-entries">
+          <p-accordion [multiple]="true" styleClass="journal-accordion">
+            @for (entry of journalEntries(); track entry.id) {
+            <p-accordionTab>
+              <ng-template pTemplate="header">
+                <div class="accordion-entry-header">
+                  @if (editingJournalTitle() === entry.id) {
+                  <input
+                    pInputText
+                    [ngModel]="entry.title"
+                    #titleInput
+                    class="entry-title-input"
+                    (keyup.enter)="saveJournalTitle(entry.id, titleInput.value)"
+                    (blur)="saveJournalTitle(entry.id, titleInput.value)"
+                    (click)="$event.stopPropagation()"
+                    (keydown)="$event.stopPropagation()"
+                    (keyup)="$event.stopPropagation()"
+                    (keypress)="$event.stopPropagation()"
+                    (input)="$event.stopPropagation()"
+                    (keydown.space)="$event.stopPropagation()"
+                    (keyup.space)="$event.stopPropagation()"
+                    #titleInputRef
+                  />
+                  } @else {
+                  <span class="entry-title">{{ entry.title }}</span>
+                  }
+                  <div class="entry-actions">
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-plus"
+                      class="p-button-text p-button-sm"
+                      (click)="addChapter(entry.id); $event.stopPropagation()"
+                      title="Adicionar capítulo"
+                    ></button>
+                    @if (editingJournalTitle() !== entry.id) {
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-pencil"
+                      class="p-button-text p-button-sm"
+                      (click)="editJournalTitle(entry.id); $event.stopPropagation()"
+                      title="Editar título"
+                    ></button>
+                    }
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-trash"
+                      class="p-button-text p-button-sm p-button-danger"
+                      (click)="deleteJournalEntry(entry.id); $event.stopPropagation()"
+                    ></button>
+                  </div>
+                </div>
+              </ng-template>
+
+              <!-- Conteúdo da entrada -->
+              <div class="accordion-entry-content">
+                @if (editingJournal() === entry.id) {
+                <div class="edit-mode">
+                  <textarea
+                    pInputTextarea
+                    [ngModel]="entry.content"
+                    #contentTextarea
+                    placeholder="Descreva os eventos deste ato da aventura..."
+                    rows="6"
+                    class="w-full entry-textarea"
+                  ></textarea>
+                  <div class="edit-actions">
+                    <button
+                      pButton
+                      type="button"
+                      label="Salvar"
+                      icon="pi pi-check"
+                      class="p-button-success p-button-sm"
+                      (click)="saveJournalEntry(entry.id, contentTextarea.value)"
+                    ></button>
+                    <button
+                      pButton
+                      type="button"
+                      label="Cancelar"
+                      icon="pi pi-times"
+                      class="p-button-secondary p-button-sm"
+                      (click)="editingJournal.set(null)"
+                    ></button>
+                  </div>
+                </div>
+                } @else {
+
+                <!-- Seção de Capítulos -->
+                <div class="chapters-section">
+                  <!-- Lista de Capítulos -->
+                  @if (entry.chapters.length > 0) {
+                  <div class="chapters-list">
+                    @for (chapter of entry.chapters; track chapter.id) {
+                    <div class="chapter-item">
+                      <div class="chapter-header">
+                        @if (editingChapter() === entry.id + '-' + chapter.id) {
+                        <!-- Modo de edição do capítulo -->
+                        <div class="chapter-edit-form w-full">
+                          <input
+                            pInputText
+                            [ngModel]="chapter.title"
+                            #chapterTitleInput
+                            placeholder="Título do capítulo..."
+                            class="chapter-title-input w-full mb-3"
+                          />
+                          <textarea
+                            pInputTextarea
+                            [ngModel]="chapter.content"
+                            #chapterContentInput
+                            placeholder="Conteúdo do capítulo..."
+                            rows="4"
+                            class="w-full chapter-content-textarea"
+                          ></textarea>
+                          <div class="chapter-edit-actions mt-3">
+                            <button
+                              pButton
+                              type="button"
+                              label="Salvar"
+                              icon="pi pi-check"
+                              class="p-button-success p-button-sm"
+                              (click)="saveChapter(entry.id, chapter.id, chapterTitleInput.value, chapterContentInput.value)"
+                            ></button>
+                            <button
+                              pButton
+                              type="button"
+                              label="Cancelar"
+                              icon="pi pi-times"
+                              class="p-button-secondary p-button-sm"
+                              (click)="cancelChapterEdit()"
+                            ></button>
+                          </div>
+                        </div>
+                        } @else {
+                        <!-- Modo de visualização do capítulo -->
+                        <h4 class="chapter-title">{{ chapter.title }}</h4>
+                        <div class="chapter-actions">
+                          <button
+                            pButton
+                            type="button"
+                            icon="pi pi-pencil"
+                            class="p-button-text p-button-sm chapter-edit-btn"
+                            (click)="editChapter(entry.id, chapter.id)"
+                            title="Editar capítulo"
+                          ></button>
+                          <button
+                            pButton
+                            type="button"
+                            icon="pi pi-trash"
+                            class="p-button-text p-button-sm p-button-danger chapter-delete-btn"
+                            (click)="deleteChapter(entry.id, chapter.id)"
+                            title="Excluir capítulo"
+                          ></button>
+                        </div>
+                        }
+                      </div>
+                      @if (editingChapter() !== entry.id + '-' + chapter.id) {
+                      <div class="chapter-content">
+                        @if (chapter.content) {
+                        <p class="chapter-text">{{ chapter.content }}</p>
+                        } @else {
+                        <p class="chapter-placeholder">
+                          Clique no ícone de edição para adicionar o conteúdo
+                          deste capítulo...
+                        </p>
+                        }
+                      </div>
+                      }
+                    </div>
+                    }
+                  </div>
+                  }
+
+                  <!-- Formulário para novo capítulo -->
+                  @if (pendingNewChapter() === entry.id) {
+                  <div class="chapter-item new-chapter-form">
+                    <div class="chapter-edit-form w-full">
+                      <input
+                        pInputText
+                        #newChapterTitleInput
+                        placeholder="Título do capítulo..."
+                        class="chapter-title-input w-full mb-3"
+                        value="Capítulo {{entry.chapters.length + 1}}"
+                      />
+                      <textarea
+                        pInputTextarea
+                        #newChapterContentInput
+                        placeholder="Conteúdo do capítulo..."
+                        rows="4"
+                        class="w-full chapter-content-textarea"
+                      ></textarea>
+                      <div class="chapter-edit-actions mt-3">
+                        <button
+                          pButton
+                          type="button"
+                          label="Salvar"
+                          icon="pi pi-check"
+                          class="p-button-success p-button-sm"
+                          (click)="saveNewChapter(entry.id, newChapterTitleInput.value, newChapterContentInput.value)"
+                        ></button>
+                        <button
+                          pButton
+                          type="button"
+                          label="Cancelar"
+                          icon="pi pi-times"
+                          class="p-button-secondary p-button-sm"
+                          (click)="cancelNewChapter()"
+                        ></button>
+                      </div>
+                    </div>
+                  </div>
+                  }
+                </div>
+
+                }
+              </div>
+            </p-accordionTab>
+            }
+          </p-accordion>
+
+          <!-- Campo para novo ato - APÓS os accordions -->
+          @if (pendingNewAct()) {
+          <div class="new-act-input">
+            <div class="new-act-form">
+              <input
+                pInputText
+                [(ngModel)]="pendingNewAct"
+                placeholder="Digite o título do ato..."
+                class="pending-act-input w-full"
+                (keyup.enter)="confirmNewAct()"
+                (keyup.escape)="cancelNewAct()"
+                (click)="$event.stopPropagation()"
+                (keydown)="$event.stopPropagation()"
+                (keyup)="$event.stopPropagation()"
+                (keypress)="$event.stopPropagation()"
+                (input)="$event.stopPropagation()"
+              />
+              <div class="new-act-actions">
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-check"
+                  class="p-button-success p-button-sm"
+                  (click)="confirmNewAct()"
+                  title="Confirmar"
+                ></button>
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-times"
+                  class="p-button-secondary p-button-sm"
+                  (click)="cancelNewAct()"
+                  title="Cancelar"
+                ></button>
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+    </p-tabPanel>
+
+    <!-- Aba Planejamento do Mestre -->
+    <p-tabPanel header="Planejamento do Mestre">
+      <ng-template pTemplate="header">
+        <i class="pi pi-cog"></i>
+        <span>Planejamento do Mestre</span>
+      </ng-template>
+
+      <div class="planning-content">
+        <!-- Cabeçalho da seção -->
+        <div class="planning-header">
+          <h2 class="planning-title">NOTAS PARA A PRÓXIMA SESSÃO</h2>
+          <button
+            pButton
+            type="button"
+            label="Adicionar Ideia"
+            icon="pi pi-plus"
+            class="p-button-warning add-note-btn"
+            (click)="addPlanningNote()"
+          ></button>
+        </div>
+
+        <!-- Input para nova nota -->
+        @if (newPlanningContent()) {
+        <div class="new-note-input">
+          <textarea
+            pInputTextarea
+            [(ngModel)]="newPlanningContent"
+            placeholder="Digite sua ideia ou nota de planejamento..."
+            rows="3"
+            class="w-full"
+            (keyup.enter)="addPlanningNote()"
+          ></textarea>
+        </div>
+        }
+
+        <!-- Lista de notas de planejamento -->
+        <div class="planning-notes">
+          @if (planningNotes().length > 0) { @for (note of planningNotes();
+          track note.id) {
+          <div class="planning-note-card">
+            @if (editingPlanning() === note.id) {
+            <div class="edit-mode">
+              <textarea
+                pInputTextarea
+                [ngModel]="note.content"
+                #noteTextarea
+                rows="4"
+                class="w-full note-textarea"
+              ></textarea>
+              <div class="edit-actions">
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-check"
+                  class="p-button-success p-button-sm"
+                  (click)="savePlanningNote(note.id, noteTextarea.value)"
+                ></button>
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-times"
+                  class="p-button-secondary p-button-sm"
+                  (click)="editingPlanning.set(null)"
+                ></button>
+              </div>
+            </div>
+            } @else {
+            <div class="view-mode">
+              <p class="note-text">{{ note.content }}</p>
+              <div class="note-actions">
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-pencil"
+                  class="p-button-text p-button-sm"
+                  (click)="editPlanningNote(note.id)"
+                ></button>
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-trash"
+                  class="p-button-text p-button-sm p-button-danger"
+                  (click)="deletePlanningNote(note.id)"
+                ></button>
+              </div>
+            </div>
+            }
+          </div>
+          } } @else {
+          <div class="empty-planning">
+            <i class="pi pi-lightbulb"></i>
+            <p>Ainda não há notas de planejamento. Adicione suas ideias!</p>
+          </div>
+          }
+        </div>
+
+        <!-- Botão para sugestões de IA (futuro) -->
+        <div class="ai-suggestions">
+          <button
+            pButton
+            type="button"
+            label="Pedir Sugestões para IA"
+            icon="pi pi-android"
+            class="p-button-outlined w-full ai-btn"
+            disabled
+          ></button>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<!-- Dialog de confirmação e Toast -->
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>

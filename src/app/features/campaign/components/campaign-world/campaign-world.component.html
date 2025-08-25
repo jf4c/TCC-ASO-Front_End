@@ -1,0 +1,103 @@
+<!-- O Mundo da Campanha -->
+<div class="campaign-world-section">
+  <div class="section-header">
+    <i class="pi pi-globe"></i>
+    <h2 class="section-title">O MUNDO DA CAMPANHA</h2>
+  </div>
+
+  @if (world()) {
+  <div class="world-content">
+    <p-accordion [multiple]="true" styleClass="world-accordion">
+      <!-- Accordion LORE -->
+      <p-accordionTab>
+        <ng-template pTemplate="header">
+          <span class="accordion-header">
+            <i class="pi pi-book"></i>
+            <span>LORE</span>
+          </span>
+        </ng-template>
+        <div class="accordion-content">
+          @if (world()!.lore.length > 0) {
+          <div class="lore-entries">
+            @for (entry of world()!.lore; track entry.id) {
+            <div class="lore-entry">
+              <h4 class="entry-title">{{ entry.title }}</h4>
+              <p class="entry-content">{{ entry.content }}</p>
+            </div>
+            }
+          </div>
+          } @else {
+          <div class="empty-content">
+            <p>Nenhuma informação de lore disponível ainda.</p>
+          </div>
+          }
+        </div>
+      </p-accordionTab>
+
+      <!-- Accordion LOCAIS PRINCIPAIS -->
+      <p-accordionTab>
+        <ng-template pTemplate="header">
+          <span class="accordion-header">
+            <i class="pi pi-map-marker"></i>
+            <span>LOCAIS PRINCIPAIS</span>
+          </span>
+        </ng-template>
+        <div class="accordion-content">
+          @if (world()!.locations.length > 0) {
+          <div class="location-entries">
+            @for (location of world()!.locations; track location.id) {
+            <div class="location-entry">
+              <h4 class="entry-title">{{ location.title }}</h4>
+              <p class="entry-content">{{ location.description }}</p>
+            </div>
+            }
+          </div>
+          } @else {
+          <div class="empty-content">
+            <p>Nenhum local principal definido ainda.</p>
+          </div>
+          }
+        </div>
+      </p-accordionTab>
+
+      <!-- Accordion PANTEÃO -->
+      <p-accordionTab>
+        <ng-template pTemplate="header">
+          <span class="accordion-header">
+            <i class="pi pi-sun"></i>
+            <span>PANTEÃO</span>
+          </span>
+        </ng-template>
+        <div class="accordion-content">
+          @if (world()!.pantheon.length > 0) {
+          <div class="pantheon-entries">
+            @for (deity of world()!.pantheon; track deity.id) {
+            <div class="deity-entry">
+              <h4 class="entry-title">{{ deity.name }}</h4>
+              <p class="deity-title">{{ deity.title }}</p>
+              <p class="entry-content">{{ deity.description }}</p>
+              @if (deity.domains && deity.domains.length > 0) {
+              <div class="deity-domains">
+                <span class="domains-label">Domínios:</span>
+                <span class="domains-list">{{ deity.domains.join(', ') }}</span>
+              </div>
+              }
+            </div>
+            }
+          </div>
+          } @else {
+          <div class="empty-content">
+            <p>Nenhuma divindade do panteão definida ainda.</p>
+          </div>
+          }
+        </div>
+      </p-accordionTab>
+    </p-accordion>
+  </div>
+  } @else {
+  <div class="no-world-content">
+    <i class="pi pi-info-circle"></i>
+    <p>As informações do mundo da campanha ainda não foram configuradas.</p>
+  </div>
+  }
+</div>

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, inject } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { Router } from '@angular/router'
 import { Subscription } from 'rxjs'
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms'
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 
 import { CampaignService } from '../../services/campaign.service'
@@ -109,18 +109,17 @@ export class ListCampaignPage implements OnInit, OnDestroy {
   }
 
   onViewCampaign(campaign: Campaign): void {
-    console.log('Visualizar campanha:', campaign)
-    // TODO: Implementar navegação para detalhes da campanha
-    // this.router.navigate(['/campanhas', campaign.id])
+    this.router.navigate(['/campanhas', campaign.id])
   }
 
   onEditCampaign(campaign: Campaign): void {
     if (campaign.userRole === UserRole.MASTER) {
-      console.log('Editar campanha:', campaign)
-      // TODO: Implementar navegação para edição da campanha
-      // this.router.navigate(['/campanhas', campaign.id, 'editar'])
+      // Por enquanto redireciona para a página de detalhes
+      // TODO: Criar página específica de edição de campanha
+      this.router.navigate(['/campanhas', campaign.id])
     } else {
       console.log('Apenas o mestre pode editar esta campanha')
+      // TODO: Mostrar mensagem de erro para o usuário
     }
   }
 

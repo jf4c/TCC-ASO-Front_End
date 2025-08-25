@@ -1,0 +1,80 @@
+// Card do Mestre
+.master-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+
+  .card-header {
+    background-color: var(--accent-primary);
+    color: var(--text-quaternary);
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 600;
+    font-size: 1rem;
+
+    i {
+      font-size: 1.25rem;
+    }
+
+    .header-title {
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .master-info {
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+
+    .master-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--accent-primary);
+    }
+
+    .master-details {
+      .master-name {
+        margin: 0 0 0.5rem 0;
+        color: var(--text-primary);
+        font-size: 1.25rem;
+        font-weight: bold;
+      }
+
+      .master-title {
+        color: var(--text-secondary);
+        font-size: 1rem;
+      }
+    }
+  }
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .master-card {
+    .master-info {
+      padding: 1.5rem;
+      gap: 1rem;
+
+      .master-avatar {
+        width: 60px;
+        height: 60px;
+      }
+
+      .master-details {
+        .master-name {
+          font-size: 1.1rem;
+        }
+
+        .master-title {
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,51 @@
+<div class="participant-card">
+  <div class="participant-header">
+    <div class="participant-avatar">
+      <img
+        [src]="participant.userAvatar || 'assets/Character/unknown.png'"
+        [alt]="participant.userName"
+        class="avatar-image"
+      />
+    </div>
+    <div class="participant-info">
+      <h3 class="participant-name">{{ participant.userName }}</h3>
+      <span class="participant-role">{{ getRoleText() }}</span>
+    </div>
+  </div>
+
+  @if (participant.characters && participant.characters.length > 0) {
+  <div class="characters-section">
+    <h4 class="section-title">
+      PERSONAGENS DE {{ participant.userName.toUpperCase() }}
+    </h4>
+    <div class="characters-grid">
+      @for (character of participant.characters; track character.id) {
+      <div class="character-card">
+        <!-- Badge Player no canto superior direito -->
+        <div class="player-badge">
+          <span class="badge-text">Player</span>
+        </div>
+
+        <!-- Nome do personagem -->
+        <h5 class="character-name">{{ character.name }}</h5>
+
+        <!-- Informações de raça e classe -->
+        <div class="character-meta">
+          <div class="meta-item">
+            <i class="pi pi-user"></i>
+            <span>{{ character.race }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="pi pi-shield"></i>
+            <span>{{ character.class }}</span>
+          </div>
+        </div>
+
+        <!-- Descrição do personagem -->
+        <p class="character-description">{{ character.description }}</p>
+      </div>
+      }
+    </div>
+  </div>
+  }
+</div>
