@@ -1,0 +1,93 @@
+<section class="list-campaign-page">
+  <div class="box-title">
+    <span>✨</span>
+    <h2 class="title">Lista de Campanhas</h2>
+    <span>✨</span>
+  </div>
+
+  <aso-button
+    icon="fas fa-circle-plus"
+    size="large"
+    label="Criar Campanha"
+    (eventClick)="onCreateCampaign()"
+    [styleClass]="{ width: '700px' }"
+  />
+
+  <!-- Filtros -->
+  <form [formGroup]="filterForm" class="filters-section">
+    <aso-card [header]="true" class="filter-card">
+      <div slot="header" class="filter-container">
+        <aso-input
+          placeholder="Buscar campanhas..."
+          icon="pi pi-search"
+          class="filter-search"
+          formControlName="search"
+        />
+
+        <aso-dropdown-input
+          [options]="roleOptions"
+          optionLabel="name"
+          optionValue="value"
+          [filter]="true"
+          filterBy="name"
+          [showClear]="true"
+          placeholder="Filtrar por papel"
+          class="filter-role"
+          formControlName="role"
+        />
+
+        <aso-dropdown-input
+          [options]="statusOptions"
+          optionLabel="name"
+          optionValue="value"
+          [filter]="true"
+          filterBy="name"
+          [showClear]="true"
+          placeholder="Filtrar por status"
+          class="filter-status"
+          formControlName="status"
+        />
+      </div>
+    </aso-card>
+  </form>
+
+  <!-- Loading State -->
+  @if (isLoading) {
+  <div class="loading-state">
+    <i class="pi pi-spin pi-spinner text-4xl"></i>
+    <p class="mt-4 text-lg">Carregando campanhas...</p>
+  </div>
+  }
+
+  <!-- Campaign Grid -->
+  @else {
+  <div class="campaigns-grid">
+    @if (campaigns.length > 0) {
+    <div class="grid">
+      @for (campaign of campaigns; track campaign.id) {
+      <aso-campaign-card
+        [campaign]="campaign"
+        (view)="onViewCampaign($event)"
+        (edit)="onEditCampaign($event)"
+        (join)="onJoinCampaign($event)"
+      />
+      }
+    </div>
+    } @else {
+    <!-- Empty State -->
+    <div class="empty-state">
+      <i class="pi pi-inbox text-6xl mb-4"></i>
+      <h3 class="text-xl font-semibold mb-2">Nenhuma campanha encontrada</h3>
+      <p class="mb-6">
+        Crie sua primeira campanha ou junte-se a uma existente.
+      </p>
+      <aso-button
+        icon="fas fa-circle-plus"
+        label="Criar Primeira Campanha"
+        (eventClick)="onCreateCampaign()"
+      />
+    </div>
+    }
+  </div>
+  }
+</section>

@@ -1,0 +1,126 @@
+.list-campaign-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem auto;
+
+  .box-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
+    padding: 1rem;
+    margin: 1rem;
+
+    span {
+      font-size: 2.5rem;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 3rem;
+      color: var(--text-tertiary);
+    }
+  }
+
+  .filters-section {
+    width: 80%;
+    max-width: 1200px;
+    margin: 1rem 0;
+
+    .filter-card {
+      width: 100%;
+    }
+
+    .filter-container {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 1rem;
+      align-items: center;
+      width: 100%;
+
+      .filter-search {
+        grid-column: 1;
+      }
+
+      .filter-role {
+        grid-column: 2;
+      }
+
+      .filter-status {
+        grid-column: 3;
+      }
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+
+        .filter-search,
+        .filter-role,
+        .filter-status {
+          grid-column: 1;
+        }
+      }
+    }
+  }
+
+  .campaigns-grid {
+    width: 80%;
+    max-width: 1200px;
+    margin: 2rem auto 0;
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      width: 100%;
+    }
+
+    @media (max-width: 1024px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+
+  .empty-state {
+    margin-top: 4rem;
+    text-align: center;
+
+    i {
+      color: var(--text-secondary);
+    }
+
+    h3 {
+      color: var(--text-secondary);
+      margin: 1rem 0 0.5rem;
+    }
+
+    p {
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  .loading-state {
+    margin-top: 4rem;
+    text-align: center;
+
+    i {
+      color: var(--accent-primary);
+    }
+
+    p {
+      color: var(--text-secondary);
+      margin-top: 1rem;
+    }
+  }
+}

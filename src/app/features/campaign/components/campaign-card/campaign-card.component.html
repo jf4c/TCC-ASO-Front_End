@@ -1,0 +1,65 @@
+<div class="campaign-card" (click)="onViewCampaign()">
+  <!-- Imagem placeholder -->
+  <div class="campaign-image relative">
+    <div class="image-placeholder">
+      <img src="assets/d20.jpg" alt="Campaign Image" class="campaign-img" />
+    </div>
+
+    <!-- Badge de Role -->
+    <div class="role-badge">
+      <span class="role-text" [ngClass]="getRoleBadgeColor()">
+        {{ getRoleText() }}
+      </span>
+    </div>
+
+    <!-- Status -->
+    <div class="status-badge">
+      <span class="status-text" [ngClass]="getStatusColor()">
+        {{ getStatusText() }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Conteúdo -->
+  <div class="campaign-content">
+    <!-- Título -->
+    <h3 class="campaign-title">{{ campaign.title }}</h3>
+
+    <!-- Descrição -->
+    <p class="campaign-description">{{ campaign.description }}</p>
+
+    <!-- Informações do DM e Jogadores -->
+    <div class="campaign-info">
+      <div class="dm-info">
+        <i class="pi pi-crown"></i>
+        <span>DM: {{ campaign.masterName }}</span>
+      </div>
+
+      <div class="players-info">
+        <i class="pi pi-users"></i>
+        <span>{{ campaign.playersCount }}/{{ campaign.maxPlayers }}</span>
+      </div>
+    </div>
+
+    <!-- Botões de ação -->
+    <div class="campaign-actions">
+      @if (campaign.userRole === UserRole.MASTER) {
+      <button
+        class="action-btn edit-btn outlined"
+        (click)="onEditClick($event)"
+      >
+        <i class="pi pi-pencil"></i>
+        Editar
+      </button>
+      } @else {
+      <button
+        class="action-btn join-btn outlined"
+        (click)="onJoinClick($event)"
+      >
+        <i class="pi pi-sign-in"></i>
+        Entrar
+      </button>
+      }
+    </div>
+  </div>
+</div>

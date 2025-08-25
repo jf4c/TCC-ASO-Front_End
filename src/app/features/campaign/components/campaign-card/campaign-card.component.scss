@@ -1,0 +1,191 @@
+:host {
+  border: 1px solid var(--accent-primary);
+  border-radius: 10px;
+  margin: 1rem;
+  background-color: var(--bg-secondary);
+  box-shadow: var(--shadow-quinary);
+  cursor: pointer;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  display: block;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-quaternary);
+  }
+}
+
+.campaign-card {
+  border-radius: 10px;
+  overflow: hidden;
+  height: 100%;
+}
+
+.campaign-image {
+  position: relative;
+
+  .image-placeholder {
+    width: 100%;
+    height: 200px;
+    background-color: var(--bg-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 3px solid var(--accent-primary);
+    overflow: hidden;
+
+    .campaign-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .placeholder-text {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      font-weight: 500;
+    }
+  }
+
+  .role-badge {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+
+    .role-text {
+      padding: 0.5rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 600;
+
+      &.master {
+        background-color: var(--accent-primary);
+        color: var(--text-quaternary);
+      }
+
+      &.player {
+        background-color: var(--accent-secondary);
+        color: var(--text-primary);
+      }
+    }
+  }
+
+  .status-badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+
+    .status-text {
+      padding: 0.25rem 0.5rem;
+      background-color: rgba(0, 0, 0, 0.8);
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+
+      &.active {
+        color: var(--accent-success);
+      }
+
+      &.paused {
+        color: var(--accent-warning);
+      }
+
+      &.finished {
+        color: var(--text-secondary);
+      }
+    }
+  }
+}
+
+.campaign-content {
+  padding: 1.5rem;
+
+  .campaign-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .campaign-description {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .campaign-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+
+    .dm-info,
+    .players-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      i {
+        color: var(--accent-primary);
+      }
+    }
+  }
+
+  .campaign-actions {
+    display: flex;
+    justify-content: flex-end;
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid;
+
+      &.outlined {
+        background-color: transparent;
+
+        &.edit-btn {
+          border-color: var(--accent-secondary);
+          color: var(--accent-secondary);
+
+          &:hover {
+            background-color: var(--accent-secondary);
+            color: var(--text-primary);
+          }
+        }
+
+        &.join-btn {
+          border-color: var(--accent-success);
+          color: var(--accent-success);
+
+          &:hover {
+            background-color: var(--accent-success);
+            color: white;
+          }
+        }
+      }
+    }
+  }
+}
