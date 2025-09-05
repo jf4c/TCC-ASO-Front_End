@@ -12,31 +12,34 @@
         <!-- Seção A SAGA ATÉ AGORA -->
         <div class="saga-header">
           <h2 class="saga-title">A SAGA ATÉ AGORA</h2>
-          <button
-            pButton
-            type="button"
+          <aso-button
             label="Adicionar Ato"
             icon="pi pi-plus"
-            class="p-button-warning add-entry-btn"
-            (click)="addJournalEntry()"
-          ></button>
+            severity="warn"
+            (eventClick)="addJournalEntry()"
+            class="add-entry-btn"
+          ></aso-button>
         </div>
 
         <!-- Lista de entradas do diário -->
         <div class="journal-entries">
-          <p-accordion [multiple]="true" styleClass="journal-accordion">
+          <p-accordion
+            [multiple]="true"
+            styleClass="journal-accordion"
+            (onClose)="onAccordionToggle($event)"
+            (onOpen)="onAccordionToggle($event)"
+          >
             @for (entry of journalEntries(); track entry.id) {
             <p-accordionTab>
               <ng-template pTemplate="header">
                 <div class="accordion-entry-header">
                   @if (editingJournalTitle() === entry.id) {
-                  <input
-                    pInputText
-                    [ngModel]="entry.title"
-                    #titleInput
+                  <aso-input
+                    [ngModel]="editingTitleValue()"
+                    (ngModelChange)="editingTitleValue.set($event)"
                     class="entry-title-input"
-                    (keyup.enter)="saveJournalTitle(entry.id, titleInput.value)"
-                    (blur)="saveJournalTitle(entry.id, titleInput.value)"
+                    (keyup.enter)="saveJournalTitle(entry.id)"
+                    (keyup.escape)="cancelJournalTitleEdit()"
                     (click)="$event.stopPropagation()"
                     (keydown)="$event.stopPropagation()"
                     (keyup)="$event.stopPropagation()"
@@ -44,37 +47,47 @@
                     (input)="$event.stopPropagation()"
                     (keydown.space)="$event.stopPropagation()"
                     (keyup.space)="$event.stopPropagation()"
-                    #titleInputRef
-                  />
+                  ></aso-input>
                   } @else {
                   <span class="entry-title">{{ entry.title }}</span>
                   }
                   <div class="entry-actions">
-                    <button
-                      pButton
-                      type="button"
+                    @if (editingJournalTitle() === entry.id) {
+                    <aso-button
+                      icon="pi pi-check"
+                      variant="text"
+                      size="small"
+                      severity="success"
+                      (eventClick)="saveJournalTitle(entry.id); $event.stopPropagation()"
+                    ></aso-button>
+                    <aso-button
+                      icon="pi pi-times"
+                      variant="text"
+                      size="small"
+                      severity="secondary"
+                      (eventClick)="cancelJournalTitleEdit(); $event.stopPropagation()"
+                    ></aso-button>
+                    } @else {
+                    <aso-button
                       icon="pi pi-plus"
-                      class="p-button-text p-button-sm"
-                      (click)="addChapter(entry.id); $event.stopPropagation()"
-                      title="Adicionar capítulo"
-                    ></button>
-                    @if (editingJournalTitle() !== entry.id) {
-                    <button
-                      pButton
-                      type="button"
+                      variant="text"
+                      size="small"
+                      (eventClick)="addChapter(entry.id); $event.stopPropagation()"
+                    ></aso-button>
+                    <aso-button
                       icon="pi pi-pencil"
-                      class="p-button-text p-button-sm"
-                      (click)="editJournalTitle(entry.id); $event.stopPropagation()"
-                      title="Editar título"
-                    ></button>
-                    }
-                    <button
-                      pButton
-                      type="button"
+                      variant="text"
+                      size="small"
+                      (eventClick)="editJournalTitle(entry.id); $event.stopPropagation()"
+                    ></aso-button>
+                    <aso-button
                       icon="pi pi-trash"
-                      class="p-button-text p-button-sm p-button-danger"
-                      (click)="deleteJournalEntry(entry.id); $event.stopPropagation()"
-                    ></button>
+                      variant="text"
+                      size="small"
+                      severity="danger"
+                      (eventClick)="deleteJournalEntry(entry.id); $event.stopPropagation()"
+                    ></aso-button>
+                    }
                   </div>
                 </div>
               </ng-template>
@@ -83,31 +96,27 @@
               <div class="accordion-entry-content">
                 @if (editingJournal() === entry.id) {
                 <div class="edit-mode">
-                  <textarea
-                    pInputTextarea
+                  <aso-textarea
                     [ngModel]="entry.content"
                     #contentTextarea
                     placeholder="Descreva os eventos deste ato da aventura..."
-                    rows="6"
                     class="w-full entry-textarea"
-                  ></textarea>
+                  ></aso-textarea>
                   <div class="edit-actions">
-                    <button
-                      pButton
-                      type="button"
+                    <aso-button
                       label="Salvar"
                       icon="pi pi-check"
-                      class="p-button-success p-button-sm"
-                      (click)="saveJournalEntry(entry.id, contentTextarea.value)"
-                    ></button>
-                    <button
-                      pButton
-                      type="button"
+                      severity="success"
+                      size="small"
+                      (eventClick)="saveJournalEntry(entry.id, contentTextarea.value)"
+                    ></aso-button>
+                    <aso-button
                       label="Cancelar"
                       icon="pi pi-times"
-                      class="p-button-secondary p-button-sm"
-                      (click)="editingJournal.set(null)"
-                    ></button>
+                      severity="secondary"
+                      size="small"
+                      (eventClick)="editingJournal.set(null)"
+                    ></aso-button>
                   </div>
                 </div>
                 } @else {
@@ -120,67 +129,26 @@
                     @for (chapter of entry.chapters; track chapter.id) {
                     <div class="chapter-item">
                       <div class="chapter-header">
-                        @if (editingChapter() === entry.id + '-' + chapter.id) {
-                        <!-- Modo de edição do capítulo -->
-                        <div class="chapter-edit-form w-full">
-                          <input
-                            pInputText
-                            [ngModel]="chapter.title"
-                            #chapterTitleInput
-                            placeholder="Título do capítulo..."
-                            class="chapter-title-input w-full mb-3"
-                          />
-                          <textarea
-                            pInputTextarea
-                            [ngModel]="chapter.content"
-                            #chapterContentInput
-                            placeholder="Conteúdo do capítulo..."
-                            rows="4"
-                            class="w-full chapter-content-textarea"
-                          ></textarea>
-                          <div class="chapter-edit-actions mt-3">
-                            <button
-                              pButton
-                              type="button"
-                              label="Salvar"
-                              icon="pi pi-check"
-                              class="p-button-success p-button-sm"
-                              (click)="saveChapter(entry.id, chapter.id, chapterTitleInput.value, chapterContentInput.value)"
-                            ></button>
-                            <button
-                              pButton
-                              type="button"
-                              label="Cancelar"
-                              icon="pi pi-times"
-                              class="p-button-secondary p-button-sm"
-                              (click)="cancelChapterEdit()"
-                            ></button>
-                          </div>
-                        </div>
-                        } @else {
-                        <!-- Modo de visualização do capítulo -->
                         <h4 class="chapter-title">{{ chapter.title }}</h4>
                         <div class="chapter-actions">
-                          <button
-                            pButton
-                            type="button"
+                          <aso-button
                             icon="pi pi-pencil"
-                            class="p-button-text p-button-sm chapter-edit-btn"
-                            (click)="editChapter(entry.id, chapter.id)"
-                            title="Editar capítulo"
-                          ></button>
-                          <button
-                            pButton
-                            type="button"
+                            variant="text"
+                            size="small"
+                            severity="secondary"
+                            (eventClick)="editChapter(entry.id, chapter.id)"
+                            class="chapter-edit-btn"
+                          ></aso-button>
+                          <aso-button
                             icon="pi pi-trash"
-                            class="p-button-text p-button-sm p-button-danger chapter-delete-btn"
-                            (click)="deleteChapter(entry.id, chapter.id)"
-                            title="Excluir capítulo"
-                          ></button>
+                            variant="text"
+                            size="small"
+                            severity="danger"
+                            (eventClick)="deleteChapter(entry.id, chapter.id)"
+                            class="chapter-delete-btn"
+                          ></aso-button>
                         </div>
-                        }
                       </div>
-                      @if (editingChapter() !== entry.id + '-' + chapter.id) {
                       <div class="chapter-content">
                         @if (chapter.content) {
                         <p class="chapter-text">{{ chapter.content }}</p>
@@ -191,49 +159,15 @@
                         </p>
                         }
                       </div>
-                      }
                     </div>
                     }
                   </div>
-                  }
-
-                  <!-- Formulário para novo capítulo -->
-                  @if (pendingNewChapter() === entry.id) {
-                  <div class="chapter-item new-chapter-form">
-                    <div class="chapter-edit-form w-full">
-                      <input
-                        pInputText
-                        #newChapterTitleInput
-                        placeholder="Título do capítulo..."
-                        class="chapter-title-input w-full mb-3"
-                        value="Capítulo {{entry.chapters.length + 1}}"
-                      />
-                      <textarea
-                        pInputTextarea
-                        #newChapterContentInput
-                        placeholder="Conteúdo do capítulo..."
-                        rows="4"
-                        class="w-full chapter-content-textarea"
-                      ></textarea>
-                      <div class="chapter-edit-actions mt-3">
-                        <button
-                          pButton
-                          type="button"
-                          label="Salvar"
-                          icon="pi pi-check"
-                          class="p-button-success p-button-sm"
-                          (click)="saveNewChapter(entry.id, newChapterTitleInput.value, newChapterContentInput.value)"
-                        ></button>
-                        <button
-                          pButton
-                          type="button"
-                          label="Cancelar"
-                          icon="pi pi-times"
-                          class="p-button-secondary p-button-sm"
-                          (click)="cancelNewChapter()"
-                        ></button>
-                      </div>
-                    </div>
+                  } @else {
+                  <div class="no-chapters">
+                    <p class="no-chapters-text">
+                      Nenhum capítulo adicionado ainda. Clique no botão
+                      "Adicionar Capítulo" para começar a escrever sua história.
+                    </p>
                   </div>
                   }
                 </div>
@@ -245,14 +179,14 @@
           </p-accordion>
 
           <!-- Campo para novo ato - APÓS os accordions -->
-          @if (pendingNewAct()) {
+          @if (pendingNewAct() === 'creating') {
           <div class="new-act-input">
             <div class="new-act-form">
-              <input
-                pInputText
-                [(ngModel)]="pendingNewAct"
+              <aso-input
+                [ngModel]="newActTitle()"
                 placeholder="Digite o título do ato..."
                 class="pending-act-input w-full"
+                (ngModelChange)="newActTitle.set($event)"
                 (keyup.enter)="confirmNewAct()"
                 (keyup.escape)="cancelNewAct()"
                 (click)="$event.stopPropagation()"
@@ -260,24 +194,22 @@
                 (keyup)="$event.stopPropagation()"
                 (keypress)="$event.stopPropagation()"
                 (input)="$event.stopPropagation()"
-              />
+                (focus)="$event.stopPropagation()"
+                #newActInput
+              ></aso-input>
               <div class="new-act-actions">
-                <button
-                  pButton
-                  type="button"
+                <aso-button
                   icon="pi pi-check"
-                  class="p-button-success p-button-sm"
-                  (click)="confirmNewAct()"
-                  title="Confirmar"
-                ></button>
-                <button
-                  pButton
-                  type="button"
+                  severity="success"
+                  size="small"
+                  (eventClick)="confirmNewAct()"
+                ></aso-button>
+                <aso-button
                   icon="pi pi-times"
-                  class="p-button-secondary p-button-sm"
-                  (click)="cancelNewAct()"
-                  title="Cancelar"
-                ></button>
+                  severity="secondary"
+                  size="small"
+                  (eventClick)="cancelNewAct()"
+                ></aso-button>
               </div>
             </div>
           </div>
@@ -297,27 +229,24 @@
         <!-- Cabeçalho da seção -->
         <div class="planning-header">
           <h2 class="planning-title">NOTAS PARA A PRÓXIMA SESSÃO</h2>
-          <button
-            pButton
-            type="button"
+          <aso-button
             label="Adicionar Ideia"
             icon="pi pi-plus"
-            class="p-button-warning add-note-btn"
-            (click)="addPlanningNote()"
-          ></button>
+            severity="warn"
+            (eventClick)="addPlanningNote()"
+            class="add-note-btn"
+          ></aso-button>
         </div>
 
         <!-- Input para nova nota -->
         @if (newPlanningContent()) {
         <div class="new-note-input">
-          <textarea
-            pInputTextarea
+          <aso-textarea
             [(ngModel)]="newPlanningContent"
             placeholder="Digite sua ideia ou nota de planejamento..."
-            rows="3"
             class="w-full"
             (keyup.enter)="addPlanningNote()"
-          ></textarea>
+          ></aso-textarea>
         </div>
         }
 
@@ -328,48 +257,43 @@
           <div class="planning-note-card">
             @if (editingPlanning() === note.id) {
             <div class="edit-mode">
-              <textarea
-                pInputTextarea
+              <aso-textarea
                 [ngModel]="note.content"
                 #noteTextarea
-                rows="4"
                 class="w-full note-textarea"
-              ></textarea>
+              ></aso-textarea>
               <div class="edit-actions">
-                <button
-                  pButton
-                  type="button"
+                <aso-button
                   icon="pi pi-check"
-                  class="p-button-success p-button-sm"
-                  (click)="savePlanningNote(note.id, noteTextarea.value)"
-                ></button>
-                <button
-                  pButton
-                  type="button"
+                  severity="success"
+                  size="small"
+                  (eventClick)="savePlanningNote(note.id, noteTextarea.value)"
+                ></aso-button>
+                <aso-button
                   icon="pi pi-times"
-                  class="p-button-secondary p-button-sm"
-                  (click)="editingPlanning.set(null)"
-                ></button>
+                  severity="secondary"
+                  size="small"
+                  (eventClick)="editingPlanning.set(null)"
+                ></aso-button>
               </div>
             </div>
             } @else {
             <div class="view-mode">
               <p class="note-text">{{ note.content }}</p>
               <div class="note-actions">
-                <button
-                  pButton
-                  type="button"
+                <aso-button
                   icon="pi pi-pencil"
-                  class="p-button-text p-button-sm"
-                  (click)="editPlanningNote(note.id)"
-                ></button>
-                <button
-                  pButton
-                  type="button"
+                  variant="text"
+                  size="small"
+                  (eventClick)="editPlanningNote(note.id)"
+                ></aso-button>
+                <aso-button
                   icon="pi pi-trash"
-                  class="p-button-text p-button-sm p-button-danger"
-                  (click)="deletePlanningNote(note.id)"
-                ></button>
+                  variant="text"
+                  size="small"
+                  severity="danger"
+                  (eventClick)="deletePlanningNote(note.id)"
+                ></aso-button>
               </div>
             </div>
             }
@@ -384,19 +308,25 @@
 
         <!-- Botão para sugestões de IA (futuro) -->
         <div class="ai-suggestions">
-          <button
-            pButton
-            type="button"
+          <aso-button
             label="Pedir Sugestões para IA"
             icon="pi pi-android"
-            class="p-button-outlined w-full ai-btn"
-            disabled
-          ></button>
+            variant="outlined"
+            class="w-full ai-btn"
+          ></aso-button>
         </div>
       </div>
     </p-tabPanel>
   </p-tabView>
 </div>
+
+<!-- Dialog de capítulos -->
+<aso-chapter-dialog
+  [visible]="chapterDialogVisible()"
+  [data]="chapterDialogData()"
+  (save)="onChapterSave($event)"
+  (cancelDialog)="onChapterCancel()"
+></aso-chapter-dialog>
 
 <!-- Dialog de confirmação e Toast -->
 <p-confirmDialog></p-confirmDialog>

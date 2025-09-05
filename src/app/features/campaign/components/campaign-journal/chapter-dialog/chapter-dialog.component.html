@@ -1,0 +1,73 @@
+<p-dialog
+  [visible]="visible()"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [closable]="true"
+  [styleClass]="'chapter-dialog'"
+  [header]="dialogTitle()"
+  (onHide)="handleCancel()"
+>
+  <div class="dialog-content">
+    <div class="form-field">
+      <label for="chapterTitle">
+        Título do Capítulo
+        <span class="required">*</span>
+      </label>
+      <aso-input
+        id="chapterTitle"
+        [(ngModel)]="chapterTitle"
+        placeholder="Ex: O Encontro na Taverna"
+        class="w-full"
+        required
+      ></aso-input>
+      @if (chapterTitle().trim() === '' && showValidation()) {
+      <div class="field-error">
+        <i class="pi pi-exclamation-triangle"></i>
+        O título é obrigatório
+      </div>
+      }
+      <div class="field-hint">
+        Dê um nome descritivo para este capítulo da história
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label for="chapterContent">Conteúdo do Capítulo</label>
+      <aso-textarea
+        id="chapterContent"
+        [(ngModel)]="chapterContent"
+        placeholder="Descreva os eventos, diálogos e acontecimentos deste capítulo da aventura..."
+        class="w-full"
+      ></aso-textarea>
+      <div class="field-hint">
+        Conte a história deste momento da aventura (opcional)
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer">
+      <div class="footer-info">
+        <i class="pi pi-info-circle"></i>
+        Campos com * são obrigatórios
+      </div>
+      <div class="footer-actions">
+        <aso-button
+          label="Cancelar"
+          icon="pi pi-times"
+          severity="secondary"
+          (eventClick)="handleCancel()"
+        ></aso-button>
+        <aso-button
+          [label]="
+            data()?.isEditing ? 'Salvar Alterações' : 'Criar Capítulo'
+          "
+          icon="pi pi-check"
+          severity="success"
+          (eventClick)="handleSave()"
+        ></aso-button>
+      </div>
+    </div>
+  </ng-template>
+</p-dialog>

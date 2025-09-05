@@ -3,12 +3,18 @@ import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { TabViewModule } from 'primeng/tabview'
 import { AccordionModule } from 'primeng/accordion'
-import { ButtonModule } from 'primeng/button'
-import { InputTextarea } from 'primeng/inputtextarea'
-import { InputTextModule } from 'primeng/inputtext'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { ConfirmationService, MessageService } from 'primeng/api'
 import { ToastModule } from 'primeng/toast'
+
+// Importar componentes reutilizáveis
+import { InputComponent } from '../../../../shared/components/input/input.component'
+import { TextareaComponent } from '../../../../shared/components/textarea/textarea.component'
+import { ButtonComponent } from '../../../../shared/components/button/button.component'
+import {
+  ChapterDialogComponent,
+  ChapterDialogData,
+} from '../dialogs/chapter-dialog/chapter-dialog.component'
 
 export interface JournalEntry {
   id: string
@@ -44,11 +50,13 @@ export interface PlanningNote {
     FormsModule,
     TabViewModule,
     AccordionModule,
-    ButtonModule,
-    InputTextarea,
-    InputTextModule,
     ConfirmDialogModule,
     ToastModule,
+    // Componentes reutilizáveis
+    InputComponent,
+    TextareaComponent,
+    ButtonComponent,
+    ChapterDialogComponent,
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './campaign-journal.component.html',
@@ -94,10 +102,14 @@ export class CampaignJournalComponent {
 
   editingJournal = signal<string | null>(null)
   editingJournalTitle = signal<string | null>(null)
-  editingChapter = signal<string | null>(null) // Para controlar qual capítulo está sendo editado
   newJournalTitle = signal('')
   pendingNewAct = signal<string>('') // Para o novo ato em criação
-  pendingNewChapter = signal<string | null>(null) // Para o novo capítulo em criação
+  newActTitle = signal<string>('') // Título do novo ato sendo digitado
+  editingTitleValue = signal<string>('') // Valor do título sendo editado
+
+  // Dialog de capítulos
+  chapterDialogVisible = signal<boolean>(false)
+  chapterDialogData = signal<ChapterDialogData | null>(null)
 
   // Planejamento do Mestre
   planningNotes = signal<PlanningNote[]>([])
@@ -106,27 +118,93 @@ export class CampaignJournalComponent {
 
   // Diário de Aventuras Methods
   addJournalEntry(): void {
-    const atoNumber = this.journalEntries().length + 1
-    this.pendingNewAct.set(`ATO ${atoNumber}: `)
+    // Reseta o título e apenas exibe o campo de input
+    this.newActTitle.set('')
+    this.pendingNewAct.set('creating')
+  }
 
-    // Foca no input após o Angular atualizar a view
-    setTimeout(() => {
-      const input = document.querySelector(
-        '.pending-act-input',
-      ) as HTMLInputElement
-      if (input) {
-        input.focus()
-        input.setSelectionRange(input.value.length, input.value.length) // Posiciona cursor no final
+  editJournal(entryId: string): void {
+    this.editingJournal.set(entryId)
+  }
+
+  editJournalTitle(entryId: string): void {
+    const entry = this.journalEntries().find((e) => e.id === entryId)
+    if (entry) {
+      this.editingTitleValue.set(entry.title)
+    }
+    this.editingJournalTitle.set(entryId)
+  }
+
+  saveJournalTitle(entryId: string, title?: string): void {
+    const titleToSave = title || this.editingTitleValue()
+    if (!titleToSave.trim()) return
+
+    this.journalEntries.update((entries) =>
+      entries.map((entry) =>
+        entry.id === entryId
+          ? { ...entry, title: titleToSave.trim(), updatedAt: new Date() }
+          : entry,
+      ),
+    )
+
+    this.editingJournalTitle.set(null)
+    this.editingTitleValue.set('')
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: 'Título do ato atualizado com sucesso',
+    })
+  }
+
+  cancelJournalTitleEdit(): void {
+    this.editingJournalTitle.set(null)
+    this.editingTitleValue.set('')
+  }
+
+  onAccordionToggle(event: { originalEvent?: Event; index: number }): void {
+    // Bloqueia o toggle do accordion se estiver editando algum título
+    if (this.editingJournalTitle()) {
+      if (event.originalEvent) {
+        event.originalEvent.preventDefault()
+        event.originalEvent.stopPropagation()
       }
-    }, 0)
+    }
+  }
+
+  saveJournal(entryId: string, content: string): void {
+    this.journalEntries.update((entries) =>
+      entries.map((entry) =>
+        entry.id === entryId
+          ? { ...entry, content: content.trim(), updatedAt: new Date() }
+          : entry,
+      ),
+    )
+
+    this.editingJournal.set(null)
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: 'Entrada do diário salva com sucesso',
+    })
+  }
+
+  cancelJournalEdit(): void {
+    this.editingJournal.set(null)
+  }
+
+  saveJournalEntry(entryId: string, content: string): void {
+    this.saveJournal(entryId, content)
   }
 
   confirmNewAct(): void {
-    if (!this.pendingNewAct().trim()) return
+    const actTitle = this.newActTitle().trim()
+    if (!actTitle) return
 
     const newEntry: JournalEntry = {
       id: Date.now().toString(),
-      title: this.pendingNewAct(),
+      title: actTitle,
       content: '',
       order: this.journalEntries().length + 1,
       chapters: [],
@@ -136,34 +214,25 @@ export class CampaignJournalComponent {
 
     this.journalEntries.update((entries) => [...entries, newEntry])
     this.pendingNewAct.set('')
+    this.newActTitle.set('')
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: 'Novo ato adicionado com sucesso',
+    })
   }
 
   cancelNewAct(): void {
     this.pendingNewAct.set('')
-  }
-
-  editJournalEntry(entryId: string): void {
-    this.editingJournal.set(entryId)
-  }
-
-  saveJournalEntry(entryId: string, content: string): void {
-    this.journalEntries.update((entries) =>
-      entries.map((entry) =>
-        entry.id === entryId
-          ? { ...entry, content, updatedAt: new Date() }
-          : entry,
-      ),
-    )
-    this.editingJournal.set(null)
+    this.newActTitle.set('')
   }
 
   deleteJournalEntry(entryId: string): void {
     this.confirmationService.confirm({
       message: 'Tem certeza que deseja excluir este ato?',
-      header: 'Confirmar Exclusão',
+      header: 'Confirmação',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Sim',
-      rejectLabel: 'Não',
       accept: () => {
         this.journalEntries.update((entries) =>
           entries.filter((entry) => entry.id !== entryId),
@@ -177,106 +246,63 @@ export class CampaignJournalComponent {
     })
   }
 
-  editJournalTitle(entryId: string): void {
-    this.editingJournalTitle.set(entryId)
-
-    // Foca no input após o Angular atualizar a view
-    setTimeout(() => {
-      const input = document.querySelector(
-        '.entry-title-input',
-      ) as HTMLInputElement
-      if (input) {
-        input.focus()
-        input.select() // Seleciona todo o texto para facilitar a edição
-      }
-    }, 0)
-  }
-
-  saveJournalTitle(entryId: string, title: string): void {
-    if (!title.trim()) return
-
-    this.journalEntries.update((entries) =>
-      entries.map((entry) =>
-        entry.id === entryId
-          ? { ...entry, title: title.trim(), updatedAt: new Date() }
-          : entry,
-      ),
-    )
-    this.editingJournalTitle.set(null)
-  }
-
-  // Planejamento do Mestre Methods
-  addPlanningNote(): void {
-    if (!this.newPlanningContent().trim()) return
-
-    const newNote: PlanningNote = {
-      id: Date.now().toString(),
-      content: this.newPlanningContent(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }
-
-    this.planningNotes.update((notes) => [...notes, newNote])
-    this.newPlanningContent.set('')
-  }
-
-  editPlanningNote(noteId: string): void {
-    this.editingPlanning.set(noteId)
-  }
-
-  savePlanningNote(noteId: string, content: string): void {
-    this.planningNotes.update((notes) =>
-      notes.map((note) =>
-        note.id === noteId ? { ...note, content, updatedAt: new Date() } : note,
-      ),
-    )
-    this.editingPlanning.set(null)
-  }
-
-  deletePlanningNote(noteId: string): void {
-    this.confirmationService.confirm({
-      message: 'Tem certeza que deseja excluir esta nota de planejamento?',
-      header: 'Confirmar Exclusão',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Sim',
-      rejectLabel: 'Não',
-      accept: () => {
-        this.planningNotes.update((notes) =>
-          notes.filter((note) => note.id !== noteId),
-        )
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Nota de planejamento excluída com sucesso',
-        })
-      },
-    })
-  }
-
   // Métodos para gerenciar capítulos
   addChapter(entryId: string): void {
-    const entry = this.journalEntries().find((e) => e.id === entryId)
-    if (!entry) return
-
-    // Define o ID do capítulo pendente
-    const pendingChapterId = `${entryId}-pending-${Date.now()}`
-    this.pendingNewChapter.set(entryId)
-    this.editingChapter.set(pendingChapterId)
-
-    // Foca no input do título após o Angular atualizar a view
-    setTimeout(() => {
-      const input = document.querySelector(
-        '.chapter-title-input',
-      ) as HTMLInputElement
-      if (input) {
-        input.focus()
-      }
-    }, 100)
+    this.chapterDialogData.set({
+      entryId,
+      isEditing: false,
+    })
+    this.chapterDialogVisible.set(true)
   }
 
-  saveNewChapter(entryId: string, title: string, content: string): void {
-    if (!title.trim()) return
+  editChapter(entryId: string, chapterId: string): void {
+    const entry = this.journalEntries().find((e) => e.id === entryId)
+    const chapter = entry?.chapters.find((c) => c.id === chapterId)
 
+    if (!entry || !chapter) return
+
+    this.chapterDialogData.set({
+      entryId,
+      chapter,
+      isEditing: true,
+    })
+    this.chapterDialogVisible.set(true)
+  }
+
+  onChapterSave(data: { title: string; content: string }): void {
+    const dialogData = this.chapterDialogData()
+    if (!dialogData) return
+
+    if (dialogData.isEditing && dialogData.chapter) {
+      // Editar capítulo existente
+      this.updateChapter(
+        dialogData.entryId,
+        dialogData.chapter.id,
+        data.title,
+        data.content,
+      )
+    } else {
+      // Criar novo capítulo
+      this.createNewChapter(dialogData.entryId, data.title, data.content)
+    }
+
+    this.closeChapterDialog()
+  }
+
+  onChapterCancel(): void {
+    this.closeChapterDialog()
+  }
+
+  private closeChapterDialog(): void {
+    this.chapterDialogVisible.set(false)
+    this.chapterDialogData.set(null)
+  }
+
+  private createNewChapter(
+    entryId: string,
+    title: string,
+    content: string,
+  ): void {
     const entry = this.journalEntries().find((e) => e.id === entryId)
     if (!entry) return
 
@@ -295,10 +321,6 @@ export class CampaignJournalComponent {
       ),
     )
 
-    // Limpa os estados pendentes
-    this.pendingNewChapter.set(null)
-    this.editingChapter.set(null)
-
     this.messageService.add({
       severity: 'success',
       summary: 'Sucesso',
@@ -306,23 +328,12 @@ export class CampaignJournalComponent {
     })
   }
 
-  cancelNewChapter(): void {
-    this.pendingNewChapter.set(null)
-    this.editingChapter.set(null)
-  }
-
-  editChapter(entryId: string, chapterId: string): void {
-    this.editingChapter.set(`${entryId}-${chapterId}`)
-  }
-
-  saveChapter(
+  private updateChapter(
     entryId: string,
     chapterId: string,
     title: string,
     content: string,
   ): void {
-    if (!title.trim()) return
-
     this.journalEntries.update((entries) =>
       entries.map((entry) =>
         entry.id === entryId
@@ -338,12 +349,11 @@ export class CampaignJournalComponent {
                     }
                   : chapter,
               ),
-              updatedAt: new Date(),
             }
           : entry,
       ),
     )
-    this.editingChapter.set(null)
+
     this.messageService.add({
       severity: 'success',
       summary: 'Sucesso',
@@ -351,26 +361,20 @@ export class CampaignJournalComponent {
     })
   }
 
-  cancelChapterEdit(): void {
-    this.editingChapter.set(null)
-  }
-
   deleteChapter(entryId: string, chapterId: string): void {
     this.confirmationService.confirm({
       message: 'Tem certeza que deseja excluir este capítulo?',
-      header: 'Confirmar Exclusão',
+      header: 'Confirmação',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Sim',
-      rejectLabel: 'Não',
       accept: () => {
         this.journalEntries.update((entries) =>
-          entries.map((e) =>
-            e.id === entryId
+          entries.map((entry) =>
+            entry.id === entryId
               ? {
-                  ...e,
-                  chapters: e.chapters.filter((ch) => ch.id !== chapterId),
+                  ...entry,
+                  chapters: entry.chapters.filter((c) => c.id !== chapterId),
                 }
-              : e,
+              : entry,
           ),
         )
         this.messageService.add({
@@ -382,24 +386,70 @@ export class CampaignJournalComponent {
     })
   }
 
-  updateChapterContent(
-    entryId: string,
-    chapterId: string,
-    content: string,
-  ): void {
-    this.journalEntries.update((entries) =>
-      entries.map((e) =>
-        e.id === entryId
-          ? {
-              ...e,
-              chapters: e.chapters.map((ch) =>
-                ch.id === chapterId
-                  ? { ...ch, content, updatedAt: new Date() }
-                  : ch,
-              ),
-            }
-          : e,
+  // Planejamento Methods
+  addPlanningNote(): void {
+    if (!this.newPlanningContent().trim()) return
+
+    const newNote: PlanningNote = {
+      id: Date.now().toString(),
+      content: this.newPlanningContent().trim(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+
+    this.planningNotes.update((notes) => [...notes, newNote])
+    this.newPlanningContent.set('')
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: 'Nota de planejamento adicionada com sucesso',
+    })
+  }
+
+  editPlanningNote(noteId: string): void {
+    this.editingPlanning.set(noteId)
+  }
+
+  savePlanningNote(noteId: string, content: string): void {
+    if (!content.trim()) return
+
+    this.planningNotes.update((notes) =>
+      notes.map((note) =>
+        note.id === noteId
+          ? { ...note, content: content.trim(), updatedAt: new Date() }
+          : note,
       ),
     )
+
+    this.editingPlanning.set(null)
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: 'Nota de planejamento atualizada com sucesso',
+    })
+  }
+
+  cancelPlanningEdit(): void {
+    this.editingPlanning.set(null)
+  }
+
+  deletePlanningNote(noteId: string): void {
+    this.confirmationService.confirm({
+      message: 'Tem certeza que deseja excluir esta nota de planejamento?',
+      header: 'Confirmação',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.planningNotes.update((notes) =>
+          notes.filter((note) => note.id !== noteId),
+        )
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Nota de planejamento excluída com sucesso',
+        })
+      },
+    })
   }
 }

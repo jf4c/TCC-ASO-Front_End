@@ -5,11 +5,11 @@
   .journal-tabs {
     // Customização das abas do PrimeNG
     ::ng-deep .p-tabview-nav {
-      background: rgba(139, 69, 19, 0.1);
+      background: var(--accent-tertiary);
       border-radius: 8px 8px 0 0;
 
       .p-tabview-nav-link {
-        color: #8b4513;
+        color: var(--accent-secondary);
         font-weight: 600;
         padding: 1rem 1.5rem;
         border: none;
@@ -24,18 +24,18 @@
       }
 
       .p-tabview-nav-link[aria-selected="true"] {
-        background: #8b4513;
+        background: var(--accent-secondary);
         color: white;
 
         &:hover {
-          background: #8b4513;
+          background: var(--accent-secondary);
         }
       }
     }
 
     ::ng-deep .p-tabview-panels {
       background: white;
-      border: 2px solid #8b4513;
+      border: 2px solid var(--accent-secondary);
       border-radius: 0 0 8px 8px;
       padding: 1.5rem;
       min-height: 500px;
@@ -51,7 +51,7 @@
     align-items: center;
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
-    border-bottom: 2px solid #d4af37;
+    border-bottom: 2px solid var(--accent-primary);
 
     .saga-title {
       font-family: "Cinzel", serif;
@@ -59,18 +59,18 @@
       font-weight: 700;
       color: var(--accent-danger);
       margin: 0;
-      text-shadow: 1px 1px 2px rgba(139, 69, 19, 0.3);
+      text-shadow: 1px 1px 2px var(--accent-tertiary);
     }
 
     .add-entry-btn {
       ::ng-deep.p-button {
-        background: #d4af37;
-        border-color: #d4af37;
+        background: var(--accent-primary);
+        border-color: var(--accent-primary);
         font-weight: 600;
 
         &:hover {
-          background: #b8941f;
-          border-color: #b8941f;
+          background: var(--accent-quinary);
+          border-color: var(--accent-quinary);
         }
       }
     }
@@ -80,20 +80,21 @@
     margin-bottom: 1.5rem;
 
     input {
-      border: 2px solid #d4af37;
+      border: 2px solid var(--accent-primary);
       border-radius: 8px;
       padding: 0.75rem;
       font-size: 1rem;
 
       &:focus {
-        border-color: #8b4513;
-        box-shadow: 0 0 5px rgba(139, 69, 19, 0.3);
+        border-color: var(--accent-secondary);
+        box-shadow: 0 0 5px var(--accent-tertiary);
       }
     }
   }
 
   .new-act-input {
-    margin-bottom: 1.5rem;
+    margin: 1.5rem 0;
+    // margin-bottom: 1.5rem;
 
     .new-act-form {
       display: flex;
@@ -121,7 +122,7 @@
         }
 
         &::placeholder {
-          color: rgba(255, 255, 255, 0.6) !important;
+          color: var(--accent-senary) !important;
         }
       }
 
@@ -143,8 +144,8 @@
       // Customização específica do accordion do diário
       ::ng-deep {
         .p-accordion-header {
-          background: #8b4513;
-          border: 1px solid #8b4513;
+          background: var(--accent-secondary);
+          border: 1px solid var(--accent-secondary);
           border-radius: 8px 8px 0 0;
           margin-bottom: 0;
 
@@ -160,7 +161,7 @@
             }
 
             &:focus {
-              box-shadow: 0 0 0 2px #d4af37;
+              box-shadow: 0 0 0 2px var(--accent-primary);
             }
           }
 
@@ -172,7 +173,7 @@
 
         .p-accordion-content {
           background: linear-gradient(135deg, #f5f5dc 0%, #f0e68c 100%);
-          border: 2px solid #8b4513;
+          border: 2px solid var(--accent-secondary);
           border-top: none;
           border-radius: 0 0 8px 8px;
           margin-bottom: 1rem;
@@ -222,7 +223,7 @@
           }
 
           &::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: var(--accent-senary);
           }
         }
 
@@ -244,7 +245,7 @@
               }
 
               &.p-button-danger:hover {
-                background: rgba(221, 30, 49, 0.657);
+                background: var(--accent-danger-active);
               }
             }
           }
@@ -262,11 +263,10 @@
 
             .chapter-item {
               padding: 1rem 0;
-              border-left: 4px solid #d4af37;
+              border-left: 4px solid var(--accent-primary);
               padding-left: 1rem;
               transition: all 0.3s ease;
               position: relative;
-
               &:hover {
                 .chapter-actions {
                   opacity: 1 !important;
@@ -284,7 +284,7 @@
                   font-family: "Cinzel", serif;
                   font-size: 1.1rem;
                   font-weight: 600;
-                  color: #d4af37;
+                  color: var(--accent-primary);
                   margin: 0;
                   flex: 1;
                   padding-right: 1rem;
@@ -300,151 +300,28 @@
                   .chapter-edit-btn,
                   .chapter-delete-btn {
                     ::ng-deep.p-button {
-                      width: 1.5rem;
-                      height: 1.5rem;
-                      padding: 0;
-                      font-size: 0.8rem;
+                      width: 1.7rem;
+                      height: 1.7rem;
+                      padding: 1rem;
+                      font-size: 1rem;
 
                       &.p-button-text {
-                        color: #8b4513;
+                        color: var(--color-primary);
 
                         &:hover {
-                          background: rgba(185, 92, 26, 0.758); // Escurecido (era 0.1)
-                          color: #8b4513;
+                          background: var(--bg-tertiary); // Escurecido (era 0.1)
+                          color: var(--color-primary);
                         }
                       }
 
                       &.p-button-danger {
-                        color: #dc3545;
+                        color: var(--accent-danger);
 
                         &:hover {
-                          background: rgba(220, 53, 70, 0.686); // Escurecido (era 0.1)
-                          color: #dc3545;
+                          background: var(--accent-danger-active);
+                          color: var(--text-quaternary);
                         }
                       }
-                    }
-                  }
-                }
-              }
-
-              .chapter-edit-form {
-                .chapter-title-input {
-                  font-family: "Cinzel", serif;
-                  font-size: 1.1rem;
-                  font-weight: 600;
-                  border: 2px solid #d4af37;
-                  border-radius: 8px;
-                  padding: 0.5rem;
-                  color: #d4af37;
-                  background: rgba(0, 0, 0, 0.8);
-
-                  &:focus {
-                    border-color: #d4af37;
-                    box-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
-                    outline: none;
-                  }
-
-                  &::placeholder {
-                    color: #999;
-                  }
-                }
-
-                .chapter-content-textarea {
-                  font-family: "Georgia", serif;
-                  font-size: 1rem;
-                  line-height: 1.7;
-                  border: 2px solid #d4af37;
-                  border-radius: 8px;
-                  padding: 0.75rem;
-                  color: #ffffff;
-                  background: rgba(0, 0, 0, 0.8);
-                  resize: vertical;
-
-                  &:focus {
-                    border-color: #d4af37;
-                    box-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
-                    outline: none;
-                  }
-
-                  &::placeholder {
-                    color: #999;
-                  }
-                }
-
-                .chapter-edit-actions {
-                  display: flex;
-                  gap: 0.75rem;
-
-                  ::ng-deep .p-button {
-                    padding: 0.5rem 1rem;
-                    font-size: 0.9rem;
-                  }
-                }
-              }
-
-              // Estilo específico para criação de novos capítulos
-              .new-chapter-form {
-                padding: 1rem !important;
-                background: rgba(212, 175, 55, 0.1) !important;
-                border: 2px solid #d4af37 !important;
-                border-radius: 8px !important;
-                margin-bottom: 1rem !important;
-
-                .chapter-edit-form {
-                  .chapter-title-input {
-                    font-family: "Cinzel", serif;
-                    font-size: 1.1rem;
-                    font-weight: 600;
-                    border: 2px solid #d4af37 !important;
-                    border-radius: 8px;
-                    padding: 0.5rem;
-                    background: white !important;
-                    color: #333 !important;
-                    width: 100%;
-                    margin-bottom: 0.75rem;
-
-                    &:focus {
-                      border-color: #8b4513 !important;
-                      box-shadow: 0 0 5px rgba(139, 69, 19, 0.3) !important;
-                      outline: none;
-                    }
-
-                    &::placeholder {
-                      color: #999 !important;
-                    }
-                  }
-
-                  .chapter-content-textarea {
-                    font-family: "Georgia", serif;
-                    font-size: 1rem;
-                    line-height: 1.7;
-                    border: 2px solid #d4af37 !important;
-                    border-radius: 8px;
-                    padding: 0.75rem;
-                    background: white !important;
-                    color: #333 !important;
-                    width: 100%;
-                    resize: vertical;
-                    margin-bottom: 0.75rem;
-
-                    &:focus {
-                      border-color: #8b4513 !important;
-                      box-shadow: 0 0 5px rgba(139, 69, 19, 0.3) !important;
-                      outline: none;
-                    }
-
-                    &::placeholder {
-                      color: #999 !important;
-                    }
-                  }
-
-                  .chapter-edit-actions {
-                    display: flex;
-                    gap: 0.75rem;
-
-                    ::ng-deep .p-button {
-                      padding: 0.5rem 1rem;
-                      font-size: 0.9rem;
                     }
                   }
                 }
@@ -455,7 +332,7 @@
                   font-family: "Georgia", serif;
                   font-size: 1rem;
                   line-height: 1.7;
-                  color: #ffffff; // Texto branco para contraste com fundo escuro
+                  color: var(--text-white); // Texto branco para contraste com fundo escuro
                   margin: 0;
                   white-space: pre-wrap;
                   text-align: justify;
@@ -463,9 +340,22 @@
 
                 .chapter-placeholder {
                   font-style: italic;
-                  color: #cccccc; // Cor clara para placeholder
+                  color: var(--text-secondary); // Cor clara para placeholder
                   margin: 0;
                   font-size: 0.9rem;
+                }
+              }
+
+              .no-chapters {
+                text-align: center;
+                padding: 2rem;
+                color: var(--text-secondary);
+                font-style: italic;
+
+                .no-chapters-text {
+                  margin: 0;
+                  font-size: 1rem;
+                  line-height: 1.5;
                 }
               }
             }
@@ -474,7 +364,7 @@
 
         .edit-mode {
           .entry-textarea {
-            border: 2px solid #d4af37;
+            border: 2px solid var(--accent-primary);
             border-radius: 8px;
             font-family: "Georgia", serif;
             font-size: 1rem;
@@ -482,8 +372,8 @@
             resize: vertical;
 
             &:focus {
-              border-color: #8b4513;
-              box-shadow: 0 0 5px rgba(139, 69, 19, 0.3);
+              border-color: var(--accent-secondary);
+              box-shadow: 0 0 5px var(--accent-tertiary);
             }
           }
 
@@ -503,16 +393,16 @@
 
     // Fallback para quando não há entradas (manter estrutura existente se necessário)
     .journal-entry-card {
-      background: linear-gradient(135deg, #f5f5dc 0%, #f0e68c 100%);
-      border: 2px solid #8b4513;
+      background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--accent-septenary) 100%);
+      border: 2px solid var(--accent-secondary);
       border-radius: 12px;
       margin-bottom: 1.5rem;
       overflow: hidden;
-      box-shadow: 0 4px 8px rgba(139, 69, 19, 0.2);
+      box-shadow: 0 4px 8px var(--accent-tertiary);
 
       .entry-header {
-        background: #8b4513;
-        color: white;
+        background: var(--accent-secondary);
+        color: var(--text-primary);
         padding: 1rem 1.5rem;
         display: flex;
         justify-content: space-between;
@@ -535,14 +425,14 @@
             padding: 0;
 
             &.p-button-text {
-              color: white;
+              color: var(--text-primary);
 
               &:hover {
                 background: rgba(255, 255, 255, 0.1);
               }
 
               &.p-button-danger:hover {
-                background: rgba(220, 53, 69, 0.2);
+                background: var(--accent-danger-active);
               }
             }
           }
@@ -554,7 +444,7 @@
 
         .edit-mode {
           .entry-textarea {
-            border: 2px solid #d4af37;
+            border: 2px solid var(--accent-primary);
             border-radius: 8px;
             font-family: "Georgia", serif;
             font-size: 1rem;
@@ -562,8 +452,8 @@
             resize: vertical;
 
             &:focus {
-              border-color: #8b4513;
-              box-shadow: 0 0 5px rgba(139, 69, 19, 0.3);
+              border-color: var(--accent-secondary);
+              box-shadow: 0 0 5px var(--accent-tertiary);
             }
           }
 
@@ -584,14 +474,14 @@
             font-family: "Georgia", serif;
             font-size: 1rem;
             line-height: 1.7;
-            color: #4a4a4a;
+            color: var(--text-quaternary);
             margin: 0;
             white-space: pre-wrap;
           }
 
           .entry-placeholder {
             font-style: italic;
-            color: #888;
+            color: var(--text-secondary);
             text-align: center;
             margin: 0;
             padding: 2rem;
@@ -610,26 +500,26 @@
     align-items: center;
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
-    border-bottom: 2px solid #dc143c;
+    border-bottom: 2px solid var(--accent-danger);
 
     .planning-title {
       font-family: "Cinzel", serif;
       font-size: 1.8rem;
       font-weight: 700;
-      color: #8b4513;
+      color: var(--accent-secondary);
       margin: 0;
-      text-shadow: 1px 1px 2px rgba(139, 69, 19, 0.3);
+      text-shadow: 1px 1px 2px var(--accent-tertiary);
     }
 
     .add-note-btn {
       ::ng-deep.p-button {
-        background: #d4af37;
-        border-color: #d4af37;
+        background: var(--accent-primary);
+        border-color: var(--accent-primary);
         font-weight: 600;
 
         &:hover {
-          background: #b8941f;
-          border-color: #b8941f;
+          background: var(--accent-secondary);
+          border-color: var(--accent-secondary);
         }
       }
     }
@@ -639,30 +529,30 @@
     margin-bottom: 1.5rem;
 
     textarea {
-      border: 2px solid #dc143c;
+      border: 2px solid var(--accent-danger);
       border-radius: 8px;
       font-family: "Georgia", serif;
       resize: vertical;
 
       &:focus {
-        border-color: #8b4513;
-        box-shadow: 0 0 5px rgba(139, 69, 19, 0.3);
+        border-color: var(--accent-secondary);
+        box-shadow: 0 0 5px var(--accent-tertiary);
       }
     }
   }
 
   .planning-notes {
     .planning-note-card {
-      background: linear-gradient(135deg, #ffe4e1 0%, #ffd0dc 100%);
-      border: 2px solid #dc143c;
+      background: linear-gradient(135deg, var(--accent-octonary) 0%, var(--accent-nonary) 100%);
+      border: 2px solid var(--accent-danger);
       border-radius: 12px;
       padding: 1.5rem;
       margin-bottom: 1rem;
-      box-shadow: 0 4px 8px rgba(220, 20, 60, 0.15);
+      box-shadow: 0 4px 8px var(--accent-danger-hover);
 
       .edit-mode {
         .note-textarea {
-          border: 2px solid #dc143c;
+          border: 2px solid var(--accent-danger);
           border-radius: 8px;
           font-family: "Georgia", serif;
           font-size: 1rem;
@@ -670,8 +560,8 @@
           resize: vertical;
 
           &:focus {
-            border-color: #8b4513;
-            box-shadow: 0 0 5px rgba(139, 69, 19, 0.3);
+            border-color: var(--accent-secondary);
+            box-shadow: 0 0 5px var(--accent-tertiary);
           }
         }
 
@@ -697,7 +587,7 @@
           font-family: "Georgia", serif;
           font-size: 1rem;
           line-height: 1.6;
-          color: #4a4a4a;
+          color: var(--text-quaternary);
           margin: 0;
           flex: 1;
           white-space: pre-wrap;
@@ -714,15 +604,15 @@
             padding: 0;
 
             &.p-button-text {
-              color: #8b4513;
+              color: var(--accent-secondary);
 
               &:hover {
-                background: rgba(139, 69, 19, 0.1);
+                background: var(--accent-tertiary);
               }
 
               &.p-button-danger:hover {
-                background: rgba(220, 53, 69, 0.1);
-                color: #dc3545;
+                background: var(--accent-danger-hover);
+                color: var(--accent-danger);
               }
             }
           }
@@ -733,12 +623,12 @@
     .empty-planning {
       text-align: center;
       padding: 3rem 2rem;
-      color: #888;
+      color: var(--text-secondary);
 
       .pi {
         font-size: 3rem;
         margin-bottom: 1rem;
-        color: #ddd;
+        color: var(--bg-tertiary);
       }
 
       p {
@@ -752,16 +642,16 @@
   .ai-suggestions {
     margin-top: 2rem;
     padding-top: 1.5rem;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid var(--bg-tertiary);
 
     .ai-btn {
       ::ng-deep.p-button {
-        border-color: #6c757d;
-        color: #6c757d;
+        border-color: var(--text-secondary);
+        color: var(--text-secondary);
         font-weight: 600;
 
         &:hover:not(:disabled) {
-          background: rgba(108, 117, 125, 0.1);
+          background: var(--accent-tertiary);
         }
 
         &:disabled {

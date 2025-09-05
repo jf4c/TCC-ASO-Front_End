@@ -48,46 +48,48 @@
           formControlName="status"
         />
       </div>
+
+      <!-- Loading State -->
+      @if (isLoading) {
+      <div class="loading-state">
+        <i class="pi pi-spin pi-spinner text-4xl"></i>
+        <p class="mt-4 text-lg">Carregando campanhas...</p>
+      </div>
+      }
+
+      <!-- Campaign Grid -->
+      @else {
+      <div class="campaigns-grid">
+        @if (campaigns.length > 0) {
+        <div class="grid">
+          @for (campaign of campaigns; track campaign.id) {
+          <aso-campaign-card
+            [campaign]="campaign"
+            (view)="onViewCampaign($event)"
+            (edit)="onEditCampaign($event)"
+            (join)="onJoinCampaign($event)"
+          />
+          }
+        </div>
+        } @else {
+        <!-- Empty State -->
+        <div class="empty-state">
+          <i class="pi pi-inbox text-6xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">
+            Nenhuma campanha encontrada
+          </h3>
+          <p class="mb-6">
+            Crie sua primeira campanha ou junte-se a uma existente.
+          </p>
+          <aso-button
+            icon="fas fa-circle-plus"
+            label="Criar Primeira Campanha"
+            (eventClick)="onCreateCampaign()"
+          />
+        </div>
+        }
+      </div>
+      }
     </aso-card>
   </form>
-
-  <!-- Loading State -->
-  @if (isLoading) {
-  <div class="loading-state">
-    <i class="pi pi-spin pi-spinner text-4xl"></i>
-    <p class="mt-4 text-lg">Carregando campanhas...</p>
-  </div>
-  }
-
-  <!-- Campaign Grid -->
-  @else {
-  <div class="campaigns-grid">
-    @if (campaigns.length > 0) {
-    <div class="grid">
-      @for (campaign of campaigns; track campaign.id) {
-      <aso-campaign-card
-        [campaign]="campaign"
-        (view)="onViewCampaign($event)"
-        (edit)="onEditCampaign($event)"
-        (join)="onJoinCampaign($event)"
-      />
-      }
-    </div>
-    } @else {
-    <!-- Empty State -->
-    <div class="empty-state">
-      <i class="pi pi-inbox text-6xl mb-4"></i>
-      <h3 class="text-xl font-semibold mb-2">Nenhuma campanha encontrada</h3>
-      <p class="mb-6">
-        Crie sua primeira campanha ou junte-se a uma existente.
-      </p>
-      <aso-button
-        icon="fas fa-circle-plus"
-        label="Criar Primeira Campanha"
-        (eventClick)="onCreateCampaign()"
-      />
-    </div>
-    }
-  </div>
-  }
 </section>
