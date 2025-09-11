@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core'
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  inject,
+  OnInit,
+} from '@angular/core'
 import { FormGroup, ReactiveFormsModule, FormControl } from '@angular/forms'
 import { ButtonComponent } from '@shared/components/button/button.component'
 import { CardComponent } from '@shared/components/card/card.component'
@@ -19,9 +26,11 @@ import { MessageService } from 'primeng/api'
   templateUrl: './character-backstory-form.component.html',
   styleUrl: './character-backstory-form.component.scss',
 })
-export class CharacterBackstoryFormComponent {
+export class CharacterBackstoryFormComponent implements OnInit {
   @Input() characterForm!: FormGroup
+  @Input() formSubmitted = false
   @Output() generateBackstory = new EventEmitter<void>()
+  @Output() triggerValidation = new EventEmitter<void>()
 
   private readonly backstoryService = inject(BackstoryService)
   private readonly messageService = inject(MessageService)
@@ -33,10 +42,34 @@ export class CharacterBackstoryFormComponent {
   errorMessage = ''
   isEditingBackstory = false
   editBackstoryControl = new FormControl('')
+  hasTriedToGenerate = false
 
   manualBackstoryControl = new FormControl('')
 
+  ngOnInit(): void {
+    // Observa mudanças no formulário para reabilitar o botão quando campos são preenchidos
+    this.characterForm.valueChanges.subscribe(() => {
+      // Reset da flag quando os campos obrigatórios são preenchidos após uma tentativa falhada
+      if (this.hasTriedToGenerate && this.canGenerate()) {
+        this.hasTriedToGenerate = false
+      }
+    })
+  }
+
   onGenerateBackstory(): void {
+    this.hasTriedToGenerate = true
+
+    // Verifica se os campos obrigatórios estão preenchidos
+    if (!this.canGenerate()) {
+      this.triggerValidation.emit()
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Campos Obrigatórios',
+        detail: 'Preencha o nome, raça e classe antes de gerar a história.',
+      })
+      return
+    }
+
     this.isGenerating = true
     this.errorMessage = ''
     this.backstoryAccepted = false
@@ -167,5 +200,9 @@ export class CharacterBackstoryFormComponent {
       formValue.ancestry?.name &&
       formValue.charClass?.name
     )
+  }
+
+  isGenerateButtonDisabled(): boolean {
+    return this.isGenerating || (this.hasTriedToGenerate && !this.canGenerate())
   }
 }

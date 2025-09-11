@@ -116,6 +116,11 @@ export class CreateCharacterPage implements OnInit {
     // Este método pode ser removido se não for mais necessário
   }
 
+  onTriggerValidation(): void {
+    this.formSubmitted = true
+    this.scrollToTop()
+  }
+
   onSaveCharacter(): void {
     this.formSubmitted = true
     console.log('Form Submitted:', this.characterForm.value)

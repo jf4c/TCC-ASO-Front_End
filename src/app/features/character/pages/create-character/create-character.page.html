@@ -28,7 +28,9 @@
     <aso-character-backstory-form
       #backstoryForm
       [characterForm]="characterForm"
+      [formSubmitted]="formSubmitted"
       (generateBackstory)="onGenerateBackstory()"
+      (triggerValidation)="onTriggerValidation()"
     ></aso-character-backstory-form>
   </form>
 

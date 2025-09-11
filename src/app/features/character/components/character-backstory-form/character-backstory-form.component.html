@@ -97,7 +97,7 @@
         class="generate-button headline"
         icon="fa-solid fa-wand-magic-sparkles"
         (eventClick)="onGenerateBackstory()"
-        [disabled]="isGenerating"
+        [disabled]="isGenerateButtonDisabled()"
         [loading]="isGenerating"
         [styleClass]="{ width: '100%' }"
       />
