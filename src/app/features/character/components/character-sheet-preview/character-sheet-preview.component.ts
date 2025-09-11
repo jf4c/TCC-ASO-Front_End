@@ -9,6 +9,7 @@ import { FormGroup } from '@angular/forms'
 import { ButtonComponent } from '@shared/components/button/button.component'
 import { CardComponent } from '@shared/components/card/card.component'
 import { ImageModule } from 'primeng/image'
+import { CharacterBackstoryFormComponent } from '../character-backstory-form/character-backstory-form.component'
 @Component({
   selector: 'aso-character-sheet-preview',
   standalone: true,
@@ -22,11 +23,16 @@ export class CharacterSheetPreviewComponent {
   @Input() displayName!: string
   @Input() displayAncestry!: string
   @Input() displayClass!: string
+  @Input() backstoryForm!: CharacterBackstoryFormComponent
 
   @Output() saveCharacter = new EventEmitter<void>()
 
   onSaveCharacter(): void {
     this.saveCharacter.emit()
+  }
+
+  get displayBackstory(): string {
+    return this.backstoryForm?.getFinalBackstory() || ''
   }
 
   getAttributeModifier(attributeName: string): number {

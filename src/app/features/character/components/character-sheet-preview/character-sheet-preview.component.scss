@@ -113,9 +113,10 @@
     }
 
     .backstory-value {
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       width: 100%;
-      min-height: 15rem;
+      min-height: 250px;
+      max-height: 783px;
       color: var(--text-secondary);
       border-radius: 10px;
       padding: 0.5rem;
@@ -123,7 +124,6 @@
       border: 1px solid var(--p-content-border-color);
       text-align: justify;
       overflow-y: auto;
-      height: 200px;
     }
   }
 }

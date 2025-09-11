@@ -1,16 +1,124 @@
 <div [formGroup]="characterForm">
   <aso-card class="card backstory">
-    <div class="w-full text-left">
-      <h3 class="card-title headline">Historia do Personagem</h3>
-      <p class="subtitle">Desvende o passado do seu personagem.</p>
+    <div class="w-full flex justify-between text-left">
+      <div class="header-text">
+        <h3 class="card-title headline">Historia do Personagem</h3>
+        <p class="subtitle">Desvende o passado do seu personagem.</p>
+      </div>
+      <div class="flex items-center">
+        @if (backstoryAccepted) {
+        <div class="action-buttons button-edit-backstory">
+          <aso-button
+            icon="pi pi-pencil"
+            severity="info"
+            size="large"
+            variant="text"
+            (eventClick)="onEditBackstory()"
+            [disabled]="isGenerating"
+          />
+          <aso-button
+            icon="pi pi-times"
+            severity="danger"
+            size="large"
+            variant="text"
+            (eventClick)="onDeleteBackstory()"
+            [disabled]="isGenerating"
+          />
+        </div>
+        }
+      </div>
     </div>
-    <aso-textarea formControlName="backstory" class="backstory-textarea" />
-    <aso-button
-      label="Gerar descrição por IA"
-      class="w-full headline"
-      [styleClass]="{ width: '100%' }"
-      icon="fa-solid fa-wand-magic-sparkles"
-      (eventClick)="onGenerateBackstory()"
+
+    <!-- Backstory gerada pela IA (preview acima do textarea) -->
+    @if (generatedBackstory) {
+    <div class="generated-backstory-overlay">
+      <div class="generated-content-text">
+        @if (!isEditingBackstory) {
+        <p>{{ generatedBackstory }}</p>
+        } @else {
+        <aso-textarea
+          [formControl]="editBackstoryControl"
+          placeholder="Edite a história do seu personagem..."
+          class="edit-backstory-textarea"
+          [style]="{ height: '500px' }"
+        />
+        <div class="edit-actions">
+          <aso-button
+            icon="pi pi-check"
+            severity="success"
+            size="small"
+            variant="text"
+            label="Salvar"
+            (eventClick)="onSaveEditBackstory()"
+          />
+          <aso-button
+            icon="pi pi-times"
+            severity="secondary"
+            size="small"
+            variant="text"
+            label="Cancelar"
+            (eventClick)="onCancelEditBackstory()"
+          />
+        </div>
+        } @if (!backstoryAccepted && !isEditingBackstory) {
+        <div class="action-buttons">
+          <aso-button
+            icon="pi pi-check"
+            severity="success"
+            size="large"
+            variant="text"
+            (eventClick)="onAcceptBackstory()"
+            [disabled]="isGenerating"
+          />
+          <aso-button
+            icon="pi pi-times"
+            severity="danger"
+            size="large"
+            variant="text"
+            (eventClick)="onDiscardBackstory()"
+            [disabled]="isGenerating"
+          />
+        </div>
+        }
+      </div>
+    </div>
+    } @if (!generatedBackstory && !backstoryAccepted) {
+    <!-- Textarea para backstory -->
+    <aso-textarea
+      [formControl]="manualBackstoryControl"
+      class="backstory-textarea"
+      placeholder="Use espaço para adicionar complementos à história do personagem ou para criar uma história própria."
     />
+    <!-- Botões para gerar ou aceitar texto manual -->
+    @if (!generatedBackstory || backstoryAccepted) {
+    <div class="button-container">
+      <aso-button
+        [label]="isGenerating ? 'Gerando...' : 'Gerar por IA'"
+        class="generate-button headline"
+        icon="fa-solid fa-wand-magic-sparkles"
+        (eventClick)="onGenerateBackstory()"
+        [disabled]="isGenerating"
+        [loading]="isGenerating"
+        [styleClass]="{ width: '100%' }"
+      />
+      <aso-button
+        label="Aceitar Texto"
+        class="accept-manual-button headline"
+        icon="pi pi-check"
+        [severity]="'info'"
+        (eventClick)="onAcceptManualBackstory()"
+        [disabled]="isGenerating || !hasManualText()"
+        [styleClass]="{ width: '100%' }"
+      />
+    </div>
+    } }
+
+    <!-- Mensagem de erro -->
+    @if (errorMessage) {
+    <div class="error-message">
+      <i class="pi pi-exclamation-triangle"></i>
+      {{ errorMessage }}
+    </div>
+    }
   </aso-card>
 </div>

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core'
+import { Component, inject, OnInit, ViewChild } from '@angular/core'
 import { ReactiveFormsModule } from '@angular/forms'
 import { Router } from '@angular/router'
 import { Ancestry } from '@characters/interface/ancestry.model'
@@ -47,6 +47,8 @@ export class CreateCharacterPage implements OnInit {
   private readonly formFactoryService = inject(FormFactoryService)
   private readonly router = inject(Router)
   private readonly messageService = inject(MessageService)
+
+  @ViewChild('backstoryForm') backstoryForm!: CharacterBackstoryFormComponent
 
   ancestries: Ancestry[] = []
   classes: Class[] = []
@@ -110,8 +112,8 @@ export class CreateCharacterPage implements OnInit {
   }
 
   onGenerateBackstory(): void {
-    // TODO: Implementar geração de backstory por IA
-    console.log('Generate backstory clicked')
+    // A geração de backstory agora é handled diretamente pelo componente
+    // Este método pode ser removido se não for mais necessário
   }
 
   onSaveCharacter(): void {
@@ -207,7 +209,7 @@ export class CreateCharacterPage implements OnInit {
       campaignId: this.characterForm.get('campaign')?.value?.id || null,
       attributes: this.characterForm.get('attributes')?.value || {},
       modifiers: this.getModifiers(),
-      backstory: this.characterForm.get('backstory')?.value || '',
+      backstory: this.backstoryForm.getFinalBackstory(),
       skillsIds:
         this.characterForm
           .get('skills')

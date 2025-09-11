@@ -17,6 +17,8 @@ export class ButtonComponent {
   @Input() icon: string | undefined
   @Input() styleClass: object = {}
   @Input() variant: 'outlined' | 'text' | undefined
+  @Input() disabled = false
+  @Input() loading = false
   @Input() severity:
     | 'success'
     | 'info'

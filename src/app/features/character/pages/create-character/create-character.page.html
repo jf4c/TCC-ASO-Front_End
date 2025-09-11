@@ -26,6 +26,7 @@
     ></aso-character-skills-form>
 
     <aso-character-backstory-form
+      #backstoryForm
       [characterForm]="characterForm"
       (generateBackstory)="onGenerateBackstory()"
     ></aso-character-backstory-form>
@@ -36,6 +37,7 @@
     [displayName]="displayName"
     [displayAncestry]="displayAncestry"
     [displayClass]="displayClass"
+    [backstoryForm]="backstoryForm"
     (saveCharacter)="onSaveCharacter()"
     style="width: 35%"
   ></aso-character-sheet-preview>

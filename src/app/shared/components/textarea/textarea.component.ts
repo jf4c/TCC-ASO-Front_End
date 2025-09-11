@@ -16,6 +16,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms'
 })
 export class TextareaComponent implements ControlValueAccessor {
   @Input() placeholder = 'Escreva aqui a descrição do personagem...'
+  @Input() style: object = { height: '200px' }
   value = ''
 
   onChange = (value: any) => {}
