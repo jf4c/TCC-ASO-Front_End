@@ -37,6 +37,31 @@
   </nav>
 
   <div class="user-section">
-    <button class="user-button">👤</button>
+    <!-- Usuário Logado -->
+    <div *ngIf="isLoggedIn" class="user-logged">
+      <span class="username">{{ username }}</span>
+      <button 
+        type="button"
+        pButton
+        icon="pi pi-user"
+        [rounded]="true"
+        [text]="true"
+        severity="secondary"
+        class="user-button"
+        (click)="menu.toggle($event)"
+      ></button>
+      <p-menu #menu [model]="userMenuItems" [popup]="true"></p-menu>
+    </div>
+
+    <!-- Botão de Login -->
+    <button 
+      *ngIf="!isLoggedIn"
+      type="button"
+      pButton
+      label="Entrar"
+      icon="pi pi-sign-in"
+      severity="primary"
+      (click)="onLogin()"
+    ></button>
   </div>
 </header>

@@ -1,0 +1,13 @@
+<section class="settings-page">
+  <h2>Configurações</h2>
+
+  <div class="setting-row">
+    <label>Theme</label>
+    <button pButton type="button" (click)="toggleTheme()" label="Toggle theme"></button>
+    <small class="muted">Current: {{ currentTheme }}</small>
+  </div>
+
+  <div class="actions">
+    <button pButton type="button" class="p-button-secondary" (click)="logout()" label="Sair"></button>
+  </div>
+</section>

@@ -12,6 +12,7 @@ import { CardComponent } from '@shared/components/card/card.component'
 import { TextareaComponent } from '@shared/components/textarea/textarea.component'
 import { BackstoryService } from '../../services/backstory.service'
 import { CharacterBackstoryRequest } from '../../interface/backstory.model'
+import { Skill } from '../../interface/skill.model'
 import { MessageService } from 'primeng/api'
 
 @Component({
@@ -46,6 +47,43 @@ export class CharacterBackstoryFormComponent implements OnInit {
 
   manualBackstoryControl = new FormControl('')
 
+  /**
+   * Converte os atributos do formulário em string formatada
+   * Exemplo: "Força: 15, Destreza: 14, Constituição: 13, Inteligência: 12, Sabedoria: 10, Carisma: 8"
+   */
+  private formatAttributes(attributes: Record<string, number>): string {
+    if (!attributes) return ''
+
+    const attributeLabels = {
+      strength: 'Força',
+      dexterity: 'Destreza',
+      constitution: 'Constituição',
+      intelligence: 'Inteligência',
+      wisdom: 'Sabedoria',
+      charisma: 'Carisma',
+    }
+
+    return Object.entries(attributes)
+      .map(
+        ([key, value]) =>
+          `${attributeLabels[key as keyof typeof attributeLabels] || key}: ${value}`,
+      )
+      .join(', ')
+  }
+
+  /**
+   * Converte o array de skills do formulário em string formatada
+   * Exemplo: "Atletismo, Enganação, Furtividade"
+   */
+  private formatSkills(skills: Skill[]): string {
+    if (!skills || !Array.isArray(skills)) return ''
+
+    return skills
+      .map((skill) => skill?.name || skill)
+      .filter((name) => name)
+      .join(', ')
+  }
+
   ngOnInit(): void {
     // Observa mudanças no formulário para reabilitar o botão quando campos são preenchidos
     this.characterForm.valueChanges.subscribe(() => {
@@ -79,6 +117,8 @@ export class CharacterBackstoryFormComponent implements OnInit {
       name: formValue.name || '',
       ancestry: formValue.ancestry?.name || '',
       class: formValue.charClass?.name || '',
+      attributes: this.formatAttributes(formValue.attributes),
+      skills: this.formatSkills(formValue.skills),
       supplements: this.manualBackstoryControl.value || '',
     }
 

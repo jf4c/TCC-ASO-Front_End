@@ -1,17 +1,30 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core'
+import {
+  ApplicationConfig,
+  provideZoneChangeDetection,
+  APP_INITIALIZER,
+} from '@angular/core'
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async'
 import { provideRouter } from '@angular/router'
 import { providePrimeNG } from 'primeng/config'
-// import Aura from '@primeng/themes/aura'
+import {
+  provideHttpClient,
+  withInterceptors,
+  withInterceptorsFromDi,
+} from '@angular/common/http'
+import { KeycloakService } from 'keycloak-angular'
 
 import { routes } from './app.routes'
 import { ASO } from './theme/theme.config'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { initializeKeycloak } from './core/auth/keycloak-init.factory'
+import { authInterceptor } from './core/auth/auth.interceptor'
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(
+      withInterceptorsFromDi(),
+      withInterceptors([authInterceptor]),
+    ),
     provideRouter(routes),
     provideAnimationsAsync(),
     providePrimeNG({
@@ -20,5 +33,12 @@ export const appConfig: ApplicationConfig = {
       },
       ripple: true,
     }),
+    KeycloakService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeKeycloak,
+      multi: true,
+      deps: [KeycloakService],
+    },
   ],
 }

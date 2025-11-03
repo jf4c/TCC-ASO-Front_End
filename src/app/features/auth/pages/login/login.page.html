@@ -1,0 +1,55 @@
+<div class="login-page">
+  <div class="login-container">
+    <!-- Logo e Título -->
+    <div class="login-header">
+      <div class="logo">
+        <i class="pi pi-sparkles"></i>
+      </div>
+      <h1 class="title">Artificial Story Oracle</h1>
+      <p class="subtitle">Crie histórias épicas de RPG com inteligência artificial</p>
+    </div>
+
+    <!-- Card de Login -->
+    <div class="login-card">
+      <h2 class="login-title">Bem-vindo!</h2>
+      <p class="login-description">
+        Entre com sua conta para acessar suas campanhas, personagens e mundos.
+      </p>
+
+      <!-- Botão de Login -->
+      <aso-button
+        label="Entrar com Keycloak"
+        icon="pi pi-sign-in"
+        [styleClass]="{ width: '100%' }"
+        severity="primary"
+        size="large"
+        (eventClick)="onLogin()"
+      />
+
+      <!-- Features -->
+      <div class="features">
+        <div class="feature-item">
+          <i class="pi pi-users"></i>
+          <span>Gerencie seus personagens</span>
+        </div>
+        <div class="feature-item">
+          <i class="pi pi-globe"></i>
+          <span>Crie mundos únicos</span>
+        </div>
+        <div class="feature-item">
+          <i class="pi pi-book"></i>
+          <span>Organize campanhas</span>
+        </div>
+        <div class="feature-item">
+          <i class="pi pi-sparkles"></i>
+          <span>Geração com IA</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="login-footer">
+      <p>&copy; 2025 Artificial Story Oracle. Todos os direitos reservados.</p>
+    </div>
+  </div>
+</div>
