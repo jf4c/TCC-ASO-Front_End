@@ -1,0 +1,137 @@
+╔════════════════════════════════════════════════════════════════╗
+║                                                                ║
+║              🎲 ARTIFICIAL STORY ORACLE 🎲                     ║
+║                                                                ║
+║               Scripts de Automação v1.0                        ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+
+📦 BEM-VINDO AOS SCRIPTS DE SETUP!
+
+Esta pasta contém tudo que você precisa para configurar o projeto
+Artificial Story Oracle em qualquer máquina Windows.
+
+═══════════════════════════════════════════════════════════════
+
+🚀 QUICK START
+
+  Para configurar TUDO automaticamente:
+
+    .\scripts\0-setup-all.ps1
+
+  Tempo estimado: 5-10 minutos
+
+═══════════════════════════════════════════════════════════════
+
+📚 DOCUMENTAÇÃO
+
+  📖 README.md          - Guia completo com troubleshooting
+  📋 INDEX.md           - Índice detalhado de todos os scripts
+  ⚡ QUICK_REFERENCE.md - Comandos rápidos
+  📊 SUMMARY.md         - Resumo do que foi criado
+  ✅ CHECKLIST.md       - Checklist de validação
+
+═══════════════════════════════════════════════════════════════
+
+🤖 SCRIPTS PRINCIPAIS
+
+  0️⃣  0-setup-all.ps1           ⭐ Setup completo (RECOMENDADO)
+  1️⃣  1-setup-keycloak.ps1       Criar Keycloak
+  2️⃣  2-configure-realm.ps1      Configurar realm
+  3️⃣  3-deploy-theme.ps1         Aplicar tema
+  4️⃣  4-install-dependencies.ps1 Instalar dependências
+  5️⃣  5-start-app.ps1           ⭐ Iniciar app (USO DIÁRIO)
+
+🛠️  SCRIPTS UTILITÁRIOS
+
+  ✓  check-status.ps1   Verificar status
+  ⏹  stop-all.ps1       Parar serviços
+  🧹 clean-all.ps1       Limpar tudo
+
+═══════════════════════════════════════════════════════════════
+
+⚙️  PRÉ-REQUISITOS
+
+  Antes de executar qualquer script, certifique-se de ter:
+
+  ✅ Docker Desktop (rodando!)
+  ✅ Node.js v18+
+  ✅ PowerShell 5.1+
+
+═══════════════════════════════════════════════════════════════
+
+📖 ORDEM DE EXECUÇÃO (Setup Manual)
+
+  1. .\scripts\1-setup-keycloak.ps1
+  2. .\scripts\2-configure-realm.ps1
+  3. .\scripts\3-deploy-theme.ps1
+  4. .\scripts\4-install-dependencies.ps1
+  5. .\scripts\5-start-app.ps1
+
+  OU simplesmente: .\scripts\0-setup-all.ps1 ⭐
+
+═══════════════════════════════════════════════════════════════
+
+🌐 URLs IMPORTANTES
+
+  🏠 Aplicação:     http://localhost:4200
+  🔐 Keycloak:      http://localhost:8080/admin
+  📄 Docs Projeto:  ../Doc/
+
+═══════════════════════════════════════════════════════════════
+
+🔑 CREDENCIAIS PADRÃO
+
+  Aplicação:
+    Usuário: admin-aso
+    Senha:   Admin@123
+
+  Keycloak Admin:
+    Usuário: admin
+    Senha:   admin
+
+═══════════════════════════════════════════════════════════════
+
+🆘 PRECISA DE AJUDA?
+
+  1. Leia: .\scripts\README.md
+  2. Execute: .\scripts\check-status.ps1
+  3. Verifique logs: docker logs keycloak
+
+═══════════════════════════════════════════════════════════════
+
+💡 DICAS
+
+  ⭐ Primeira vez?       → 0-setup-all.ps1
+  💼 Uso diário?         → 5-start-app.ps1
+  🐛 Algo errado?        → check-status.ps1
+  🔄 Começar do zero?    → clean-all.ps1 + 0-setup-all.ps1
+
+═══════════════════════════════════════════════════════════════
+
+✨ FUNCIONALIDADES
+
+  ✓ Setup totalmente automatizado
+  ✓ Validação de pré-requisitos
+  ✓ Tratamento de erros
+  ✓ Mensagens coloridas e claras
+  ✓ Logs detalhados
+  ✓ Documentação completa
+
+═══════════════════════════════════════════════════════════════
+
+📅 INFORMAÇÕES
+
+  Criado em:  3 de Novembro de 2025
+  Versão:     1.0
+  Status:     ✅ Testado e Validado
+
+═══════════════════════════════════════════════════════════════
+
+🎉 BOM DESENVOLVIMENTO!
+
+Para começar agora:
+
+  .\scripts\0-setup-all.ps1
+
+═══════════════════════════════════════════════════════════════

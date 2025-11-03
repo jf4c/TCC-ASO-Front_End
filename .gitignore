@@ -41,9 +41,13 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# Documentation - ignore everything except features
-!/Doc/features/
-/Doc/components
-/Doc/modules
-/Doc/geral
+# Logs e temporários
+*.log
+*.tmp
+*.temp
+
+# Environment variables (se usar .env)
+.env
+.env.local
+.env.*.local
 

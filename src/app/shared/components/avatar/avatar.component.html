@@ -1,0 +1,23 @@
+<div 
+  class="aso-avatar" 
+  [class]="'aso-avatar--' + size"
+  role="button"
+  tabindex="0"
+  [attr.aria-label]="alt"
+  (click)="onClick($event)"
+  (keydown)="onKeyDown($event)"
+>
+  <img 
+    *ngIf="src && !imageError" 
+    [src]="src" 
+    [alt]="alt"
+    (error)="onImageError()"
+    class="aso-avatar__image"
+  />
+  <span 
+    *ngIf="!src || imageError" 
+    class="aso-avatar__fallback"
+  >
+    {{ fallback }}
+  </span>
+</div>

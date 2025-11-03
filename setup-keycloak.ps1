@@ -14,7 +14,7 @@ $token = $tokenResponse.access_token
 $headers = @{ "Authorization" = "Bearer $token"; "Content-Type" = "application/json" }
 
 Write-Host "Criando realm..." -ForegroundColor Yellow
-$realmJson = '{"realm":"artificial-story-oracle","enabled":true,"displayName":"Artificial Story Oracle","loginWithEmailAllowed":true,"registrationAllowed":true,"resetPasswordAllowed":true,"rememberMe":true}'
+$realmJson = '{"realm":"artificial-story-oracle","enabled":true,"displayName":"Artificial Story Oracle","loginWithEmailAllowed":true,"registrationAllowed":true,"resetPasswordAllowed":true,"rememberMe":true,"internationalizationEnabled":true,"supportedLocales":["pt-BR","en"],"defaultLocale":"pt-BR"}'
 try { Invoke-RestMethod -Uri "$KEYCLOAK_URL/admin/realms" -Method POST -Headers $headers -Body $realmJson } catch { Write-Host "Realm ja existe" -ForegroundColor Yellow }
 
 Write-Host "Criando client..." -ForegroundColor Yellow

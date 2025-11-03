@@ -27,11 +27,6 @@ html {
   padding: 0 !important;
 }
 
-/* Ocultar seletor de idiomas */
-#kc-locale {
-  display: none !important;
-}
-
 /* Container principal - REMOVER DUPLICAÇÃO E SCROLL */
 .login-pf-page {
   display: flex;
@@ -98,8 +93,6 @@ html {
   align-items: flex-end;
   justify-content: center;
   padding-bottom: 2rem !important;
-  /* Remover qualquer cor de fundo que possa criar áreas brancas */
-  background-color: transparent !important;
 }
 
 /* Container de conteúdo DENTRO do pergaminho */

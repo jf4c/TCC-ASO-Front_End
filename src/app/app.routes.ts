@@ -5,7 +5,6 @@ import { CreateCharacterPage } from '@features/character/pages/create-character/
 import { ListCampaignPage } from '@features/campaign/pages/list-campaign/list-campaign.page'
 import { ViewCampaignPage } from '@features/campaign/pages/view-campaign/view-campaign.page'
 import { authGuard } from '@core/auth/auth.guard'
-import { SettingsPage } from '@features/settings/pages/settings.page'
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -28,11 +27,6 @@ export const routes: Routes = [
   {
     path: 'personagens/criar',
     component: CreateCharacterPage,
-    canActivate: [authGuard],
-  },
-  {
-    path: 'settings',
-    component: SettingsPage,
     canActivate: [authGuard],
   },
 ]

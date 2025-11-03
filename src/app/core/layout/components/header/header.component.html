@@ -5,30 +5,42 @@
   </div>
 
   <nav class="nav-bar">
-    <ul class="nav-list">
+    <button 
+      class="hamburger" 
+      aria-label="Toggle navigation" 
+      type="button"
+      (click)="toggleMobileNav()"
+      [attr.aria-expanded]="isMobileNavOpen"
+    >
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+
+    <ul class="nav-list" [class.nav-list--open]="isMobileNavOpen">
       <li class="nav-item">
-        <a routerLink="/home" routerLinkActive="active">
+        <a routerLink="/home" routerLinkActive="active" (click)="closeAllMenus()">
           <span>🏰</span>
           Início
         </a>
       </li>
 
       <li class="nav-item">
-        <a routerLink="/personagens" routerLinkActive="active">
+        <a routerLink="/personagens" routerLinkActive="active" (click)="closeAllMenus()">
           <span>🧙🏼‍♂️</span>
           Personagens
         </a>
       </li>
 
       <li class="nav-item">
-        <a routerLink="/campanhas" routerLinkActive="active">
+        <a routerLink="/campanhas" routerLinkActive="active" (click)="closeAllMenus()">
           <span>🫅🏼</span>
           Campanhas
         </a>
       </li>
 
       <li class="nav-item">
-        <a routerLink="/mundos" routerLinkActive="active">
+        <a routerLink="/mundos" routerLinkActive="active" (click)="closeAllMenus()">
           <span>🌎</span>
           Mundos
         </a>
@@ -38,19 +50,48 @@
 
   <div class="user-section">
     <!-- Usuário Logado -->
-    <div *ngIf="isLoggedIn" class="user-logged">
+    <div *ngIf="isLoggedIn" class="user-wrapper">
       <span class="username">{{ username }}</span>
-      <button 
-        type="button"
-        pButton
-        icon="pi pi-user"
-        [rounded]="true"
-        [text]="true"
-        severity="secondary"
-        class="user-button"
-        (click)="menu.toggle($event)"
-      ></button>
-      <p-menu #menu [model]="userMenuItems" [popup]="true"></p-menu>
+      
+      <aso-avatar 
+        [src]="userPhotoUrl"
+        [alt]="username"
+        size="sm"
+        fallback="👤"
+        (avatarClick)="toggleUserMenu()"
+        [attr.aria-expanded]="isUserMenuOpen"
+        [attr.aria-haspopup]="true"
+      ></aso-avatar>
+
+      <!-- Menu inline abaixo do avatar -->
+      <div 
+        class="user-menu" 
+        [class.user-menu--open]="isUserMenuOpen"
+        role="menu"
+        [attr.aria-hidden]="!isUserMenuOpen"
+      >
+        <button 
+          type="button" 
+          class="user-menu__item"
+          role="menuitem"
+          (click)="toggleTheme(); closeAllMenus()"
+        >
+          <span class="user-menu__icon">🎨</span>
+          Tema
+        </button>
+
+        <hr class="user-menu__divider" />
+
+        <button 
+          type="button" 
+          class="user-menu__item user-menu__item--danger"
+          role="menuitem"
+          (click)="onLogout()"
+        >
+          <span class="user-menu__icon">🚪</span>
+          Sair
+        </button>
+      </div>
     </div>
 
     <!-- Botão de Login -->
