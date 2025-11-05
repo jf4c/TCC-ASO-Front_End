@@ -105,12 +105,6 @@ export class CreateCharacterPage implements OnInit {
     this.showInfoRandom()
   }
 
-  onGenerateRandomName(): void {
-    this.characterForm.patchValue({
-      name: this.formFactoryService.onGenerateRandomName(),
-    })
-  }
-
   onGenerateBackstory(): void {
     // A geração de backstory agora é handled diretamente pelo componente
     // Este método pode ser removido se não for mais necessário

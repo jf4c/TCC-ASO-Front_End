@@ -14,11 +14,15 @@ import { ButtonComponent } from '@app/shared/components/button/button.component'
 import { Toast } from 'primeng/toast'
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { CharacterDialogImageComponent } from '@characters/components/dialogs/character-dialog-image/character-dialog-image.component'
+import { CharacterNamesService } from '@characters/services/character-names.service'
+import { CharacterNamesResponse } from '@characters/interface/character-names.model'
+import { CommonModule } from '@angular/common'
 
 @Component({
   selector: 'aso-character-identity-form',
   standalone: true,
   imports: [
+    CommonModule,
     ReactiveFormsModule,
     CardComponent,
     DropdownInputComponent,
@@ -34,6 +38,7 @@ import { CharacterDialogImageComponent } from '@characters/components/dialogs/ch
 })
 export class CharacterIdentityFormComponent {
   private readonly dialogService = inject(DialogService)
+  private readonly characterNamesService = inject(CharacterNamesService)
 
   @Input() characterForm!: FormGroup
   @Input() ancestries: Ancestry[] = []
@@ -50,8 +55,35 @@ export class CharacterIdentityFormComponent {
 
   @Output() generateRandomName = new EventEmitter<void>()
 
+  generatedNames: CharacterNamesResponse | null = null
+  isGeneratingNames = false
+
   onGenerateRandomName(): void {
-    this.generateRandomName.emit()
+    this.isGeneratingNames = true
+
+    const ancestryId = this.characterForm.get('ancestry')?.value?.id
+    const classId = this.characterForm.get('charClass')?.value?.id
+
+    this.characterNamesService.generateNames(ancestryId, classId).subscribe({
+      next: (response) => {
+        this.generatedNames = response
+        this.isGeneratingNames = false
+      },
+      error: (error) => {
+        console.error('Erro ao gerar nomes:', error)
+        this.isGeneratingNames = false
+      },
+    })
+  }
+
+  onSelectName(name: string): void {
+    this.characterForm.patchValue({ name })
+    this.generatedNames = null
+  }
+
+  getAllNames(): string[] {
+    if (!this.generatedNames) return []
+    return [...this.generatedNames.maleNames, ...this.generatedNames.femaleNames]
   }
 
   getPlaceholder(text: string): string {

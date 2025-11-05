@@ -27,6 +27,43 @@
       (eventClick)="onGenerateRandomName()"
       [isInvalid]="isInvalid('name')"
     ></aso-input>
+
+    <!-- Seção de nomes gerados -->
+    @if (isGeneratingNames) {
+    <div class="generated-names-loading">
+      <i class="pi pi-spin pi-spinner"></i>
+      <span>Gerando nomes...</span>
+    </div>
+    }
+
+    @if (generatedNames && !isGeneratingNames) {
+    <div class="generated-names-container">
+      <div class="names-header">
+        <h4 class="names-title">Escolha um nome:</h4>
+        <button
+          type="button"
+          class="close-button"
+          (click)="generatedNames = null"
+          title="Fechar"
+        >
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+      
+      <div class="names-grid">
+        @for (name of getAllNames(); track name) {
+        <button
+          type="button"
+          class="name-button"
+          (click)="onSelectName(name)"
+        >
+          {{ name }}
+        </button>
+        }
+      </div>
+    </div>
+    }
+
     @if (isInvalid('name')) {
     <p-message
       class="w-full text-left"
