@@ -99,6 +99,8 @@
         background: transparent;
         border-radius: 8px;
         color: var(--text-secondary);
+        font-size: 1.1rem;
+        font-weight: 500;
         transition: all 0.2s ease;
       }
 
@@ -129,7 +131,7 @@
       .username {
         color: var(--text-primary);
         font-weight: 600;
-        font-size: 0.95rem;
+        font-size: 1.05rem;
         white-space: nowrap;
         max-width: 140px;
         overflow: hidden;
@@ -169,7 +171,7 @@
         border: none;
         background: transparent;
         color: var(--text-primary);
-        font-size: 0.95rem;
+        font-size: 1rem;
         font-weight: 500;
         cursor: pointer;
         text-align: left;

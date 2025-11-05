@@ -20,28 +20,24 @@
     <ul class="nav-list" [class.nav-list--open]="isMobileNavOpen">
       <li class="nav-item">
         <a routerLink="/home" routerLinkActive="active" (click)="closeAllMenus()">
-          <span>🏰</span>
           Início
         </a>
       </li>
 
       <li class="nav-item">
         <a routerLink="/personagens" routerLinkActive="active" (click)="closeAllMenus()">
-          <span>🧙🏼‍♂️</span>
           Personagens
         </a>
       </li>
 
       <li class="nav-item">
         <a routerLink="/campanhas" routerLinkActive="active" (click)="closeAllMenus()">
-          <span>🫅🏼</span>
           Campanhas
         </a>
       </li>
 
       <li class="nav-item">
         <a routerLink="/mundos" routerLinkActive="active" (click)="closeAllMenus()">
-          <span>🌎</span>
           Mundos
         </a>
       </li>
@@ -57,7 +53,7 @@
         [src]="userPhotoUrl"
         [alt]="username"
         size="sm"
-        fallback="👤"
+        fallback="U"
         (avatarClick)="toggleUserMenu()"
         [attr.aria-expanded]="isUserMenuOpen"
         [attr.aria-haspopup]="true"
@@ -76,7 +72,7 @@
           role="menuitem"
           (click)="toggleTheme(); closeAllMenus()"
         >
-          <span class="user-menu__icon">🎨</span>
+          <span class="user-menu__icon pi pi-palette"></span>
           Tema
         </button>
 
@@ -88,7 +84,7 @@
           role="menuitem"
           (click)="onLogout()"
         >
-          <span class="user-menu__icon">🚪</span>
+          <span class="user-menu__icon pi pi-sign-out"></span>
           Sair
         </button>
       </div>
