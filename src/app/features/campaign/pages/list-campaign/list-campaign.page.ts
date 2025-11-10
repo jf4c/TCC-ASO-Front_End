@@ -8,11 +8,9 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { CampaignService } from '../../services/campaign.service'
 import { CampaignCardComponent } from '../../components/campaign-card/campaign-card.component'
 import {
-  Campaign,
-  UserRole,
-  CampaignStatus,
-  GetCampaignsRequest,
-} from '../../interfaces/campaign.model'
+  CampaignListItem,
+  CampaignStatus
+} from '../../interfaces/campaign.interface'
 import { ButtonComponent } from '@shared/components/button/button.component'
 import { InputComponent } from '@shared/components/input/input.component'
 import { DropdownInputComponent } from '@shared/components/dropdown-input/dropdown-input.component'
@@ -39,23 +37,24 @@ export class ListCampaignPage implements OnInit, OnDestroy {
   private readonly formBuilder = inject(FormBuilder)
   private subscriptions = new Subscription()
 
-  campaigns: Campaign[] = []
+  campaigns: CampaignListItem[] = []
   isLoading = false
   totalCampaigns = 0
 
-  readonly UserRole = UserRole
   readonly CampaignStatus = CampaignStatus
 
   // Opções para dropdowns
   roleOptions = [
-    { id: 'master', name: 'Mestre', value: UserRole.MASTER },
-    { id: 'player', name: 'Jogador', value: UserRole.PLAYER },
+    { id: 'creator', name: 'Criador', value: 'creator' },
+    { id: 'gameMaster', name: 'Mestre', value: 'gameMaster' },
+    { id: 'player', name: 'Jogador', value: 'player' },
   ]
 
   statusOptions = [
-    { id: 'active', name: 'Ativa', value: CampaignStatus.ACTIVE },
-    { id: 'paused', name: 'Pausada', value: CampaignStatus.PAUSED },
-    { id: 'finished', name: 'Finalizada', value: CampaignStatus.FINISHED },
+    { id: 'planning', name: 'Planejamento', value: CampaignStatus.Planning },
+    { id: 'active', name: 'Ativa', value: CampaignStatus.Active },
+    { id: 'onHold', name: 'Pausada', value: CampaignStatus.OnHold },
+    { id: 'completed', name: 'Finalizada', value: CampaignStatus.Completed },
   ]
 
   filterForm = this.formBuilder.group({
@@ -87,19 +86,22 @@ export class ListCampaignPage implements OnInit, OnDestroy {
     this.isLoading = true
 
     const formValues = this.filterForm.value
-    const request: GetCampaignsRequest = {
-      role: formValues.role || undefined,
-      status: formValues.status || undefined,
-      search: formValues.search || undefined,
+    const params: { status?: CampaignStatus; role?: 'creator' | 'gameMaster' | 'player' } = {}
+    
+    if (formValues.status) {
+      params.status = formValues.status
+    }
+    if (formValues.role) {
+      params.role = formValues.role
     }
 
-    const subscription = this.campaignService.getCampaigns(request).subscribe({
-      next: (response) => {
-        this.campaigns = response.campaigns
-        this.totalCampaigns = response.totalCount
+    const subscription = this.campaignService.getCampaigns(params).subscribe({
+      next: (campaigns: CampaignListItem[]) => {
+        this.campaigns = campaigns
+        this.totalCampaigns = campaigns.length
         this.isLoading = false
       },
-      error: (error) => {
+      error: (error: Error) => {
         console.error('Erro ao carregar campanhas:', error)
         this.isLoading = false
       },
@@ -108,23 +110,23 @@ export class ListCampaignPage implements OnInit, OnDestroy {
     this.subscriptions.add(subscription)
   }
 
-  onViewCampaign(campaign: Campaign): void {
+  onViewCampaign(campaign: CampaignListItem): void {
     this.router.navigate(['/campanhas', campaign.id])
   }
 
-  onEditCampaign(campaign: Campaign): void {
-    if (campaign.userRole === UserRole.MASTER) {
+  onEditCampaign(campaign: CampaignListItem): void {
+    if (campaign.myRole === 'creator' || campaign.myRole === 'gameMaster') {
       // Por enquanto redireciona para a página de detalhes
       // TODO: Criar página específica de edição de campanha
       this.router.navigate(['/campanhas', campaign.id])
     } else {
-      console.log('Apenas o mestre pode editar esta campanha')
+      console.log('Apenas o criador ou mestre pode editar esta campanha')
       // TODO: Mostrar mensagem de erro para o usuário
     }
   }
 
-  onJoinCampaign(campaign: Campaign): void {
-    if (campaign.userRole === UserRole.PLAYER) {
+  onJoinCampaign(campaign: CampaignListItem): void {
+    if (campaign.myRole === 'player') {
       console.log('Entrar na sessão da campanha:', campaign)
       // TODO: Implementar lógica para entrar na sessão
     } else {
@@ -134,7 +136,6 @@ export class ListCampaignPage implements OnInit, OnDestroy {
   }
 
   onCreateCampaign(): void {
-    console.log('Criar nova campanha')
-    // Futura navegação para criação
+    this.router.navigate(['/campanhas/criar'])
   }
 }

@@ -1,148 +1,111 @@
-import { Injectable } from '@angular/core'
-import { Observable, of, delay } from 'rxjs'
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, BehaviorSubject, tap, catchError, throwError } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 import {
   Campaign,
+  CampaignListItem,
   CampaignStatus,
-  UserRole,
-  GetCampaignsRequest,
-  GetCampaignsResponse,
-} from '../interfaces/campaign.model'
+  CreateCampaignRequest,
+  UpdateCampaignRequest
+} from '../interfaces/campaign.interface';
+import {
+  CampaignParticipant,
+  ParticipantRole,
+  AddParticipantRequest,
+  AvailableFriend,
+  AvailableCharacter
+} from '../interfaces/campaign-participant.interface';
+import { CampaignDetail } from '../interfaces/campaign-detail.interface';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class CampaignService {
-  private mockCampaigns: Campaign[] = [
-    {
-      id: '1',
-      title: 'The Lost Mine of Phandelver',
-      description:
-        'A classic adventure to save the town of Phandalin from threats both above and below ground. A group of adventurers is hired to escort a wagon of supplies...',
-      image: '/assets/campaigns/lost-mine.jpg',
-      status: CampaignStatus.ACTIVE,
-      masterName: 'Gandalf the Grey',
-      playersCount: 2,
-      maxPlayers: 4,
-      userRole: UserRole.MASTER,
-      createdAt: new Date('2024-01-15'),
-      lastActivity: new Date('2024-08-20'),
-    },
-    {
-      id: '2',
-      title: 'Curse of Strahd',
-      description:
-        'A gothic horror campaign set in the misty land of Barovia, ruled by the vampire lord Strahd von Zarovich. Unwillingly drawn into this bleak domain...',
-      image: '/assets/campaigns/curse-strahd.jpg',
-      status: CampaignStatus.ACTIVE,
-      masterName: 'Elminster Aumar',
-      playersCount: 5,
-      maxPlayers: 6,
-      userRole: UserRole.PLAYER,
-      createdAt: new Date('2024-03-10'),
-      lastActivity: new Date('2024-08-15'),
-    },
-    {
-      id: '3',
-      title: 'Tomb of Annihilation',
-      description:
-        'A deadly adventure in the jungles of Chult, where the heroes must find the cause of a death curse that plagues the land. They will face dinosaurs, undead...',
-      image: '/assets/campaigns/tomb-annihilation.jpg',
-      status: CampaignStatus.PAUSED,
-      masterName: 'Mordenkainen',
-      playersCount: 3,
-      maxPlayers: 5,
-      userRole: UserRole.PLAYER,
-      createdAt: new Date('2023-12-05'),
-      lastActivity: new Date('2024-07-30'),
-    },
-    {
-      id: '4',
-      title: 'Waterdeep: Dragon Heist',
-      description:
-        'A treasure hunt in the most cosmopolitan city of the Sword Coast. Political intrigue, urban adventures, and a missing fortune await...',
-      image: '/assets/campaigns/dragon-heist.jpg',
-      status: CampaignStatus.FINISHED,
-      masterName: 'Volo Geddarm',
-      playersCount: 4,
-      maxPlayers: 4,
-      userRole: UserRole.MASTER,
-      createdAt: new Date('2023-08-20'),
-      lastActivity: new Date('2024-02-14'),
-    },
-    {
-      id: '5',
-      title: 'Out of the Abyss',
-      description:
-        'Escape from the Underdark in this adventure where madness and chaos reign. The demon lords have been summoned and reality itself is at stake...',
-      image: '/assets/campaigns/out-abyss.jpg',
-      status: CampaignStatus.ACTIVE,
-      masterName: 'Drizzt DoUrden',
-      playersCount: 3,
-      maxPlayers: 6,
-      userRole: UserRole.PLAYER,
-      createdAt: new Date('2024-05-01'),
-      lastActivity: new Date('2024-08-22'),
-    },
-    {
-      id: '6',
-      title: 'Storm King Thunder',
-      description:
-        'Giants have emerged from their strongholds to threaten civilization as never before. Hill giants are stealing all the grain and livestock...',
-      image: '/assets/campaigns/storm-king.jpg',
-      status: CampaignStatus.ACTIVE,
-      masterName: 'Tasha Hidora',
-      playersCount: 1,
-      maxPlayers: 4,
-      userRole: UserRole.MASTER,
-      createdAt: new Date('2024-06-12'),
-      lastActivity: new Date('2024-08-24'),
-    },
-  ]
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/Campaign`;
 
-  getCampaigns(
-    request: GetCampaignsRequest = {},
-  ): Observable<GetCampaignsResponse> {
-    const { page = 1, pageSize = 9, role, status, search } = request
+  private campaignsSubject = new BehaviorSubject<CampaignListItem[]>([]);
+  public campaigns$ = this.campaignsSubject.asObservable();
 
-    let filteredCampaigns = [...this.mockCampaigns]
+  private currentCampaignSubject = new BehaviorSubject<CampaignDetail | null>(null);
+  public currentCampaign$ = this.currentCampaignSubject.asObservable();
 
-    // Filtrar por role
-    if (role) {
-      filteredCampaigns = filteredCampaigns.filter(
-        (campaign) => campaign.userRole === role,
-      )
+  createCampaign(data: CreateCampaignRequest): Observable<Campaign> {
+    return this.http.post<Campaign>(this.apiUrl, data).pipe(
+      tap(campaign => {
+        console.log('Campanha criada:', campaign);
+        this.refreshCampaigns();
+      }),
+      catchError((error) => {
+        console.error('Erro ao criar campanha:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  getCampaign(campaignId: string): Observable<CampaignDetail> {
+    return this.http.get<CampaignDetail>(`${this.apiUrl}/${campaignId}`).pipe(
+      tap(campaign => this.currentCampaignSubject.next(campaign)),
+      catchError((error) => throwError(() => error))
+    );
+  }
+
+  getMyCampaigns(): Observable<CampaignListItem[]> {
+    return this.http.get<CampaignListItem[]>(this.apiUrl).pipe(
+      tap(campaigns => this.campaignsSubject.next(campaigns)),
+      catchError((error) => throwError(() => error))
+    );
+  }
+
+  getCampaigns(params?: { status?: CampaignStatus; role?: 'creator' | 'gameMaster' | 'player' }): Observable<CampaignListItem[]> {
+    let url = this.apiUrl;
+    const queryParams: string[] = [];
+
+    if (params?.status !== undefined) {
+      queryParams.push(`status=${params.status}`);
+    }
+    if (params?.role) {
+      queryParams.push(`role=${params.role}`);
     }
 
-    // Filtrar por status
-    if (status) {
-      filteredCampaigns = filteredCampaigns.filter(
-        (campaign) => campaign.status === status,
-      )
+    if (queryParams.length > 0) {
+      url += `?${queryParams.join('&')}`;
     }
 
-    // Filtrar por busca
-    if (search) {
-      const searchLower = search.toLowerCase()
-      filteredCampaigns = filteredCampaigns.filter(
-        (campaign) =>
-          campaign.title.toLowerCase().includes(searchLower) ||
-          campaign.description.toLowerCase().includes(searchLower),
-      )
-    }
+    return this.http.get<CampaignListItem[]>(url).pipe(
+      tap(campaigns => this.campaignsSubject.next(campaigns)),
+      catchError((error) => throwError(() => error))
+    );
+  }
 
-    // Paginação
-    const startIndex = (page - 1) * pageSize
-    const endIndex = startIndex + pageSize
-    const paginatedCampaigns = filteredCampaigns.slice(startIndex, endIndex)
+  addParticipant(campaignId: string, data: AddParticipantRequest): Observable<CampaignParticipant> {
+    return this.http.post<CampaignParticipant>(`${this.apiUrl}/${campaignId}/participants`, data).pipe(
+      tap(() => this.refreshCurrentCampaign(campaignId)),
+      catchError((error) => throwError(() => error))
+    );
+  }
 
-    const response: GetCampaignsResponse = {
-      campaigns: paginatedCampaigns,
-      totalCount: filteredCampaigns.length,
-      currentPage: page,
-      pageSize,
-    }
+  getAvailableFriends(campaignId: string): Observable<AvailableFriend[]> {
+    return this.http.get<AvailableFriend[]>(`${this.apiUrl}/${campaignId}/available-friends`);
+  }
 
-    // Simular delay da API
-    return of(response).pipe(delay(500))
+  setGameMaster(campaignId: string, playerId: string | null): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${campaignId}/set-game-master`, { playerId }).pipe(
+      tap(() => this.refreshCurrentCampaign(campaignId))
+    );
+  }
+
+  refreshCampaigns(): void {
+    this.getMyCampaigns().subscribe();
+  }
+
+  refreshCurrentCampaign(campaignId: string): void {
+    this.getCampaign(campaignId).subscribe();
+  }
+
+  clearAll(): void {
+    this.campaignsSubject.next([]);
+    this.currentCampaignSubject.next(null);
   }
 }

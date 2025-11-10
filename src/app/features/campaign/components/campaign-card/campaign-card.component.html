@@ -23,21 +23,18 @@
   <!-- Conteúdo -->
   <div class="campaign-content">
     <!-- Título -->
-    <h3 class="campaign-title">{{ campaign.title }}</h3>
+    <h3 class="campaign-title">{{ campaign.name }}</h3>
 
     <!-- Descrição -->
-    <p class="campaign-description">{{ campaign.description }}</p>
+    @if (campaign.description) {
+      <p class="campaign-description">{{ campaign.description }}</p>
+    }
 
-    <!-- Informações do DM e Jogadores -->
+    <!-- Informações de Jogadores -->
     <div class="campaign-info">
-      <div class="dm-info">
-        <i class="pi pi-crown"></i>
-        <span>DM: {{ campaign.masterName }}</span>
-      </div>
-
       <div class="players-info">
         <i class="pi pi-users"></i>
-        <span>{{ campaign.playersCount }}/{{ campaign.maxPlayers }}</span>
+        <span>{{ campaign.participantsCount }}/{{ campaign.maxPlayers }} participantes</span>
       </div>
     </div>
 
@@ -48,7 +45,7 @@
         Ver Detalhes
       </button>
 
-      @if (campaign.userRole === UserRole.MASTER) {
+      @if (campaign.myRole === 'creator' || campaign.myRole === 'gameMaster') {
       <button
         class="action-btn edit-btn outlined"
         (click)="onEditClick($event)"

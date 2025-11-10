@@ -4,6 +4,7 @@ import { ListCharacterPage } from '@features/character/pages/list-character/list
 import { CreateCharacterPage } from '@features/character/pages/create-character/create-character.page'
 import { ListCampaignPage } from '@features/campaign/pages/list-campaign/list-campaign.page'
 import { ViewCampaignPage } from '@features/campaign/pages/view-campaign/view-campaign.page'
+import { CreateCampaignPage } from '@features/campaign/pages/create-campaign/create-campaign.page'
 import { FriendsListPage } from '@features/friends/pages/friends-list/friends-list.page'
 import { FriendSearchPage } from '@features/friends/pages/friend-search/friend-search.page'
 import { FriendRequestsPage } from '@features/friends/pages/friend-requests/friend-requests.page'
@@ -15,6 +16,11 @@ export const routes: Routes = [
   {
     path: 'campanhas',
     component: ListCampaignPage,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'campanhas/criar',
+    component: CreateCampaignPage,
     canActivate: [authGuard],
   },
   {

@@ -1,10 +1,9 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import {
-  Campaign,
+  CampaignListItem,
   CampaignStatus,
-  UserRole,
-} from '../../interfaces/campaign.model'
+} from '../../interfaces/campaign.interface'
 
 @Component({
   selector: 'aso-campaign-card',
@@ -14,13 +13,12 @@ import {
   styleUrl: './campaign-card.component.scss',
 })
 export class CampaignCardComponent {
-  @Input({ required: true }) campaign!: Campaign
-  @Output() view = new EventEmitter<Campaign>()
-  @Output() edit = new EventEmitter<Campaign>()
-  @Output() join = new EventEmitter<Campaign>()
+  @Input({ required: true }) campaign!: CampaignListItem
+  @Output() view = new EventEmitter<CampaignListItem>()
+  @Output() edit = new EventEmitter<CampaignListItem>()
+  @Output() join = new EventEmitter<CampaignListItem>()
 
   readonly CampaignStatus = CampaignStatus
-  readonly UserRole = UserRole
 
   onViewCampaign(): void {
     this.view.emit(this.campaign)
@@ -38,35 +36,60 @@ export class CampaignCardComponent {
 
   getStatusText(): string {
     switch (this.campaign.status) {
-      case CampaignStatus.ACTIVE:
+      case CampaignStatus.Planning:
+        return 'Planejamento'
+      case CampaignStatus.Active:
         return 'Ativa'
-      case CampaignStatus.PAUSED:
+      case CampaignStatus.OnHold:
         return 'Pausada'
-      case CampaignStatus.FINISHED:
+      case CampaignStatus.Completed:
         return 'Finalizada'
+      case CampaignStatus.Cancelled:
+        return 'Cancelada'
       default:
         return 'Desconhecido'
     }
   }
 
   getRoleText(): string {
-    return this.campaign.userRole === UserRole.MASTER ? 'Mestre' : 'Jogador'
+    switch (this.campaign.myRole) {
+      case 'creator':
+        return 'Criador'
+      case 'gameMaster':
+        return 'Mestre'
+      case 'player':
+        return 'Jogador'
+      default:
+        return 'Desconhecido'
+    }
   }
 
   getStatusColor(): string {
     switch (this.campaign.status) {
-      case CampaignStatus.ACTIVE:
+      case CampaignStatus.Planning:
+        return 'planning'
+      case CampaignStatus.Active:
         return 'active'
-      case CampaignStatus.PAUSED:
+      case CampaignStatus.OnHold:
         return 'paused'
-      case CampaignStatus.FINISHED:
+      case CampaignStatus.Completed:
         return 'finished'
+      case CampaignStatus.Cancelled:
+        return 'cancelled'
       default:
         return 'finished'
     }
   }
 
   getRoleBadgeColor(): string {
-    return this.campaign.userRole === UserRole.MASTER ? 'master' : 'player'
+    switch (this.campaign.myRole) {
+      case 'creator':
+      case 'gameMaster':
+        return 'master'
+      case 'player':
+        return 'player'
+      default:
+        return 'player'
+    }
   }
 }

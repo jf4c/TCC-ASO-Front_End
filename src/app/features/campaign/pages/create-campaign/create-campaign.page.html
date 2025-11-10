@@ -1,0 +1,331 @@
+<section class="create-campaign-page">
+  <p-toast />
+
+  <div class="create-campaign-page__header">
+    <button 
+      pButton 
+      icon="pi pi-arrow-left" 
+      class="p-button-text p-button-lg"
+      (click)="onCancel()"
+      label="Voltar"
+    ></button>
+    <h1>Criar Nova Campanha</h1>
+  </div>
+
+  <!-- Steps -->
+  <div class="steps-container">
+    <p-steps 
+      [model]="steps" 
+      [activeIndex]="activeStep"
+      [readonly]="true"
+    ></p-steps>
+  </div>
+
+  <form [formGroup]="campaignForm" class="create-campaign-page__form">
+    
+    <!-- STEP 1: Informações Básicas -->
+    @if (activeStep === 0) {
+      <div class="form-section">
+        <h2>Informações Básicas</h2>
+
+        <div class="form-field">
+          <label for="name">
+            Nome da Campanha <span class="required">*</span>
+          </label>
+          <input 
+            pInputText 
+            id="name" 
+            formControlName="name"
+            placeholder="Ex: A Maldição do Lich"
+          />
+          @if (campaignForm.get('name')?.invalid && campaignForm.get('name')?.touched) {
+            @if (campaignForm.get('name')?.errors?.['required']) {
+              <small class="error">Nome é obrigatório</small>
+            }
+            @if (campaignForm.get('name')?.errors?.['minlength']) {
+              <small class="error">Nome deve ter no mínimo 3 caracteres</small>
+            }
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="description">Descrição</label>
+          <textarea 
+            pInputTextarea 
+            id="description" 
+            formControlName="description"
+            placeholder="Descreva sua campanha..."
+            [rows]="5"
+          ></textarea>
+          <small class="help">Opcional - Máximo 1000 caracteres</small>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="maxPlayers">Máximo de Jogadores</label>
+            <p-dropdown 
+              id="maxPlayers"
+              formControlName="maxPlayers"
+              [options]="maxPlayersOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Selecione"
+            ></p-dropdown>
+          </div>
+
+          <div class="form-field checkbox-field">
+            <p-checkbox 
+              formControlName="isPublic" 
+              [binary]="true"
+              inputId="isPublic"
+            ></p-checkbox>
+            <label for="isPublic">Campanha Pública</label>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- STEP 2: Adicionar Jogadores -->
+    @if (activeStep === 1) {
+      <div class="form-section">
+        <h2>Adicionar Jogadores</h2>
+        <p class="section-description">
+          Selecione os amigos que participarão da sua campanha
+        </p>
+
+        @if (selectedPlayers.length > 0) {
+          <div class="selected-players">
+            <h3>Jogadores Selecionados ({{ selectedPlayers.length }})</h3>
+            <div class="selected-players-list">
+              @for (player of selectedPlayers; track player.friendshipId) {
+                <div class="selected-player-card">
+                  <div class="player-info">
+                    <i class="pi pi-user"></i>
+                    <div>
+                      <strong>{{ player.friend.nickName }}</strong>
+                      <small>{{ player.friend.firstName }} {{ player.friend.lastName }}</small>
+                    </div>
+                  </div>
+                  <button 
+                    pButton 
+                    icon="pi pi-times" 
+                    class="p-button-text p-button-danger p-button-sm"
+                    (click)="removePlayer(player)"
+                  ></button>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (friends.length === 0) {
+          <div class="empty-state">
+            <i class="pi pi-users" style="font-size: 3rem;"></i>
+            <p>Você ainda não tem amigos adicionados</p>
+            <button 
+              pButton 
+              label="Adicionar Amigos" 
+              icon="pi pi-user-plus"
+              (click)="onCancel()"
+            ></button>
+          </div>
+        } @else {
+          <div class="friends-list">
+            <h3>Seus Amigos</h3>
+            <div class="friends-grid">
+              @for (friend of friends; track friend.friendshipId) {
+                <div 
+                  class="friend-card"
+                  [class.selected]="isPlayerSelected(friend)"
+                  (click)="togglePlayer(friend)"
+                >
+                  <div class="friend-info">
+                    <i class="pi pi-user"></i>
+                    <div>
+                      <strong>{{ friend.friend.nickName }}</strong>
+                      <small>{{ friend.friend.firstName }} {{ friend.friend.lastName }}</small>
+                    </div>
+                  </div>
+                  @if (isPlayerSelected(friend)) {
+                    <i class="pi pi-check-circle selected-icon"></i>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- STEP 3: Atribuir Personagens -->
+    @if (activeStep === 2) {
+      <div class="form-section">
+        <h2>Atribuir Personagens</h2>
+        <p class="section-description">
+          Selecione o personagem que cada jogador usará na campanha
+        </p>
+
+        @if (selectedPlayers.length === 0) {
+          <div class="empty-state">
+            <i class="pi pi-info-circle" style="font-size: 3rem;"></i>
+            <p>Nenhum jogador selecionado</p>
+          </div>
+        } @else {
+          <div class="character-assignment-list">
+            @for (player of selectedPlayers; track player.friendshipId) {
+              <div class="player-character-card">
+                <div class="player-header">
+                  <div class="player-info">
+                    <i class="pi pi-user"></i>
+                    <div>
+                      <strong>{{ player.friend.nickName }}</strong>
+                      <small>{{ player.friend.firstName }} {{ player.friend.lastName }}</small>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="character-selection">
+                  @if (getPlayerCharacters(player.friend.id).length === 0) {
+                    <div class="no-characters">
+                      <i class="pi pi-exclamation-triangle"></i>
+                      <p>Este jogador não possui personagens</p>
+                    </div>
+                  } @else {
+                    <label>Selecione um personagem:</label>
+                    <div class="characters-grid">
+                      @for (character of getPlayerCharacters(player.friend.id); track character.id) {
+                        <div 
+                          class="character-card"
+                          [class.selected]="getSelectedCharacterId(player.friend.id) === character.id"
+                          [class.disabled]="character.isInCampaign"
+                          (click)="!character.isInCampaign && selectCharacter(player.friend.id, character.id)"
+                        >
+                          <div class="character-info">
+                            <h4>{{ character.name }}</h4>
+                            <div class="character-details">
+                              <span class="race">{{ character.race }}</span>
+                              <span class="class">{{ character.class }}</span>
+                              <span class="level">Nv. {{ character.level }}</span>
+                            </div>
+                            @if (character.isInCampaign) {
+                              <small class="in-campaign">Já em outra campanha</small>
+                            }
+                          </div>
+                          @if (getSelectedCharacterId(player.friend.id) === character.id) {
+                            <i class="pi pi-check-circle selected-icon"></i>
+                          }
+                        </div>
+                      }
+                    </div>
+
+                    @if (!getSelectedCharacterId(player.friend.id)) {
+                      <small class="optional-note">Opcional - Personagem pode ser atribuído depois</small>
+                    }
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- STEP 4: Revisar -->
+    @if (activeStep === 3) {
+      <div class="form-section">
+        <h2>Revisar Informações</h2>
+        <p class="section-description">
+          Confirme os dados da sua campanha antes de criar
+        </p>
+
+        <div class="review-section">
+          <h3>Informações da Campanha</h3>
+          <div class="review-item">
+            <strong>Nome:</strong>
+            <span>{{ campaignForm.get('name')?.value }}</span>
+          </div>
+          @if (campaignForm.get('description')?.value) {
+            <div class="review-item">
+              <strong>Descrição:</strong>
+              <span>{{ campaignForm.get('description')?.value }}</span>
+            </div>
+          }
+          <div class="review-item">
+            <strong>Máximo de Jogadores:</strong>
+            <span>{{ campaignForm.get('maxPlayers')?.value }}</span>
+          </div>
+          <div class="review-item">
+            <strong>Visibilidade:</strong>
+            <span>{{ campaignForm.get('isPublic')?.value ? 'Pública' : 'Privada' }}</span>
+          </div>
+        </div>
+
+        @if (selectedPlayers.length > 0) {
+          <div class="review-section">
+            <h3>Jogadores e Personagens ({{ selectedPlayers.length }})</h3>
+            <div class="review-players">
+              @for (player of selectedPlayers; track player.friendshipId) {
+                <div class="review-player-character">
+                  <div class="player-info">
+                    <i class="pi pi-user"></i>
+                    <span>{{ player.friend.nickName }}</span>
+                  </div>
+                  @if (getSelectedCharacter(player.friend.id); as character) {
+                    <div class="character-info">
+                      <i class="pi pi-shield"></i>
+                      <span>{{ character.name }} ({{ character.class }} Nv.{{ character.level }})</span>
+                    </div>
+                  } @else {
+                    <div class="no-character">
+                      <i class="pi pi-minus-circle"></i>
+                      <span>Sem personagem</span>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Actions -->
+    <div class="create-campaign-page__actions">
+      @if (activeStep > 0) {
+        <button 
+          pButton 
+          type="button"
+          label="Voltar" 
+          icon="pi pi-arrow-left"
+          class="p-button-outlined"
+          (click)="prevStep()"
+          [disabled]="loading"
+        ></button>
+      }
+
+      <div class="spacer"></div>
+
+      @if (activeStep < steps.length - 1) {
+        <button 
+          pButton 
+          type="button"
+          label="Próximo" 
+          icon="pi pi-arrow-right"
+          iconPos="right"
+          (click)="nextStep()"
+          [disabled]="loading"
+        ></button>
+      } @else {
+        <button 
+          pButton 
+          type="button"
+          label="Criar Campanha" 
+          icon="pi pi-check"
+          [loading]="loading"
+          (click)="onSubmit()"
+          [disabled]="campaignForm.invalid"
+        ></button>
+      }
+    </div>
+  </form>
+</section>
