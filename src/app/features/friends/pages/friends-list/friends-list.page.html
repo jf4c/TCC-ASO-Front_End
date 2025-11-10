@@ -1,0 +1,110 @@
+<div class="friends-list-page">
+  <p-toast />
+  <p-confirmDialog />
+
+  <!-- Header -->
+  <div class="friends-list-page__header">
+    <div class="friends-list-page__title-section">
+      <h1>Meus Amigos</h1>
+      <p class="friends-list-page__subtitle">Gerencie seus amigos e convites de amizade</p>
+    </div>
+    <div class="friends-list-page__header-actions">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-search"
+        label="Buscar Amigos"
+        severity="primary"
+        (click)="goToSearch()"
+      ></button>
+    </div>
+  </div>
+
+  <!-- Alert de convites pendentes -->
+  <div *ngIf="pendingCount > 0" class="friends-list-page__pending-alert">
+    <i class="pi pi-inbox"></i>
+    <div class="friends-list-page__pending-content">
+      <span class="friends-list-page__pending-text">
+        Você tem {{ pendingCount }} {{ pendingCount === 1 ? 'convite pendente' : 'convites pendentes' }}
+      </span>
+      <p class="friends-list-page__pending-description">
+        Aceite ou recuse solicitações de amizade
+      </p>
+    </div>
+    <button
+      pButton
+      type="button"
+      icon="pi pi-envelope"
+      label="Ver Convites"
+      severity="info"
+      [outlined]="true"
+      (click)="goToRequests()"
+    ></button>
+  </div>
+
+  <!-- Busca local -->
+  <div class="friends-list-page__search" *ngIf="friends.length > 0">
+    <div class="search-input-wrapper">
+      <i class="pi pi-search search-input-wrapper__icon"></i>
+      <input
+        class="search-input-wrapper__input"
+        type="text"
+        placeholder="Digite o nickname do jogador..."
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange()"
+      />
+    </div>
+  </div>
+
+  <!-- Conteúdo -->
+  <div class="friends-list-page__content">
+    <!-- Loading state -->
+    <div *ngIf="loading" class="friends-list-page__loading">
+      <i class="pi pi-spin pi-spinner" style="font-size: 3rem;"></i>
+      <h3>Carregando amigos...</h3>
+    </div>
+
+    <!-- Empty state - sem amigos -->
+    <div *ngIf="!loading && friends.length === 0" class="friends-list-page__empty">
+      <div class="friends-list-page__empty-icon">
+        <i class="pi pi-users"></i>
+      </div>
+      <h3>Você ainda não tem amigos</h3>
+      <p>Comece a adicionar amigos para jogar juntos!</p>
+      <button
+        pButton
+        type="button"
+        icon="pi pi-user-plus"
+        label="Buscar Amigos"
+        severity="primary"
+        size="large"
+        (click)="goToSearch()"
+      ></button>
+    </div>
+
+    <!-- Empty state - busca sem resultados -->
+    <div *ngIf="!loading && friends.length > 0 && filteredFriends.length === 0" class="friends-list-page__empty">
+      <div class="friends-list-page__empty-icon">
+        <i class="pi pi-search"></i>
+      </div>
+      <h3>Nenhum amigo encontrado</h3>
+      <p>Tente outro termo de busca</p>
+    </div>
+
+    <!-- Lista de amigos -->
+    <div *ngIf="!loading && filteredFriends.length > 0" class="friends-list-page__list">
+      <div class="friends-list-page__count">
+        <i class="pi pi-users"></i>
+        <h2>{{ filteredFriends.length }} {{ filteredFriends.length === 1 ? 'amigo' : 'amigos' }}</h2>
+      </div>
+
+      <div class="friends-list-page__grid">
+        <aso-friend-card
+          *ngFor="let friend of filteredFriends"
+          [friend]="friend"
+          (remove)="onRemoveFriend($event)"
+        ></aso-friend-card>
+      </div>
+    </div>
+  </div>
+</div>

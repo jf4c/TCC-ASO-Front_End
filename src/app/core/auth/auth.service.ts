@@ -2,12 +2,15 @@ import { Injectable, inject } from '@angular/core'
 import { KeycloakService } from 'keycloak-angular'
 import { KeycloakProfile } from 'keycloak-js'
 import { from, Observable } from 'rxjs'
+import { UserService } from '../../shared/services/user.service'
+import { switchMap, tap } from 'rxjs/operators'
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private keycloakService = inject(KeycloakService)
+  private userService = inject(UserService)
 
   /**
    * Verifica se o usuário está autenticado
@@ -27,6 +30,7 @@ export class AuthService {
    * Realiza o logout
    */
   logout(): void {
+    this.userService.clearUser()
     this.keycloakService.logout(window.location.origin)
   }
 
@@ -60,9 +64,15 @@ export class AuthService {
 
   /**
    * Obtém o nome do usuário autenticado
+   * Retorna string vazia se não estiver disponível
    */
   getUsername(): string {
-    return this.keycloakService.getUsername()
+    try {
+      return this.keycloakService.getUsername()
+    } catch (error) {
+      console.warn('Username não disponível:', error)
+      return ''
+    }
   }
 
   /**
@@ -70,5 +80,16 @@ export class AuthService {
    */
   updateToken(): Observable<boolean> {
     return from(this.keycloakService.updateToken())
+  }
+
+  /**
+   * Sincroniza usuário com o backend após login
+   * Deve ser chamado após autenticação bem-sucedida
+   */
+  syncUserWithBackend(): Observable<any> {
+    return from(this.getToken()).pipe(
+      switchMap(token => this.userService.syncUser(token)),
+      tap(user => console.log('Usuário sincronizado:', user))
+    )
   }
 }

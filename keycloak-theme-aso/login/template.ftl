@@ -65,7 +65,7 @@
     </script>
 </head>
 
-<body class="${properties.kcBodyClass!}">
+<body class="${properties.kcBodyClass!} <#if bodyClass??>${bodyClass}</#if>">
     <div class="login-pf-page">
         <!-- Logo no topo -->
         <div class="logo-container">

@@ -1,0 +1,63 @@
+<div class="friend-search-page">
+  <p-toast />
+
+  <div class="friend-search-page__header">
+    <button
+      pButton
+      type="button"
+      icon="pi pi-arrow-left"
+      [outlined]="true"
+      (click)="goBack()"
+    ></button>
+    <h1>Buscar Amigos</h1>
+  </div>
+
+  <div class="friend-search-page__search">
+    <div class="search-input-wrapper">
+      <i class="pi pi-search search-input-wrapper__icon"></i>
+      <input 
+        class="search-input-wrapper__input"
+        type="text"
+        placeholder="Digite o nickname do jogador..."
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange()"
+        autofocus
+      />
+    </div>
+  </div>
+
+  <div class="friend-search-page__content">
+    <!-- Loading state -->
+    <div *ngIf="loading" class="friend-search-page__loading">
+      <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
+      <p>Buscando jogadores...</p>
+    </div>
+
+    <!-- Initial state -->
+    <div *ngIf="!loading && searchTerm === '' && results.length === 0" class="friend-search-page__empty">
+      <i class="pi pi-search" style="font-size: 4rem; opacity: 0.3;"></i>
+      <h3>Buscar Jogadores</h3>
+      <p>Digite um nickname para encontrar jogadores</p>
+    </div>
+
+    <!-- No results state -->
+    <div *ngIf="!loading && searchTerm !== '' && results.length === 0" class="friend-search-page__empty">
+      <i class="pi pi-user-minus" style="font-size: 4rem; opacity: 0.3;"></i>
+      <h3>Nenhum jogador encontrado</h3>
+      <p>Tente outro termo de busca</p>
+    </div>
+
+    <!-- Results -->
+    <div *ngIf="!loading && results.length > 0" class="friend-search-page__results">
+      <h2>{{ results.length }} {{ results.length === 1 ? 'resultado encontrado' : 'resultados encontrados' }}</h2>
+      <div class="friend-search-page__grid">
+        <aso-player-search-result
+          *ngFor="let player of results"
+          [player]="player"
+          [loading]="loadingPlayerId === player.id"
+          (addFriend)="onAddFriend($event)"
+        ></aso-player-search-result>
+      </div>
+    </div>
+  </div>
+</div>

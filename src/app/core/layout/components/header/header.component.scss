@@ -128,14 +128,32 @@
       gap: 0.75rem;
       position: relative;
 
-      .username {
-        color: var(--text-primary);
-        font-weight: 600;
-        font-size: 1.05rem;
-        white-space: nowrap;
-        max-width: 140px;
-        overflow: hidden;
-        text-overflow: ellipsis;
+      .user-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+        align-items: flex-end;
+
+        .username {
+          color: var(--text-primary);
+          font-weight: 600;
+          font-size: 1.05rem;
+          white-space: nowrap;
+          max-width: 140px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .player-name {
+          color: var(--text-secondary);
+          font-weight: 400;
+          font-size: 0.85rem;
+          white-space: nowrap;
+          max-width: 140px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          opacity: 0.85;
+        }
       }
     }
 
@@ -176,6 +194,7 @@
         cursor: pointer;
         text-align: left;
         transition: all 0.15s ease;
+        position: relative;
 
         &:hover {
           background: var(--accent-tertiary);
@@ -195,6 +214,14 @@
             color: #ff4757;
           }
         }
+
+        &--with-badge {
+          justify-content: space-between;
+        }
+      }
+
+      &__badge {
+        margin-left: auto;
       }
 
       &__icon {
@@ -273,7 +300,9 @@
     .logo .logo-title { display: none; }
 
     .user-section {
-      .username { display: none; }
+      .user-info {
+        display: none;
+      }
 
       .user-menu {
         right: auto;

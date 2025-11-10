@@ -1,23 +1,31 @@
 import { Component, OnInit, inject, HostListener } from '@angular/core'
-import { RouterModule } from '@angular/router'
+import { Router, RouterModule } from '@angular/router'
 import { CommonModule } from '@angular/common'
 import { ButtonModule } from 'primeng/button'
+import { BadgeModule } from 'primeng/badge'
 import { AuthService } from '@core/auth/auth.service'
+import { UserService } from '@shared/services/user.service'
+import { FriendshipService } from '@features/friends/services/friendship.service'
 import { AvatarComponent } from '@shared/components/avatar/avatar.component'
 
 @Component({
   selector: 'aso-header',
   standalone: true,
-  imports: [RouterModule, CommonModule, ButtonModule, AvatarComponent],
+  imports: [RouterModule, CommonModule, ButtonModule, BadgeModule, AvatarComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent implements OnInit {
   private authService = inject(AuthService)
+  private userService = inject(UserService)
+  private friendshipService = inject(FriendshipService)
+  private router = inject(Router)
 
   isLoggedIn = false
   username = ''
+  playerName = ''
   userPhotoUrl: string | null = null
+  pendingRequestsCount = 0
   
   // Menu states
   isUserMenuOpen = false
@@ -27,10 +35,34 @@ export class HeaderComponent implements OnInit {
     this.isLoggedIn = this.authService.isLoggedIn()
 
     if (this.isLoggedIn) {
-      this.username = this.authService.getUsername()
-      // TODO: Buscar foto do perfil quando disponível
-      // const profile = await this.authService.getUserProfile().toPromise()
-      // this.userPhotoUrl = profile?.attributes?.photoUrl?.[0] || null
+      // Busca dados do player do backend
+      this.userService.currentUser$.subscribe(user => {
+        if (user) {
+          console.log('👤 Dados completos do user:', user)
+          
+          // Backend retorna: Email, NickName, FirstName, LastName (PascalCase)
+          this.username = user.nickName || 'Usuário'
+          this.playerName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Player'
+          
+          console.log('✅ Valores finais - username:', this.username, '| playerName:', this.playerName)
+        }
+      })
+
+      // Se não tiver em cache, tenta pegar do localStorage
+      const cachedUser = this.userService.getCurrentUser()
+      if (cachedUser) {
+        console.log('💾 User do localStorage:', cachedUser)
+        this.username = cachedUser.nickName || 'Usuário'
+        this.playerName = `${cachedUser.firstName || ''} ${cachedUser.lastName || ''}`.trim() || 'Player'
+      }
+
+      // Subscrever aos contadores de amizade
+      this.friendshipService.counts$.subscribe(counts => {
+        this.pendingRequestsCount = counts.pendingReceived
+      })
+
+      // Carregar contadores inicialmente
+      this.friendshipService.getCounts().subscribe()
     }
   }
 
@@ -65,6 +97,14 @@ export class HeaderComponent implements OnInit {
 
   onLogout() {
     this.authService.logout()
+  }
+
+  goToProfile() {
+    this.router.navigate(['/perfil'])
+  }
+
+  goToFriends() {
+    this.router.navigate(['/amigos'])
   }
 
   toggleTheme() {

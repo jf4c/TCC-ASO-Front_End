@@ -21,8 +21,7 @@ body,
 html {
   background: linear-gradient(135deg, #121212 0%, #1e1e1e 70%) !important;
   min-height: 100vh !important;
-  max-height: 100vh !important;
-  overflow: hidden !important;
+  overflow-x: hidden !important;
   margin: 0 !important;
   padding: 0 !important;
 }
@@ -37,10 +36,9 @@ html {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   min-height: 100vh;
-  max-height: 100vh;
-  padding: 1rem;
+  padding: 2rem 1rem;
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
@@ -50,19 +48,25 @@ html {
 .logo-container {
   text-align: center;
   filter: drop-shadow(0 4px 8px rgba(212, 175, 55, 0.3));
-  position: absolute;
-  top: 7rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
   margin-bottom: 0;
+  position: relative;
+  z-index: 10;
 }
 
 .logo-image {
-  max-width: 450px;
+  max-width: 470px;
   height: auto;
   display: block;
   margin: 0 auto;
+}
+
+/* Ocultar logo na página de registro (tem muitos campos) */
+body.login-pf.register .logo-container,
+body[class*="register"] .logo-container {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  overflow: hidden !important;
 }
 
 /* Título da página */
@@ -89,17 +93,35 @@ html {
   padding: 0 !important;
   border-radius: 0 !important;
   width: 100% !important;
-  max-width: 550px !important;
-  min-height: 600px !important;
+  max-width: 480px !important;
+  min-height: 530px !important;
   margin: 0 auto !important;
   position: relative;
   overflow: visible;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  padding-bottom: 2rem !important;
-  /* Remover qualquer cor de fundo que possa criar áreas brancas */
   background-color: transparent !important;
+}
+
+/* Ajuste para página de registro */
+body.login-pf.register .card-pf,
+#kc-register-form:not(.not-register) ~ * .card-pf,
+.card-pf:has(#kc-register-form) {
+  min-height: 650px !important;
+  max-width: 650px !important;
+  margin-top: 1rem !important;
+}
+
+/* Também tentar pelo container pai */
+#kc-content:has(#kc-register-form) .card-pf {
+  min-height: 650px !important;
+  max-width: 650px !important;
+  margin-top: 1rem !important;
+}
+
+body.login-pf.register .login-pf-page {
+  padding: 1rem;
 }
 
 /* Container de conteúdo DENTRO do pergaminho */
@@ -107,6 +129,18 @@ html {
   width: 75% !important;
   max-width: 420px !important;
   padding: 2rem 1.5rem !important;
+  margin: 0 auto !important;
+  position: relative;
+  z-index: 1;
+}
+
+/* Container de conteúdo maior para registro - FORÇAR */
+#kc-register-form ~ * .pergaminho-content,
+form#kc-register-form .pergaminho-content,
+body.login-pf.register .pergaminho-content {
+  width: 100% !important;
+  max-width: 520px !important;
+  padding: 0rem 0rem !important;
   margin: 0 auto !important;
   position: relative;
   z-index: 1;
@@ -342,7 +376,121 @@ input:-webkit-autofill:focus {
 
 /* Espaçamento dos campos */
 .form-group {
-  margin-bottom: 0.8rem !important;
+  margin-bottom: 0rem !important;
+}
+
+/* Espaçamento menor para formulário de registro */
+body.login-pf.register .form-group,
+#kc-register-form .form-group {
+  margin-bottom: 0rem !important;
+}
+
+body.login-pf.register .pf-c-form-control,
+body.login-pf.register input[type="text"],
+body.login-pf.register input[type="password"],
+body.login-pf.register input[type="email"],
+#kc-register-form .pf-c-form-control,
+#kc-register-form input[type="text"],
+#kc-register-form input[type="password"],
+#kc-register-form input[type="email"] {
+  padding: 0.5rem 0.8rem !important;
+  min-height: 36px !important;
+  font-size: 0.9rem !important;
+  margin-bottom: 0rem !important;
+}
+
+body.login-pf.register #kc-page-title {
+  font-size: 1.2rem !important;
+  margin-bottom: 0.6rem !important;
+}
+
+body.login-pf.register .pf-c-form__label-text,
+#kc-register-form .pf-c-form__label-text {
+  font-size: 0.7rem !important;
+  margin-bottom: 0.3rem !important;
+}
+
+body.login-pf.register .pf-c-button.pf-m-primary,
+body.login-pf.register button[type="submit"],
+body.login-pf.register input[type="submit"],
+#kc-register-form .pf-c-button.pf-m-primary,
+#kc-register-form button[type="submit"],
+#kc-register-form input[type="submit"] {
+  padding: 0.7rem 1.5rem !important;
+  min-height: 42px !important;
+  font-size: 0.95rem !important;
+  margin-top: 0rem !important;
+  margin-bottom: 0rem !important;
+}
+
+/* Layout de duas colunas para registro */
+body.login-pf.register .register-fields-grid,
+#kc-register-form .register-fields-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 0.5rem 1rem !important;
+  width: 100% !important;
+}
+
+/* Nome e Sobrenome lado a lado */
+body.login-pf.register .register-field-firstName,
+body.login-pf.register .register-field-lastName,
+#kc-register-form .register-field-firstName,
+#kc-register-form .register-field-lastName {
+  grid-column: span 1 !important;
+}
+
+/* Email ocupa linha inteira */
+body.login-pf.register .register-field-email,
+#kc-register-form .register-field-email {
+  grid-column: span 2 !important;
+}
+
+/* Username ocupa linha inteira */
+body.login-pf.register .register-field-username,
+#kc-register-form .register-field-username {
+  grid-column: span 2 !important;
+}
+
+/* Senha e Confirmar senha lado a lado */
+body.login-pf.register .register-field-password,
+body.login-pf.register .register-field-passwordConfirm,
+#kc-register-form .register-field-password,
+#kc-register-form .register-field-passwordConfirm {
+  grid-column: span 1 !important;
+}
+
+/* Botões e links ocupam linha inteira */
+body.login-pf.register .register-field-buttons,
+#kc-register-form .register-field-buttons {
+  grid-column: span 2 !important;
+  margin-top: 0.5rem !important;
+}
+
+/* Responsivo - voltar para coluna única em mobile */
+@media (max-width: 767px) {
+  body.login-pf.register .register-fields-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  body.login-pf.register .register-field-firstName,
+  body.login-pf.register .register-field-lastName,
+  body.login-pf.register .register-field-email,
+  body.login-pf.register .register-field-username,
+  body.login-pf.register .register-field-password,
+  body.login-pf.register .register-field-passwordConfirm,
+  body.login-pf.register .register-field-buttons {
+    grid-column: span 1 !important;
+  }
+  
+  body.login-pf.register .card-pf {
+    max-width: 100% !important;
+  }
+  
+  body.login-pf.register .pergaminho-content {
+    width: 80% !important;
+    max-width: 100% !important;
+  }
 }
 
 /* Form actions */
@@ -354,30 +502,31 @@ input:-webkit-autofill:focus {
 /* Responsivo */
 @media (max-width: 767px) {
   .login-pf-page {
-    padding: 0.5rem;
+    padding: 1rem 0.5rem;
   }
 
   .logo-image {
-    max-width: 200px;
+    max-width: 220px;
   }
 
   .card-pf {
     max-width: 100%;
-    min-height: 550px !important;
+    min-height: 600px !important;
   }
 
   .pergaminho-content {
-    width: 75% !important;
+    width: 80% !important;
     padding: 1.5rem 1rem !important;
   }
 
   #kc-page-title {
-    font-size: 1.3rem !important;
+    font-size: 1.2rem !important;
   }
 
   .pf-c-form-control,
   input[type="text"],
-  input[type="password"] {
+  input[type="password"],
+  input[type="email"] {
     font-size: 0.9rem !important;
     min-height: 40px !important;
     padding: 0.65rem 0.85rem !important;

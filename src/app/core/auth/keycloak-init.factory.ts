@@ -1,12 +1,17 @@
 import { KeycloakService } from 'keycloak-angular'
 import { environment } from '../../../environments/environment'
+import { AuthService } from './auth.service'
+import { firstValueFrom } from 'rxjs'
 
 /**
  * Função para inicializar o Keycloak antes do bootstrap do Angular
  */
-export function initializeKeycloak(keycloak: KeycloakService): () => Promise<boolean> {
-  return () =>
-    keycloak.init({
+export function initializeKeycloak(
+  keycloak: KeycloakService,
+  authService: AuthService
+): () => Promise<boolean> {
+  return async () => {
+    const authenticated = await keycloak.init({
       config: {
         url: environment.keycloak.url,
         realm: environment.keycloak.realm,
@@ -19,4 +24,19 @@ export function initializeKeycloak(keycloak: KeycloakService): () => Promise<boo
       // Atualiza o token quando faltar 30 segundos para expirar
       bearerExcludedUrls: ['/assets', '/public'],
     })
+
+    // Se autenticado, sincroniza usuário com backend
+    if (authenticated) {
+      try {
+        console.log('🔄 Keycloak autenticado, sincronizando usuário...')
+        await firstValueFrom(authService.syncUserWithBackend())
+        console.log('✅ Usuário sincronizado após inicialização do Keycloak')
+      } catch (error) {
+        console.error('❌ Erro ao sincronizar usuário:', error)
+        // Não bloqueia a inicialização
+      }
+    }
+
+    return authenticated
+  }
 }

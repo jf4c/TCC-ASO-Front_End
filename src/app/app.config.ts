@@ -17,6 +17,7 @@ import { routes } from './app.routes'
 import { ASO } from './theme/theme.config'
 import { initializeKeycloak } from './core/auth/keycloak-init.factory'
 import { authInterceptor } from './core/auth/auth.interceptor'
+import { AuthService } from './core/auth/auth.service'
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -38,7 +39,7 @@ export const appConfig: ApplicationConfig = {
       provide: APP_INITIALIZER,
       useFactory: initializeKeycloak,
       multi: true,
-      deps: [KeycloakService],
+      deps: [KeycloakService, AuthService],
     },
   ],
 }

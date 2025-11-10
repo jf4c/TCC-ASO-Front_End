@@ -1,0 +1,51 @@
+<div class="friend-request-card" *ngIf="player">
+  <div class="friend-request-card__header">
+    <aso-avatar 
+      [fallback]="player.nickName.charAt(0).toUpperCase()"
+      [alt]="player.nickName"
+      size="md"
+    ></aso-avatar>
+    
+    <div class="friend-request-card__info">
+      <h3 class="friend-request-card__nickname">{{ player.nickName }}</h3>
+      <p class="friend-request-card__name">{{ getFullName() }}</p>
+      <p class="friend-request-card__time">{{ getTimeAgo() }}</p>
+    </div>
+  </div>
+
+  <div class="friend-request-card__actions">
+    <!-- Botões para convites recebidos -->
+    <ng-container *ngIf="type === 'received'">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-check"
+        label="Aceitar"
+        severity="success"
+        (click)="onAccept()"
+      ></button>
+      <button
+        pButton
+        type="button"
+        icon="pi pi-times"
+        label="Recusar"
+        severity="danger"
+        [outlined]="true"
+        (click)="onReject()"
+      ></button>
+    </ng-container>
+
+    <!-- Botão para convites enviados -->
+    <ng-container *ngIf="type === 'sent'">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-times"
+        label="Cancelar"
+        severity="secondary"
+        [outlined]="true"
+        (click)="onCancel()"
+      ></button>
+    </ng-container>
+  </div>
+</div>

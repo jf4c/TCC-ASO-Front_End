@@ -47,13 +47,16 @@
   <div class="user-section">
     <!-- Usuário Logado -->
     <div *ngIf="isLoggedIn" class="user-wrapper">
-      <span class="username">{{ username }}</span>
+      <div class="user-info">
+        <span class="username">{{ username }}</span>
+        <span class="player-name" *ngIf="playerName">{{ playerName }}</span>
+      </div>
       
       <aso-avatar 
         [src]="userPhotoUrl"
         [alt]="username"
         size="sm"
-        fallback="U"
+        [fallback]="username ? username.charAt(0).toUpperCase() : 'U'"
         (avatarClick)="toggleUserMenu()"
         [attr.aria-expanded]="isUserMenuOpen"
         [attr.aria-haspopup]="true"
@@ -66,6 +69,31 @@
         role="menu"
         [attr.aria-hidden]="!isUserMenuOpen"
       >
+        <button 
+          type="button" 
+          class="user-menu__item"
+          role="menuitem"
+          (click)="goToProfile(); closeAllMenus()"
+        >
+          <span class="user-menu__icon pi pi-user"></span>
+          Perfil
+        </button>
+
+        <hr class="user-menu__divider" />
+
+        <button 
+          type="button" 
+          class="user-menu__item"
+          role="menuitem"
+          (click)="goToFriends(); closeAllMenus()"
+        >
+          <span class="user-menu__icon pi pi-users"></span>
+          Meus Amigos
+          <span *ngIf="pendingRequestsCount > 0" class="user-menu__badge" pBadge [value]="pendingRequestsCount.toString()" severity="danger"></span>
+        </button>
+
+        <hr class="user-menu__divider" />
+
         <button 
           type="button" 
           class="user-menu__item"

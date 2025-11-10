@@ -1,0 +1,31 @@
+<div class="friend-card">
+  <div class="friend-card__header">
+    <aso-avatar 
+      [fallback]="friend.friend.nickName.charAt(0).toUpperCase()"
+      [alt]="friend.friend.nickName"
+      size="md"
+    ></aso-avatar>
+    
+    <div class="friend-card__info">
+      <h3 class="friend-card__nickname">{{ friend.friend.nickName }}</h3>
+      <p class="friend-card__name">{{ getFullName() }}</p>
+      <p class="friend-card__since">
+        Amigos desde {{ getFriendsSinceText() }}
+      </p>
+    </div>
+  </div>
+
+  <div class="friend-card__actions">
+    <button
+      *ngIf="showRemoveButton"
+      pButton
+      type="button"
+      icon="pi pi-trash"
+      label="Remover"
+      severity="danger"
+      [outlined]="true"
+      (click)="onRemove()"
+      class="friend-card__remove-btn"
+    ></button>
+  </div>
+</div>

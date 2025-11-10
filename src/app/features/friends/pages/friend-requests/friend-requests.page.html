@@ -1,0 +1,73 @@
+<div class="friend-requests-page">
+  <p-toast />
+
+  <div class="friend-requests-page__header">
+    <button
+      pButton
+      type="button"
+      icon="pi pi-arrow-left"
+      [outlined]="true"
+      (click)="goBack()"
+    ></button>
+    <h1>Convites de Amizade</h1>
+  </div>
+
+  <p-tabView>
+    <!-- Tab Recebidos -->
+    <p-tabPanel [header]="'Recebidos (' + receivedRequests.length + ')'">
+      <div class="friend-requests-page__content">
+        <!-- Loading state -->
+        <div *ngIf="loading" class="friend-requests-page__loading">
+          <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
+          <p>Carregando convites...</p>
+        </div>
+
+        <!-- Empty state -->
+        <div *ngIf="!loading && receivedRequests.length === 0" class="friend-requests-page__empty">
+          <i class="pi pi-inbox" style="font-size: 4rem; opacity: 0.3;"></i>
+          <h3>Nenhum convite recebido</h3>
+          <p>Você não tem convites pendentes no momento</p>
+        </div>
+
+        <!-- Lista -->
+        <div *ngIf="!loading && receivedRequests.length > 0" class="friend-requests-page__grid">
+          <aso-friend-request-card
+            *ngFor="let request of receivedRequests"
+            [request]="request"
+            type="received"
+            (accept)="onAccept($event)"
+            (reject)="onReject($event)"
+          ></aso-friend-request-card>
+        </div>
+      </div>
+    </p-tabPanel>
+
+    <!-- Tab Enviados -->
+    <p-tabPanel [header]="'Enviados (' + sentRequests.length + ')'">
+      <div class="friend-requests-page__content">
+        <!-- Loading state -->
+        <div *ngIf="loading" class="friend-requests-page__loading">
+          <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
+          <p>Carregando convites...</p>
+        </div>
+
+        <!-- Empty state -->
+        <div *ngIf="!loading && sentRequests.length === 0" class="friend-requests-page__empty">
+          <i class="pi pi-send" style="font-size: 4rem; opacity: 0.3;"></i>
+          <h3>Nenhum convite enviado</h3>
+          <p>Você não enviou nenhum convite pendente</p>
+        </div>
+
+        <!-- Lista -->
+        <div *ngIf="!loading && sentRequests.length > 0" class="friend-requests-page__grid">
+          <aso-friend-request-card
+            *ngFor="let request of sentRequests"
+            [request]="request"
+            type="sent"
+            (cancel)="onCancel($event)"
+          ></aso-friend-request-card>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
