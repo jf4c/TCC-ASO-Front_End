@@ -35,13 +35,15 @@
     </div>
   </div>
 
-  <div class="character-actions">
-    <aso-button [label]="'Ver Detalhes'" (eventClick)="onView()" />
-    <aso-button
-      [label]="'Editar'"
-      severity="secondary"
-      (eventClick)="onEdit()"
-    />
-    <!-- <aso-button icon="pi pi-trash" severity="danger" /> -->
-  </div>
+  @if (!hideActions) {
+    <div class="character-actions">
+      <aso-button [label]="'Ver Detalhes'" (eventClick)="onView()" />
+      <aso-button
+        [label]="'Editar'"
+        severity="secondary"
+        (eventClick)="onEdit()"
+      />
+      <!-- <aso-button icon="pi pi-trash" severity="danger" /> -->
+    </div>
+  }
 </div>

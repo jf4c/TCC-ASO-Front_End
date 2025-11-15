@@ -1,9 +1,13 @@
 :host {
-  border: 1px solid var(--accent-primary);
+  display: block;
+}
+
+.character-card {
+  border: 2px solid var(--accent-primary);
   border-radius: 10px;
-  margin: 1rem;
   background-color: var(--bg-secondary);
   box-shadow: var(--shadow-quinary);
+  transition: all 0.3s ease;
 }
 
 .tooltip {
@@ -97,6 +101,8 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    background-color: var(--bg-primary);
+    background-image: url('/assets/Character/unknown.png');
     border-radius: 0.5rem;
     box-shadow: var(--shadow-quinary);
   }

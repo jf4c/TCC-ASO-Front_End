@@ -195,24 +195,19 @@
                     <div class="characters-grid">
                       @for (character of getPlayerCharacters(player.friend.id); track character.id) {
                         <div 
-                          class="character-card"
+                          class="character-card-wrapper"
                           [class.selected]="getSelectedCharacterId(player.friend.id) === character.id"
                           [class.disabled]="character.isInCampaign"
                           (click)="!character.isInCampaign && selectCharacter(player.friend.id, character.id)"
                         >
-                          <div class="character-info">
-                            <h4>{{ character.name }}</h4>
-                            <div class="character-details">
-                              <span class="race">{{ character.race }}</span>
-                              <span class="class">{{ character.class }}</span>
-                              <span class="level">Nv. {{ character.level }}</span>
+                          <aso-character-card 
+                            [character]="toCharacterCard(character)"
+                            [hideActions]="true"
+                          />
+                          @if (character.isInCampaign) {
+                            <div class="overlay-disabled">
+                              <span class="in-campaign-badge">Já em outra campanha</span>
                             </div>
-                            @if (character.isInCampaign) {
-                              <small class="in-campaign">Já em outra campanha</small>
-                            }
-                          </div>
-                          @if (getSelectedCharacterId(player.friend.id) === character.id) {
-                            <i class="pi pi-check-circle selected-icon"></i>
                           }
                         </div>
                       }

@@ -43,6 +43,7 @@ export interface CreateCharacterRequest {
 }
 
 export interface GetPaginatedCharacterRequest {
+  playerId?: string
   name?: string
   ancestryId?: string
   classId?: string

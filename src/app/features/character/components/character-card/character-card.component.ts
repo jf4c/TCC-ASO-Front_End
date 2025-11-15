@@ -13,6 +13,7 @@ import { ButtonModule } from 'primeng/button'
 })
 export class CharacterCardComponent {
   @Input() character!: Character
+  @Input() hideActions: boolean = false  // ✨ Novo: controla exibição dos botões
 
   @Output() edit = new EventEmitter<void>()
   @Output() view = new EventEmitter<void>()

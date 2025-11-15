@@ -331,84 +331,96 @@
 
     .characters-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem 1rem;
+      max-height: 500px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 2rem 0.5rem 1rem 0;
+      margin-top: 1rem;
+      
+      // Estilizar scrollbar
+      &::-webkit-scrollbar {
+        width: 8px;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: var(--bg-primary);
+        border-radius: 4px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: var(--accent-secondary);
+        border-radius: 4px;
+        
+        &:hover {
+          background: var(--accent-primary);
+        }
+      }
     }
 
-    .character-card {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.25rem;
-      background: var(--bg-secondary);
-      border-radius: 8px;
-      border: 2px solid transparent;
+    .character-card-wrapper {
+      position: relative;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
+      border-radius: 12px;
+      overflow: visible;
+      padding: 0.5rem;
+
+      ::ng-deep aso-character-card {
+        .character-card {
+          border: 2px solid #555555;
+          transition: all 0.3s ease;
+        }
+      }
 
       &:hover:not(.disabled) {
-        border-color: var(--accent-primary);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transform: translateY(-4px);
+
+        ::ng-deep aso-character-card .character-card {
+          border-color: #888888;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
       }
 
       &.selected {
-        border-color: var(--accent-primary);
-        background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--accent-primary-dark) 100%);
-
-        .selected-icon {
-          color: var(--accent-primary);
-          font-size: 1.5rem;
+        ::ng-deep aso-character-card .character-card {
+          border: 3px solid #ffd700 !important;
+          box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.3) !important;
         }
       }
 
       &.disabled {
-        opacity: 0.5;
         cursor: not-allowed;
-        
-        .in-campaign {
-          color: var(--warning-color);
-          font-size: 0.75rem;
-          font-weight: 600;
+        opacity: 0.6;
+
+        ::ng-deep aso-character-card .character-card {
+          filter: grayscale(0.5);
         }
       }
 
-      .character-info {
-        flex: 1;
+      // Overlay para personagem já em campanha
+      .overlay-disabled {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        backdrop-filter: blur(2px);
 
-        h4 {
-          margin: 0 0 0.5rem 0;
-          color: var(--text-primary);
-          font-size: 1.125rem;
-        }
-
-        .character-details {
-          display: flex;
-          gap: 0.75rem;
-          flex-wrap: wrap;
-
-          span {
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-
-            &.race {
-              background: var(--accent-primary);
-              color: white;
-            }
-
-            &.class {
-              background: var(--accent-secondary);
-              color: var(--text-primary);
-            }
-
-            &.level {
-              background: var(--bg-primary);
-              color: var(--text-primary);
-              border: 1px solid var(--accent-secondary);
-            }
-          }
+        .in-campaign-badge {
+          background: var(--warning-color);
+          color: white;
+          padding: 0.5rem 1rem;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 0.875rem;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
       }
     }

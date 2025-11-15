@@ -29,6 +29,25 @@ export class CharacterService {
     })
   }
 
+  /**
+   * Busca personagens de um jogador específico.
+   * Útil para seleção de personagens em campanhas.
+   * @param playerId ID do jogador
+   * @param page Número da página (padrão: 1)
+   * @param pageSize Tamanho da página (padrão: 10)
+   */
+  getCharactersByPlayer(
+    playerId: string,
+    page: number = 1,
+    pageSize: number = 10,
+  ): Observable<GetPaginatedCharacterResponse> {
+    return this.getPaginatedCharacter({
+      playerId,
+      page,
+      pageSize,
+    })
+  }
+
   private filterUndefinedParams(
     obj: Record<string, unknown>,
   ): Record<string, string | number | boolean> {

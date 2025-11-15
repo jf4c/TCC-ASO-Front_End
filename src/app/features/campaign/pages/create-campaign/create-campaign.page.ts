@@ -13,9 +13,12 @@ import { CardModule } from 'primeng/card';
 import { MessageService, MenuItem } from 'primeng/api';
 import { CampaignService } from '../../services/campaign.service';
 import { FriendshipService } from '../../../friends/services/friendship.service';
+import { CharacterService } from '../../../character/services/character.service';
 import { CreateCampaignRequest } from '../../interfaces/campaign.interface';
 import { AvailableFriend, AvailableCharacter } from '../../interfaces/campaign-participant.interface';
 import { Friend } from '../../../friends/interfaces/friend.interface';
+import { CharacterCardComponent } from '../../../character/components/character-card/character-card.component';
+import { Character } from '../../../character/interface/character.model';
 
 @Component({
   selector: 'aso-create-campaign',
@@ -30,7 +33,8 @@ import { Friend } from '../../../friends/interfaces/friend.interface';
     CheckboxModule,
     ToastModule,
     StepsModule,
-    CardModule
+    CardModule,
+    CharacterCardComponent
   ],
   providers: [MessageService],
   templateUrl: './create-campaign.page.html',
@@ -41,6 +45,7 @@ export class CreateCampaignPage implements OnInit {
   private router = inject(Router);
   private campaignService = inject(CampaignService);
   private friendshipService = inject(FriendshipService);
+  private characterService = inject(CharacterService);
   private messageService = inject(MessageService);
 
   // Wizard Steps
@@ -131,37 +136,43 @@ export class CreateCampaignPage implements OnInit {
   // Load characters for selected players
   async loadPlayersCharacters(): Promise<void> {
     this.loading = true;
+    this.playerCharacters.clear();
     
-    // Criar campanha temporariamente para poder usar o endpoint de characters
-    // Ou carregar characters de cada player diretamente
-    // Por ora, vou simular com dados mockados
-    // TODO: Implementar endpoint para buscar characters do player
-    
-    for (const player of this.selectedPlayers) {
-      // Mock de personagens - substituir por chamada real ao backend
-      const mockCharacters: AvailableCharacter[] = [
-        {
-          id: `char1-${player.friend.id}`,
-          name: `Guerreiro de ${player.friend.nickName}`,
-          race: 'Humano',
-          class: 'Guerreiro',
-          level: 5,
-          isInCampaign: false
-        },
-        {
-          id: `char2-${player.friend.id}`,
-          name: `Mago de ${player.friend.nickName}`,
-          race: 'Elfo',
-          class: 'Mago',
-          level: 4,
-          isInCampaign: false
-        }
-      ];
+    try {
+      // Carregar personagens de cada jogador selecionado
+      const loadPromises = this.selectedPlayers.map(player => {
+        return this.characterService
+          .getCharactersByPlayer(player.friend.id, 1, 50) // Carregar até 50 personagens
+          .toPromise()
+          .then(response => {
+            if (response) {
+              // Mapear os personagens para o formato esperado
+              const characters: AvailableCharacter[] = response.results.map(char => ({
+                id: char.id,
+                name: char.name,
+                race: char.ancestry,
+                class: char.class,
+                level: char.level,
+                image: char.image,
+                health: char.health,
+                mana: char.mana,
+                isInCampaign: false // TODO: Verificar se já está em campanha
+              }));
+              
+              this.playerCharacters.set(player.friend.id, characters);
+            }
+          })
+          .catch(error => {
+            console.error(`Erro ao carregar personagens do jogador ${player.friend.nickName}:`, error);
+            // Em caso de erro, define lista vazia
+            this.playerCharacters.set(player.friend.id, []);
+          });
+      });
       
-      this.playerCharacters.set(player.friend.id, mockCharacters);
+      await Promise.all(loadPromises);
+    } finally {
+      this.loading = false;
     }
-    
-    this.loading = false;
   }
 
   // Character Selection
@@ -181,6 +192,22 @@ export class CreateCampaignPage implements OnInit {
     const characterId = this.selectedCharacters.get(playerId);
     const characters = this.playerCharacters.get(playerId) || [];
     return characters.find(c => c.id === characterId);
+  }
+
+  /**
+   * Converte AvailableCharacter para Character (formato do card)
+   */
+  toCharacterCard(char: AvailableCharacter): Character {
+    return {
+      id: char.id,
+      name: char.name,
+      class: char.class,
+      ancestry: char.race,
+      level: char.level,
+      health: char.health || 100,
+      mana: char.mana || 50,
+      image: char.image || '/assets/Character/unknown.png'
+    };
   }
 
   // Player Selection

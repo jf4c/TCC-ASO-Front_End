@@ -146,6 +146,7 @@ export class ListCharacterPage implements OnInit, OnDestroy {
     const request = {
       page: this.currentPage + 1,
       pageSize: this.pageSize,
+      // playerId não é passado aqui - o backend usa o JWT automaticamente
       name: formValues.name || undefined,
       ancestryName: formValues.ancestry?.name || undefined,
       className: formValues.class?.name || undefined,

@@ -52,4 +52,7 @@ export interface AvailableCharacter {
   class: string;
   level: number;
   isInCampaign: boolean;
+  image?: string | null;
+  health?: number;
+  mana?: number;
 }
