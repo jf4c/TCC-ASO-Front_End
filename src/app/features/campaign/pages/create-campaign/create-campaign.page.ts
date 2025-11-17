@@ -14,6 +14,7 @@ import { MessageService, MenuItem } from 'primeng/api';
 import { CampaignService } from '../../services/campaign.service';
 import { FriendshipService } from '../../../friends/services/friendship.service';
 import { CharacterService } from '../../../character/services/character.service';
+import { AuthService } from '../../../../core/auth/auth.service';
 import { CreateCampaignRequest } from '../../interfaces/campaign.interface';
 import { AvailableFriend, AvailableCharacter } from '../../interfaces/campaign-participant.interface';
 import { Friend } from '../../../friends/interfaces/friend.interface';
@@ -47,6 +48,7 @@ export class CreateCampaignPage implements OnInit {
   private friendshipService = inject(FriendshipService);
   private characterService = inject(CharacterService);
   private messageService = inject(MessageService);
+  private authService = inject(AuthService);
 
   // Wizard Steps
   activeStep = 0;
@@ -67,6 +69,14 @@ export class CreateCampaignPage implements OnInit {
   playerCharacters: Map<string, AvailableCharacter[]> = new Map(); // playerId -> characters
   selectedCharacters: Map<string, string> = new Map(); // playerId -> characterId
   createdCampaignId: string | null = null;
+  creatorName: string = '';
+  creatorNickname: string = '';
+  
+  // IA Story Generation
+  isGeneratingStory = false;
+  generatedStory = '';
+  storyAccepted = false;
+  storyErrorMessage = '';
 
   maxPlayersOptions = [
     { label: '2 jogadores', value: 2 },
@@ -83,6 +93,20 @@ export class CreateCampaignPage implements OnInit {
   ngOnInit(): void {
     this.initForm();
     this.loadFriends();
+    this.loadCreatorInfo();
+  }
+
+  private loadCreatorInfo(): void {
+    this.authService.getUserProfile().subscribe({
+      next: (profile) => {
+        this.creatorName = `${profile.firstName || ''} ${profile.lastName || ''}`.trim();
+        this.creatorNickname = profile.username || 'Você';
+      },
+      error: (err) => {
+        console.error('Erro ao carregar perfil do criador:', err);
+        this.creatorNickname = 'Você';
+      }
+    });
   }
 
   initForm(): void {
@@ -142,29 +166,41 @@ export class CreateCampaignPage implements OnInit {
       // Carregar personagens de cada jogador selecionado
       const loadPromises = this.selectedPlayers.map(player => {
         return this.characterService
-          .getCharactersByPlayer(player.friend.id, 1, 50) // Carregar até 50 personagens
+          .getCharactersByPlayer(player.friend.id)
           .toPromise()
           .then(response => {
+            // Backend pode retornar array direto ou objeto com results
+            let charactersData: any[] = [];
+            
             if (response) {
+              if (Array.isArray(response)) {
+                charactersData = response;
+              } else if (response.results && Array.isArray(response.results)) {
+                charactersData = response.results;
+              }
+            }
+            
+            if (charactersData.length > 0) {
               // Mapear os personagens para o formato esperado
-              const characters: AvailableCharacter[] = response.results.map(char => ({
+              const characters: AvailableCharacter[] = charactersData.map(char => ({
                 id: char.id,
                 name: char.name,
-                race: char.ancestry,
+                race: char.ancestry || char.race,
                 class: char.class,
                 level: char.level,
                 image: char.image,
                 health: char.health,
                 mana: char.mana,
-                isInCampaign: false // TODO: Verificar se já está em campanha
+                isInCampaign: false
               }));
               
               this.playerCharacters.set(player.friend.id, characters);
+            } else {
+              this.playerCharacters.set(player.friend.id, []);
             }
           })
           .catch(error => {
             console.error(`Erro ao carregar personagens do jogador ${player.friend.nickName}:`, error);
-            // Em caso de erro, define lista vazia
             this.playerCharacters.set(player.friend.id, []);
           });
       });
@@ -248,29 +284,30 @@ export class CreateCampaignPage implements OnInit {
 
     this.loading = true;
 
+    // Monta o array de participantes para o payload
+    const participants = this.selectedPlayers.map(player => ({
+      playerId: player.friend.id,
+      characterId: this.selectedCharacters.get(player.friend.id) || ''
+    }));
+
     const request: CreateCampaignRequest = {
       name: this.campaignForm.get('name')?.value,
       description: this.campaignForm.get('description')?.value || undefined,
       maxPlayers: this.campaignForm.get('maxPlayers')?.value,
-      isPublic: this.campaignForm.get('isPublic')?.value
+      isPublic: this.campaignForm.get('isPublic')?.value,
+      participants,
+      storyIntroduction: this.storyAccepted && this.generatedStory ? this.generatedStory : undefined
     };
 
     this.campaignService.createCampaign(request).subscribe({
       next: async (campaign) => {
         this.createdCampaignId = campaign.id;
-        
         this.messageService.add({
           severity: 'success',
           summary: 'Sucesso',
           detail: 'Campanha criada com sucesso!'
         });
-
-        // Adicionar jogadores se houver
-        if (this.selectedPlayers.length > 0) {
-          await this.addParticipants(campaign.id);
-        } else {
-          this.navigateToDetail(campaign.id);
-        }
+        this.navigateToDetail(campaign.id);
       },
       error: (error: any) => {
         this.loading = false;
@@ -321,5 +358,81 @@ export class CreateCampaignPage implements OnInit {
 
   onCancel(): void {
     this.router.navigate(['/campanhas']);
+  }
+
+  // IA Story Generation (with selected characters)
+  async onGenerateCampaignStory(): Promise<void> {
+    const characterIds = this.selectedPlayers
+      .map(player => this.selectedCharacters.get(player.friend.id))
+      .filter(id => !!id) as string[];
+
+    if (characterIds.length === 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Atenção',
+        detail: 'Selecione pelo menos um personagem para gerar a história'
+      });
+      return;
+    }
+
+    const campaignName = this.campaignForm.get('name')?.value;
+    const campaignDescription = this.campaignForm.get('description')?.value;
+
+    this.isGeneratingStory = true;
+    this.storyErrorMessage = '';
+
+    try {
+      const response = await this.campaignService.generateCampaignStory({
+        characterIds,
+        campaignName,
+        campaignDescription
+      }).toPromise();
+
+      if (response?.story) {
+        this.generatedStory = response.story;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'História da campanha gerada com IA!'
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao gerar história:', error);
+      this.storyErrorMessage = 'Erro ao gerar história. Tente novamente.';
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Não foi possível gerar a história da campanha'
+      });
+    } finally {
+      this.isGeneratingStory = false;
+    }
+  }
+
+  onAcceptStory(): void {
+    this.storyAccepted = true;
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: 'História aceita!'
+    });
+  }
+
+  onDiscardStory(): void {
+    this.generatedStory = '';
+    this.storyAccepted = false;
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Descartado',
+      detail: 'História descartada'
+    });
+  }
+
+  hasSelectedCharacters(): boolean {
+    return this.selectedCharacters.size > 0;
+  }
+
+  isGenerateStoryDisabled(): boolean {
+    return !this.hasSelectedCharacters() || this.isGeneratingStory;
   }
 }

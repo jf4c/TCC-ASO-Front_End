@@ -1,0 +1,203 @@
+<div class="view-world-container">
+  @if (isLoading()) {
+  <!-- Loading State -->
+  <div class="loading-container">
+    <i class="pi pi-spin pi-spinner loading-icon"></i>
+    <p>Carregando mundo...</p>
+  </div>
+  } @else if (world()) {
+  <!-- World Content -->
+  <div class="world-content">
+    <!-- Header with Actions -->
+    <div class="world-header">
+      <button
+        pButton
+        icon="pi pi-arrow-left"
+        class="p-button-text back-button"
+        (click)="onBack()"
+        label="Voltar"
+      ></button>
+
+      <div class="header-actions">
+        <button
+          pButton
+          icon="pi pi-pencil"
+          label="Editar"
+          class="p-button-outlined edit-button"
+          (click)="onEditWorld()"
+        ></button>
+        <button
+          pButton
+          icon="pi pi-trash"
+          label="Deletar"
+          class="p-button-outlined p-button-danger delete-button"
+          (click)="onDeleteWorld()"
+        ></button>
+      </div>
+    </div>
+
+    <!-- World Banner -->
+    <div class="world-banner">
+      @if (world()!.imageUrl) {
+      <img
+        [src]="world()!.imageUrl"
+        [alt]="world()!.name"
+        class="banner-image"
+      />
+      } @else {
+      <div class="banner-placeholder">
+        <i class="pi pi-globe"></i>
+      </div>
+      }
+      <div class="banner-overlay">
+        <h1 class="world-name">{{ world()!.name }}</h1>
+        <p class="world-description">{{ world()!.description }}</p>
+      </div>
+      <!-- Botão para trocar imagem -->
+      <button
+        pButton
+        [icon]="world()!.imageUrl ? 'pi pi-image' : 'pi pi-plus'"
+        [label]="world()!.imageUrl ? 'Trocar Imagem' : 'Adicionar Imagem'"
+        class="change-image-button"
+        (click)="onChangeImage()"
+      ></button>
+    </div>
+
+    <!-- World Details Accordion -->
+    <div class="world-details">
+      <p-accordion [multiple]="true" styleClass="world-accordion">
+        <!-- Lore Section -->
+        <p-accordionTab>
+          <ng-template pTemplate="header">
+            <span class="accordion-header">
+              <i class="pi pi-book"></i>
+              <span>LORE</span>
+              <span class="entry-count">({{ world()!.lore.length }})</span>
+            </span>
+          </ng-template>
+          <div class="accordion-content">
+            @if (world()!.lore.length > 0) {
+            <div class="lore-entries">
+              @for (entry of world()!.lore; track entry.id) {
+              <div class="lore-entry">
+                <h4 class="entry-title">{{ entry.title }}</h4>
+                <p class="entry-content">{{ entry.content }}</p>
+              </div>
+              }
+            </div>
+            } @else {
+            <div class="empty-content">
+              <p>Nenhuma informação de lore disponível ainda.</p>
+            </div>
+            }
+          </div>
+        </p-accordionTab>
+
+        <!-- Locations Section -->
+        <p-accordionTab>
+          <ng-template pTemplate="header">
+            <span class="accordion-header">
+              <i class="pi pi-map-marker"></i>
+              <span>LOCAIS PRINCIPAIS</span>
+              <span class="entry-count">({{ world()!.locations.length }})</span>
+            </span>
+          </ng-template>
+          <div class="accordion-content">
+            @if (world()!.locations.length > 0) {
+            <div class="location-entries">
+              @for (location of world()!.locations; track location.id) {
+              <div class="location-entry">
+                <h4 class="entry-title">{{ location.title }}</h4>
+                <p class="entry-content">{{ location.description }}</p>
+              </div>
+              }
+            </div>
+            } @else {
+            <div class="empty-content">
+              <p>Nenhum local principal definido ainda.</p>
+            </div>
+            }
+          </div>
+        </p-accordionTab>
+
+        <!-- Pantheon Section -->
+        <p-accordionTab>
+          <ng-template pTemplate="header">
+            <span class="accordion-header">
+              <i class="pi pi-sun"></i>
+              <span>PANTEÃO</span>
+              <span class="entry-count">({{ world()!.pantheon.length }})</span>
+            </span>
+          </ng-template>
+          <div class="accordion-content">
+            @if (world()!.pantheon.length > 0) {
+            <div class="pantheon-entries">
+              @for (deity of world()!.pantheon; track deity.id) {
+              <div class="deity-entry">
+                <h4 class="entry-title">{{ deity.name }}</h4>
+                <p class="deity-title">{{ deity.title }}</p>
+                <p class="entry-content">{{ deity.description }}</p>
+                @if (deity.domains && deity.domains.length > 0) {
+                <div class="deity-domains">
+                  <span class="domains-label">Domínios:</span>
+                  <span class="domains-list">{{ deity.domains.join(', ') }}</span>
+                </div>
+                }
+              </div>
+              }
+            </div>
+            } @else {
+            <div class="empty-content">
+              <p>Nenhuma divindade do panteão definida ainda.</p>
+            </div>
+            }
+          </div>
+        </p-accordionTab>
+      </p-accordion>
+    </div>
+  </div>
+  } @else {
+  <!-- Error State -->
+  <div class="error-container">
+    <i class="pi pi-exclamation-circle error-icon"></i>
+    <h3>Mundo não encontrado</h3>
+    <p>Não foi possível carregar as informações deste mundo.</p>
+    <button
+      pButton
+      label="Voltar para Mundos"
+      icon="pi pi-arrow-left"
+      (click)="onBack()"
+    ></button>
+  </div>
+  }
+
+  <!-- Dialog de Upload de Imagem -->
+  <p-dialog
+    [header]="world()?.imageUrl ? 'Trocar Imagem do Mundo' : 'Adicionar Imagem do Mundo'"
+    [(visible)]="showImageDialog"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [closable]="!isUpdatingImage()"
+    [closeOnEscape]="!isUpdatingImage()"
+  >
+    <aso-image-upload
+      uploadType="world"
+      label="Imagem do Mundo"
+      aspectRatio="16:9"
+      [currentImageUrl]="world()?.imageUrl"
+      (imageUploaded)="onImageUploaded($event)"
+      (imageRemoved)="onImageRemoved()"
+    ></aso-image-upload>
+
+    <ng-template pTemplate="footer">
+      <button
+        pButton
+        label="Fechar"
+        icon="pi pi-times"
+        class="p-button-text"
+        (click)="onCloseImageDialog()"
+        [disabled]="isUpdatingImage()"
+      ></button>
+    </ng-template>
+  </p-dialog>
+</div>

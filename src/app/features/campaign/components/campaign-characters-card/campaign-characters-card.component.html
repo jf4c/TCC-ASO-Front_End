@@ -5,19 +5,20 @@
     <span class="header-title">PERSONAGENS</span>
   </div>
   <div class="characters-avatars">
-    @for (player of players(); track player.id) { @for (character of
-    player.characters; track character.id) {
-    <div
-      class="character-avatar-item"
-      (click)="onCharacterClick(character)"
-      [title]="character.name"
-    >
-      <img
-        [src]="character.image || 'assets/Character/unknown.png'"
-        [alt]="character.name"
-        class="character-avatar"
-      />
-    </div>
-    } }
+    @for (player of players(); track player.id) {
+      @if (player.character) {
+        <div
+          class="character-avatar-item"
+          (click)="onCharacterClick(player.character)"
+          [title]="player.character.name"
+        >
+          <img
+            [src]="player.character.image || 'assets/Character/unknown.png'"
+            [alt]="player.character.name"
+            class="character-avatar"
+          />
+        </div>
+      }
+    }
   </div>
 </div>

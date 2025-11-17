@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { InputText } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
@@ -19,7 +18,6 @@ import { PlayerSearchResult } from '../../interfaces/player-search.interface';
     RouterModule,
     FormsModule,
     ButtonModule,
-    InputText,
     ToastModule,
     PlayerSearchResultComponent
   ],

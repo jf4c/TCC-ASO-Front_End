@@ -1,5 +1,6 @@
 export interface Campaign {
   id: string
+  name: string
   title: string
   description: string
   image?: string
@@ -8,6 +9,8 @@ export interface Campaign {
   playersCount: number
   maxPlayers: number
   userRole: UserRole
+  worldId?: string
+  worldName?: string
   createdAt: Date
   lastActivity: Date
 }

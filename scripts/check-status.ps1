@@ -38,7 +38,7 @@ Write-Host "[3/8] PostgreSQL Database..." -ForegroundColor Yellow
 try {
     $pgTest = docker exec aso-postgres pg_isready -U aso_user 2>$null
     if ($LASTEXITCODE -eq 0) {
-        Write-Host "  ✓ PostgreSQL respondendo (porta 5432)" -ForegroundColor Green
+        Write-Host "  ✓ PostgreSQL respondendo (porta 5433)" -ForegroundColor Green
     } else {
         Write-Host "  ✗ PostgreSQL não está respondendo" -ForegroundColor Red
         $allOk = $false

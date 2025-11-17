@@ -5,7 +5,6 @@
     <h2 class="section-title">O MUNDO DA CAMPANHA</h2>
   </div>
 
-  @if (world()) {
   <div class="world-content">
     <p-accordion [multiple]="true" styleClass="world-accordion">
       <!-- Accordion LORE -->
@@ -17,9 +16,9 @@
           </span>
         </ng-template>
         <div class="accordion-content">
-          @if (world()!.lore.length > 0) {
+          @if (displayWorld().lore.length > 0) {
           <div class="lore-entries">
-            @for (entry of world()!.lore; track entry.id) {
+            @for (entry of displayWorld().lore; track entry.id) {
             <div class="lore-entry">
               <h4 class="entry-title">{{ entry.title }}</h4>
               <p class="entry-content">{{ entry.content }}</p>
@@ -43,9 +42,9 @@
           </span>
         </ng-template>
         <div class="accordion-content">
-          @if (world()!.locations.length > 0) {
+          @if (displayWorld().locations.length > 0) {
           <div class="location-entries">
-            @for (location of world()!.locations; track location.id) {
+            @for (location of displayWorld().locations; track location.id) {
             <div class="location-entry">
               <h4 class="entry-title">{{ location.title }}</h4>
               <p class="entry-content">{{ location.description }}</p>
@@ -69,9 +68,9 @@
           </span>
         </ng-template>
         <div class="accordion-content">
-          @if (world()!.pantheon.length > 0) {
+          @if (displayWorld().pantheon.length > 0) {
           <div class="pantheon-entries">
-            @for (deity of world()!.pantheon; track deity.id) {
+            @for (deity of displayWorld().pantheon; track deity.id) {
             <div class="deity-entry">
               <h4 class="entry-title">{{ deity.name }}</h4>
               <p class="deity-title">{{ deity.title }}</p>
@@ -94,10 +93,4 @@
       </p-accordionTab>
     </p-accordion>
   </div>
-  } @else {
-  <div class="no-world-content">
-    <i class="pi pi-info-circle"></i>
-    <p>As informações do mundo da campanha ainda não foram configuradas.</p>
-  </div>
-  }
 </div>

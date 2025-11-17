@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
-import { InputText } from 'primeng/inputtext';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -19,7 +18,6 @@ import { Friend } from '../../interfaces/friend.interface';
     RouterModule,
     FormsModule,
     ButtonModule,
-    InputText,
     ConfirmDialogModule,
     ToastModule,
     FriendCardComponent

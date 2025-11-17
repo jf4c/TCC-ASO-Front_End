@@ -173,6 +173,62 @@
       }
     }
 
+    .game-master-card {
+      background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(212, 175, 55, 0.15) 100%);
+      border: 2px solid var(--accent-primary);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+
+      .gm-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: var(--accent-primary);
+        color: var(--bg-primary);
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        width: fit-content;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+        i {
+          font-size: 1.2rem;
+        }
+      }
+
+      .gm-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        i {
+          font-size: 2rem;
+          color: var(--accent-primary);
+          background: var(--bg-primary);
+          padding: 0.75rem;
+          border-radius: 50%;
+        }
+
+        strong {
+          display: block;
+          color: var(--text-primary);
+          font-size: 1.2rem;
+        }
+
+        small {
+          display: block;
+          color: var(--text-secondary);
+          font-size: 0.95rem;
+        }
+      }
+    }
+
     .friends-list {
       h3 {
         margin: 0 0 1rem 0;
@@ -531,6 +587,99 @@
         }
       }
     }
+  }
+
+  // IA Story Generation Styles (Review Step)
+  .story-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--border-color);
+
+    .story-help {
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+      font-style: italic;
+    }
+
+    .generated-story-container {
+      background: var(--bg-primary);
+      border: 2px solid var(--accent-primary);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 1rem;
+      animation: slideIn 0.3s ease;
+
+      @keyframes slideIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .generated-story-content {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+
+        i {
+          color: var(--accent-primary);
+          font-size: 1.5rem;
+          flex-shrink: 0;
+          margin-top: 0.25rem;
+        }
+
+        p {
+          margin: 0;
+          color: var(--text-white);
+          line-height: 1.8;
+          flex: 1;
+          white-space: pre-wrap;
+          max-height: 400px;
+          overflow-y: auto;
+        }
+      }
+
+      .generated-story-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+      }
+    }
+
+    .accepted-story {
+      background: var(--bg-primary);
+      border: 2px solid var(--success);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 1rem;
+      position: relative;
+
+      i {
+        color: var(--success);
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        margin: 0 0 1rem 0;
+        color: var(--text-white);
+        line-height: 1.8;
+        white-space: pre-wrap;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      button {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+      }
+    }
+  }
+
+  // Remove old description generation styles
+  .generated-description-container,
+  .description-actions,
+  .accepted-description {
+    display: none;
   }
 
   &__actions {

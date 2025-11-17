@@ -5,7 +5,9 @@ export interface CampaignDetail extends Campaign {
   sessions: CampaignSession[]
   settings: CampaignSettings
   statistics: CampaignStatistics
-  world?: CampaignWorld
+  worldId?: string
+  worldName?: string
+  storyIntroduction?: string
 }
 
 export interface CampaignParticipant {
@@ -16,7 +18,7 @@ export interface CampaignParticipant {
   role: UserRole
   joinedAt: Date
   status: ParticipantStatus
-  characters: CharacterInCampaign[]
+  character?: CharacterInCampaign
 }
 
 export interface CharacterInCampaign {
@@ -52,35 +54,6 @@ export interface CampaignStatistics {
   totalPlaytime: number
   averageSessionLength: number
   lastSessionDate?: Date
-}
-
-export interface CampaignWorld {
-  lore: LoreEntry[]
-  locations: LocationEntry[]
-  pantheon: PantheonEntry[]
-}
-
-export interface LoreEntry {
-  id: string
-  title: string
-  content: string
-  order: number
-}
-
-export interface LocationEntry {
-  id: string
-  title: string
-  description: string
-  order: number
-}
-
-export interface PantheonEntry {
-  id: string
-  name: string
-  title: string
-  description: string
-  domains?: string[]
-  order: number
 }
 
 export enum ParticipantStatus {

@@ -7,7 +7,9 @@ import {
   CampaignListItem,
   CampaignStatus,
   CreateCampaignRequest,
-  UpdateCampaignRequest
+  UpdateCampaignRequest,
+  GenerateCampaignStoryRequest,
+  GenerateCampaignStoryResponse
 } from '../interfaces/campaign.interface';
 import {
   CampaignParticipant,
@@ -16,7 +18,7 @@ import {
   AvailableFriend,
   AvailableCharacter
 } from '../interfaces/campaign-participant.interface';
-import { CampaignDetail } from '../interfaces/campaign-detail.interface';
+import { CampaignDetail } from '../interfaces/campaign-detail.model';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +26,7 @@ import { CampaignDetail } from '../interfaces/campaign-detail.interface';
 export class CampaignService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/Campaign`;
+  private readonly oracleApiUrl = environment.oracleApiUrl;
 
   private campaignsSubject = new BehaviorSubject<CampaignListItem[]>([]);
   public campaigns$ = this.campaignsSubject.asObservable();
@@ -80,7 +83,7 @@ export class CampaignService {
   }
 
   addParticipant(campaignId: string, data: AddParticipantRequest): Observable<CampaignParticipant> {
-    return this.http.post<CampaignParticipant>(`${this.apiUrl}/${campaignId}/participants`, data).pipe(
+    return this.http.post<CampaignParticipant>(`${this.apiUrl}/${campaignId}/Participant`, data).pipe(
       tap(() => this.refreshCurrentCampaign(campaignId)),
       catchError((error) => throwError(() => error))
     );
@@ -107,5 +110,37 @@ export class CampaignService {
   clearAll(): void {
     this.campaignsSubject.next([]);
     this.currentCampaignSubject.next(null);
+  }
+
+  generateCampaignStory(data: { characterIds: string[]; campaignName: string; campaignDescription?: string }): Observable<{ story: string }> {
+    return this.http.post<{ story: string }>(`${this.oracleApiUrl}/campaign-story-from-characters`, data).pipe(
+      catchError((error) => {
+        console.error('Erro ao gerar história da campanha:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  updateCampaignStory(campaignId: string, storyIntroduction: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${campaignId}/story`, { storyIntroduction }).pipe(
+      tap(() => this.refreshCurrentCampaign(campaignId)),
+      catchError((error) => {
+        console.error('Erro ao atualizar história da campanha:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Atualiza a imagem da campanha
+   */
+  updateCampaignImage(campaignId: string, imageUrl: string | null): Observable<CampaignDetail> {
+    return this.http.patch<CampaignDetail>(`${this.apiUrl}/${campaignId}/image`, { imageUrl }).pipe(
+      tap((campaign) => this.currentCampaignSubject.next(campaign)),
+      catchError((error) => {
+        console.error('Erro ao atualizar imagem da campanha:', error);
+        return throwError(() => error);
+      })
+    );
   }
 }

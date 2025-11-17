@@ -93,6 +93,23 @@
           Selecione os amigos que participarão da sua campanha
         </p>
 
+        <!-- Game Master (Creator) -->
+        <div class="game-master-card">
+          <div class="gm-badge">
+            <i class="pi pi-crown"></i>
+            <span>Game Master</span>
+          </div>
+          <div class="gm-info">
+            <i class="pi pi-user"></i>
+            <div>
+              <strong>{{ creatorNickname }}</strong>
+              @if (creatorName) {
+                <small>{{ creatorName }}</small>
+              }
+            </div>
+          </div>
+        </div>
+
         @if (selectedPlayers.length > 0) {
           <div class="selected-players">
             <h3>Jogadores Selecionados ({{ selectedPlayers.length }})</h3>
@@ -279,6 +296,72 @@
                 </div>
               }
             </div>
+          </div>
+
+          <!-- Geração de História por IA -->
+          <div class="review-section story-section">
+            <h3>História da Campanha (IA)</h3>
+            
+            @if (!generatedStory && !storyAccepted) {
+              <p class="story-help">Gere uma história épica baseada nos personagens selecionados usando IA!</p>
+              <button
+                pButton
+                [label]="isGeneratingStory ? 'Gerando História...' : 'Gerar História por IA'"
+                icon="pi pi-sparkles"
+                class="p-button-lg"
+                (click)="onGenerateCampaignStory()"
+                [disabled]="isGenerateStoryDisabled()"
+                [loading]="isGeneratingStory"
+              ></button>
+            }
+
+            @if (generatedStory && !storyAccepted) {
+              <div class="generated-story-container">
+                <div class="generated-story-content">
+                  <i class="pi pi-book"></i>
+                  <p>{{ generatedStory }}</p>
+                </div>
+                <div class="generated-story-actions">
+                  <button
+                    pButton
+                    icon="pi pi-check"
+                    label="Aceitar História"
+                    class="p-button-success"
+                    (click)="onAcceptStory()"
+                    [disabled]="isGeneratingStory"
+                  ></button>
+                  <button
+                    pButton
+                    icon="pi pi-times"
+                    label="Descartar"
+                    class="p-button-danger p-button-text"
+                    (click)="onDiscardStory()"
+                    [disabled]="isGeneratingStory"
+                  ></button>
+                </div>
+              </div>
+            }
+
+            @if (storyAccepted) {
+              <div class="accepted-story">
+                <i class="pi pi-check-circle"></i>
+                <p>{{ generatedStory }}</p>
+                <button
+                  pButton
+                  icon="pi pi-replay"
+                  label="Gerar Novamente"
+                  class="p-button-text p-button-sm"
+                  (click)="storyAccepted = false; generatedStory = ''"
+                ></button>
+              </div>
+            }
+
+            @if (storyErrorMessage) {
+              <small class="error">
+                <i class="pi pi-exclamation-triangle"></i>
+                {{ storyErrorMessage }}
+              </small>
+            }
           </div>
         }
       </div>

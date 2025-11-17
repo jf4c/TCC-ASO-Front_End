@@ -9,10 +9,10 @@ Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
 $DB_CONTAINER = "aso-postgres"
-$DB_NAME = "aso_db"
-$DB_USER = "aso_user"
-$DB_PASSWORD = "aso_password"
-$DB_PORT = 5432
+$DB_NAME = "aso"
+$DB_USER = "aso"
+$DB_PASSWORD = "teste"
+$DB_PORT = 5433
 
 # Verificar Docker
 Write-Host "[1/5] Verificando Docker..." -ForegroundColor Yellow

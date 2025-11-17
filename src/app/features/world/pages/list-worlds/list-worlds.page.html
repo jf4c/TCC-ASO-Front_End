@@ -1,0 +1,76 @@
+<div class="list-worlds-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="title-section">
+        <i class="pi pi-globe header-icon"></i>
+        <h1 class="page-title">MUNDOS</h1>
+      </div>
+      <p class="page-subtitle">
+        Explore e gerencie os mundos de suas campanhas de RPG
+      </p>
+    </div>
+    <button
+      pButton
+      label="CRIAR MUNDO"
+      icon="pi pi-plus"
+      class="create-button"
+      (click)="onCreateWorld()"
+    ></button>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+  <div class="loading-container">
+    <i class="pi pi-spin pi-spinner loading-icon"></i>
+    <p>Carregando mundos...</p>
+  </div>
+  }
+
+  <!-- Worlds Grid -->
+  @if (!isLoading() && worlds().length > 0) {
+  <div class="worlds-grid">
+    @for (world of worlds(); track world.id) {
+    <div class="world-card" (click)="onViewWorld(world.id)">
+      <div class="world-image">
+        @if (world.imageUrl) {
+        <img [src]="world.imageUrl" [alt]="world.name" />
+        } @else {
+        <div class="world-placeholder">
+          <i class="pi pi-globe"></i>
+        </div>
+        }
+      </div>
+      <div class="world-content">
+        <h3 class="world-name">{{ world.name }}</h3>
+        <p class="world-description">{{ world.description }}</p>
+        <div class="world-footer">
+          <span class="click-hint">
+            <i class="pi pi-arrow-right"></i>
+            Clique para ver detalhes
+          </span>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+  }
+
+  <!-- Empty State -->
+  @if (!isLoading() && worlds().length === 0) {
+  <div class="empty-state">
+    <i class="pi pi-globe empty-icon"></i>
+    <h3 class="empty-title">Nenhum mundo encontrado</h3>
+    <p class="empty-message">
+      Comece criando seu primeiro mundo para suas campanhas de RPG!
+    </p>
+    <button
+      pButton
+      label="CRIAR PRIMEIRO MUNDO"
+      icon="pi pi-plus"
+      class="create-first-button"
+      (click)="onCreateWorld()"
+    ></button>
+  </div>
+  }
+</div>

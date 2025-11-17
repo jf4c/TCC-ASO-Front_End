@@ -15,7 +15,11 @@
   </div>
   } @else if (campaign()) {
   <!-- Header da campanha com imagem de fundo -->
-  <aso-campaign-banner [campaign]="campaign()!" />
+  <aso-campaign-banner 
+    [campaign]="campaign()!" 
+    [canEdit]="true"
+    (changeImage)="onChangeCampaignImage()"
+  />
 
   <!-- Layout principal com duas colunas -->
   <div class="campaign-layout">
@@ -28,8 +32,183 @@
 
     <!-- Área de conteúdo principal -->
     <div class="main-content">
+      <!-- Seção de História Introdutória -->
+      <div class="intro-story-section">
+        <div class="section-header">
+          <i class="pi pi-book"></i>
+          <h2>Início da Jornada</h2>
+        </div>
+        <div class="intro-story-content">
+          @if (isAIMode()) {
+            <!-- Modo de Geração com IA -->
+            <div class="ai-generation-mode">
+              <div class="ai-prompt-section">
+                <label class="prompt-label">
+                  <i class="pi pi-comment"></i>
+                  Detalhes adicionais para a IA (opcional):
+                </label>
+                <textarea
+                  class="prompt-textarea"
+                  [(ngModel)]="aiPromptDetails"
+                  placeholder="Adicione contexto, tom narrativo, elementos específicos que deseja incluir na história..."
+                  rows="4"
+                  [disabled]="isGeneratingStory()"
+                ></textarea>
+              </div>
+
+              @if (generatedStory()) {
+                <!-- História Gerada -->
+                <div class="generated-story-preview">
+                  <label class="preview-label">
+                    <i class="pi pi-sparkles"></i>
+                    História Gerada:
+                  </label>
+                  <div class="story-preview">{{ generatedStory() }}</div>
+                </div>
+              }
+
+              @if (storyError()) {
+                <p class="error-message">
+                  <i class="pi pi-exclamation-triangle"></i>
+                  {{ storyError() }}
+                </p>
+              }
+
+              <div class="ai-actions">
+                @if (!generatedStory()) {
+                  <button
+                    class="generate-button"
+                    (click)="onGenerateWithAI()"
+                    [disabled]="isGeneratingStory()"
+                  >
+                    @if (isGeneratingStory()) {
+                      <i class="pi pi-spinner pi-spin"></i>
+                      Gerando história...
+                    } @else {
+                      <i class="pi pi-sparkles"></i>
+                      Gerar História
+                    }
+                  </button>
+                  <button class="cancel-button" (click)="onDiscardAIStory()">
+                    <i class="pi pi-times"></i>
+                    Cancelar
+                  </button>
+                } @else {
+                  <button class="save-button" (click)="onAcceptAIStory()">
+                    <i class="pi pi-check"></i>
+                    Salvar História
+                  </button>
+                  <button class="discard-button" (click)="onDiscardAIStory()">
+                    <i class="pi pi-times"></i>
+                    Descartar
+                  </button>
+                  <button
+                    class="regenerate-button"
+                    (click)="onGenerateWithAI()"
+                    [disabled]="isGeneratingStory()"
+                  >
+                    <i class="pi pi-refresh"></i>
+                    Regerar
+                  </button>
+                }
+              </div>
+            </div>
+          } @else if (isEditingStory()) {
+            <!-- Modo de Edição -->
+            <div class="story-editor">
+              <textarea
+                class="story-textarea"
+                [(ngModel)]="editedStory"
+                placeholder="Escreva o início da jornada da campanha..."
+                rows="10"
+              ></textarea>
+              @if (storyError()) {
+                <p class="error-message">
+                  <i class="pi pi-exclamation-triangle"></i>
+                  {{ storyError() }}
+                </p>
+              }
+              <div class="editor-actions">
+                <button class="save-button" (click)="onSaveStory()">
+                  <i class="pi pi-check"></i>
+                  Salvar
+                </button>
+                <button class="cancel-button" (click)="onCancelEdit()">
+                  <i class="pi pi-times"></i>
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          } @else if (campaign()!.storyIntroduction) {
+            <!-- Modo de Visualização com História -->
+            <p class="intro-story">{{ campaign()!.storyIntroduction }}</p>
+            <div class="story-actions">
+              <button class="edit-button" (click)="onEditStory()">
+                <i class="pi pi-pencil"></i>
+                Editar
+              </button>
+            </div>
+          } @else {
+            <!-- Modo Vazio -->
+            <div class="no-story">
+              <p class="no-story-message">
+                <i class="pi pi-info-circle"></i>
+                Nenhuma história introdutória ainda. Escreva manualmente ou use a IA para criar uma história épica baseada nos personagens da campanha!
+              </p>
+              @if (storyError()) {
+                <p class="error-message">
+                  <i class="pi pi-exclamation-triangle"></i>
+                  {{ storyError() }}
+                </p>
+              }
+              <div class="story-actions">
+                <button
+                  class="generate-button"
+                  (click)="onGenerateStory()"
+                  [disabled]="isGeneratingStory()"
+                >
+                  @if (isGeneratingStory()) {
+                    <i class="pi pi-spinner pi-spin"></i>
+                    Gerando história...
+                  } @else {
+                    <i class="pi pi-sparkles"></i>
+                    Gerar com IA
+                  }
+                </button>
+                <button class="edit-button" (click)="onEditStory()">
+                  <i class="pi pi-pencil"></i>
+                  Escrever Manualmente
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
       <!-- Seção O Mundo da Campanha -->
-      <aso-campaign-world [world]="campaign()!.world || null" />
+      @if (campaign()!.worldId) {
+      <div class="world-section">
+        <div class="section-header">
+          <i class="pi pi-globe"></i>
+          <h2>O Mundo da Campanha</h2>
+        </div>
+        <div class="world-card">
+          <div class="world-info">
+            <h3 class="world-name">{{ campaign()!.worldName || 'Mundo da Campanha' }}</h3>
+            <p class="world-description">
+              Explore o mundo desta campanha com toda sua lore, locais e panteão.
+            </p>
+          </div>
+          <button
+            pButton
+            label="Ver Mundo"
+            icon="pi pi-external-link"
+            class="view-world-button"
+            (click)="onViewWorld()"
+          ></button>
+        </div>
+      </div>
+      }
 
       <!-- Seção de Diário e Planejamento -->
       <aso-campaign-journal [campaignId]="campaignId()" />
@@ -41,6 +220,37 @@
     [character]="selectedCharacter()"
     (closeDialog)="onCloseDialog()"
   />
+
+  <!-- Dialog de Upload de Imagem -->
+  <p-dialog
+    [header]="campaign()?.image ? 'Trocar Imagem da Campanha' : 'Adicionar Imagem da Campanha'"
+    [(visible)]="showImageDialog"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [closable]="!isUpdatingImage()"
+    [closeOnEscape]="!isUpdatingImage()"
+  >
+    <aso-image-upload
+      uploadType="campaign"
+      label="Imagem da Campanha"
+      aspectRatio="16:9"
+      [currentImageUrl]="campaign()?.image"
+      (imageUploaded)="onCampaignImageUploaded($event)"
+      (imageRemoved)="onCampaignImageRemoved()"
+    ></aso-image-upload>
+
+    <ng-template pTemplate="footer">
+      <button
+        pButton
+        label="Fechar"
+        icon="pi pi-times"
+        class="p-button-text"
+        (click)="onCloseImageDialog()"
+        [disabled]="isUpdatingImage()"
+      ></button>
+    </ng-template>
+  </p-dialog>
+
   } @else {
   <div class="not-found-state">
     <i class="pi pi-search"></i>

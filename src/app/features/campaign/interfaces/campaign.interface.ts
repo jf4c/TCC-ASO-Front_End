@@ -32,11 +32,18 @@ export interface CampaignListItem {
   isCreator: boolean;
 }
 
+export interface CreateCampaignParticipantInput {
+  playerId: string;
+  characterId: string;
+}
+
 export interface CreateCampaignRequest {
   name: string;
   description?: string;
   maxPlayers: number;
   isPublic: boolean;
+  participants: CreateCampaignParticipantInput[];
+  storyIntroduction?: string;
 }
 
 export interface UpdateCampaignRequest {
@@ -44,4 +51,15 @@ export interface UpdateCampaignRequest {
   description?: string;
   maxPlayers: number;
   status: CampaignStatus;
+}
+
+export interface GenerateCampaignStoryRequest {
+  characterIds: string[];
+  campaignName: string;
+  campaignDescription?: string;
+}
+
+export interface GenerateCampaignStoryResponse {
+  story: string;
+  generatedAt: string;
 }
