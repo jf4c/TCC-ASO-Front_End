@@ -49,20 +49,92 @@
     </div>
   </section>
 
-  <section class="feature-historic">
-    <h2 class="infos-title">Atualizações Recentes</h2>
-    <div class="historic-cards">
-      <aso-historic-card
-        title="Nova Campanha: As Sombras de Eldoria"
-        date="12/05/2023"
-        description="Uma nova ameaça surge nas terras de Eldoria. Reúna seu grupo e enfrente as forças das sombras!"
-      ></aso-historic-card>
-
-      <aso-historic-card
-        title="Novo Sistema de Magia"
-        date="03/04/2023"
-        description="Implementamos um novo sistema de magia com mais de 100 feitiços e rituais para seus personagens."
-      ></aso-historic-card>
+  <!-- Seção de Personagens Favoritos -->
+  <section class="favorite-characters">
+    <div class="section-header">
+      <h2 class="section-title">Personagens Favoritos</h2>
+      <a routerLink="/personagens" class="view-all-link">
+        Ver todos <i class="pi pi-arrow-right"></i>
+      </a>
     </div>
+    @if (favoriteCharacters().length > 0) {
+    <div class="characters-grid">
+      @for (character of favoriteCharacters(); track character.id) {
+      <div class="character-card" (click)="onViewCharacter(character.id)">
+        <div class="character-image">
+          @if (character.image) {
+          <img [src]="character.image" [alt]="character.name" />
+          } @else {
+          <div class="character-placeholder">
+            <i class="pi pi-user"></i>
+          </div>
+          }
+        </div>
+        <div class="character-info">
+          <h3 class="character-name">{{ character.name }}</h3>
+          <p class="character-details">
+            {{ character.race }} · {{ character.class }} · Nível {{ character.level }}
+          </p>
+        </div>
+      </div>
+      }
+    </div>
+    } @else {
+    <div class="empty-state">
+      <i class="pi pi-users empty-icon"></i>
+      <p>Nenhum personagem favorito ainda.</p>
+      <a routerLink="/personagens/criar" class="create-link">
+        <i class="pi pi-plus"></i> Criar Primeiro Personagem
+      </a>
+    </div>
+    }
+  </section>
+
+  <!-- Seção de Campanhas Recentes -->
+  <section class="recent-campaigns">
+    <div class="section-header">
+      <h2 class="section-title">Campanhas Recentes</h2>
+      <a routerLink="/campanhas" class="view-all-link">
+        Ver todas <i class="pi pi-arrow-right"></i>
+      </a>
+    </div>
+    @if (recentCampaigns().length > 0) {
+    <div class="campaigns-grid">
+      @for (campaign of recentCampaigns(); track campaign.id) {
+      <div class="campaign-card" (click)="onViewCampaign(campaign.id)">
+        <div class="campaign-image">
+          <img src="assets/d20.jpg" alt="Campaign" />
+          <div class="campaign-status" [class]="'status-' + campaign.status">
+            {{ getStatusText(campaign.status) }}
+          </div>
+        </div>
+        <div class="campaign-info">
+          <h3 class="campaign-name">{{ campaign.name }}</h3>
+          @if (campaign.description) {
+          <p class="campaign-description">{{ campaign.description }}</p>
+          }
+          <div class="campaign-meta">
+            <span class="participants">
+              <i class="pi pi-users"></i>
+              {{ campaign.participantsCount }}/{{ campaign.maxPlayers }}
+            </span>
+            <span class="last-access">
+              <i class="pi pi-clock"></i>
+              {{ getRelativeTime(campaign.lastAccess) }}
+            </span>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+    } @else {
+    <div class="empty-state">
+      <i class="pi pi-book empty-icon"></i>
+      <p>Nenhuma campanha recente.</p>
+      <a routerLink="/campanhas/criar" class="create-link">
+        <i class="pi pi-plus"></i> Criar Primeira Campanha
+      </a>
+    </div>
+    }
   </section>
 </main>

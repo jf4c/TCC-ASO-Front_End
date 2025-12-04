@@ -77,3 +77,258 @@ section {
     text-shadow: var(--shadow-tertiary);
   }
 }
+
+// Novas seções
+.favorite-characters,
+.recent-campaigns {
+  width: 65%;
+  margin: 2rem auto;
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--accent-quaternary);
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--text-primary);
+    }
+
+    .view-all-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--accent-primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+
+      &:hover {
+        color: var(--accent-primary-hover);
+        transform: translateX(4px);
+      }
+    }
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    background: var(--bg-secondary);
+    border-radius: 10px;
+    gap: 1rem;
+
+    .empty-icon {
+      font-size: 3rem;
+      color: var(--text-secondary);
+    }
+
+    p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    .create-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--accent-primary);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: var(--accent-primary-hover);
+        transform: translateY(-2px);
+      }
+    }
+  }
+}
+
+// Personagens Favoritos
+.characters-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+
+  .character-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-secondary);
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-quinary);
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-quaternary);
+    }
+
+    .character-image {
+      width: 100%;
+      height: 250px;
+      overflow: hidden;
+      background: var(--bg-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+      }
+
+      .character-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        i {
+          font-size: 4rem;
+          color: var(--text-secondary);
+        }
+      }
+    }
+
+    .character-info {
+      padding: 1rem;
+      text-align: left;
+
+      .character-name {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+      }
+
+      .character-details {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin: 0;
+      }
+    }
+  }
+}
+
+// Campanhas Recentes
+.campaigns-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+
+  .campaign-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-secondary);
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-quinary);
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-quaternary);
+    }
+
+    .campaign-image {
+      position: relative;
+      width: 100%;
+      height: 150px;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .campaign-status {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: rgba(0, 0, 0, 0.8);
+
+        &.status-0 { // Planning
+          color: var(--accent-warning);
+        }
+
+        &.status-1 { // Active
+          color: var(--accent-success);
+        }
+
+        &.status-2 { // OnHold
+          color: var(--accent-warning);
+        }
+
+        &.status-3 { // Completed
+          color: var(--text-secondary);
+        }
+      }
+    }
+
+    .campaign-info {
+      padding: 1rem;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      .campaign-name {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: var(--text-primary);
+        margin: 0;
+      }
+
+      .campaign-description {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin: 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .campaign-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-top: 0.5rem;
+
+        span {
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+
+          i {
+            color: var(--accent-primary);
+          }
+        }
+      }
+    }
+  }
+}
+
