@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core'
+import { Component, inject, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
+import { Router } from '@angular/router'
 import { Character } from '@features/character/interface/character.model'
 import { ButtonComponent } from '@shared/components/button/button.component'
 import { ButtonModule } from 'primeng/button'
@@ -12,16 +13,14 @@ import { ButtonModule } from 'primeng/button'
   styleUrl: './character-card.component.scss',
 })
 export class CharacterCardComponent {
+  private readonly router = inject(Router)
+  
   @Input() character!: Character
-  @Input() hideActions: boolean = false  // ✨ Novo: controla exibição dos botões
 
-  @Output() edit = new EventEmitter<void>()
-  @Output() view = new EventEmitter<void>()
-
-  onView() {
-    this.view.emit()
-  }
-  onEdit() {
-    this.edit.emit()
+  /**
+   * Navega para tela de detalhes do personagem
+   */
+  onViewDetails() {
+    this.router.navigate(['/personagens', this.character.id])
   }
 }

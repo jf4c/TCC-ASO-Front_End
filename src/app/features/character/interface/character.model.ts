@@ -13,6 +13,80 @@ export interface Character {
   image?: string | null
 }
 
+export interface CharacterDetail {
+  id: string
+  name: string
+  level: number
+  backstory?: string
+  image?: string | null
+  ancestry: {
+    id: string
+    name: string
+  }
+  class: {
+    id: string
+    name: string
+  }
+  attributes: {
+    strength: number
+    dexterity: number
+    constitution: number
+    intelligence: number
+    wisdom: number
+    charisma: number
+  }
+  skills: Skill[]
+  playerId: string
+  campaignId?: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+// Computed properties para compatibilidade
+export interface CharacterDetailViewModel extends CharacterDetail {
+  ancestryId: string
+  ancestryName: string
+  classId: string
+  className: string
+  health: number
+  mana: number
+  modifiers: Modifiers
+  campaignId?: string | null
+  campaignName?: string | null
+  isInCampaign: boolean
+}
+
+export interface Skill {
+  id: string
+  name: string
+  description?: string
+}
+
+export interface UpdateCharacterRequest {
+  name?: string
+  level?: number
+  health?: number
+  mana?: number
+  backstory?: string
+  image?: string | null
+  imageId?: string | null
+  ancestryId?: string
+  classId?: string
+  skillsIds?: string[]
+  modifiers?: Modifiers
+}
+
+export interface LevelUpRequest {
+  newLevel: number
+}
+
+export interface LevelUpResponse {
+  id: string
+  name: string
+  newLevel: number
+  updatedAt: string
+}
+
 export interface CharacterForm {
   name: string
   attribute: Attributes

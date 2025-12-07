@@ -111,15 +111,6 @@ export class ListCharacterPage implements OnInit, OnDestroy {
     this.subscriptions.add(subscription)
   }
 
-  onEditCharacter(character: Character): void {
-    this.showSuccess()
-    console.log('Editando personagem:', character)
-  }
-
-  onDeleteCharacter(character: Character): void {
-    console.log('Delete character:', character.name)
-  }
-
   onPageChange(event: PaginatorState): void {
     this.currentPage = event.page || 0
     this.first = event.first || 0

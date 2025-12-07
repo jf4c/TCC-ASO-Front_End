@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core'
+import { Component, EventEmitter, Output, Input } from '@angular/core'
 import { ButtonComponent } from '@shared/components/button/button.component'
 
 @Component({
@@ -8,6 +8,11 @@ import { ButtonComponent } from '@shared/components/button/button.component'
   styleUrl: './dialog-footer.component.scss',
 })
 export class DialogFooterComponent {
+  @Input() saveLabel = 'Salvar'
+  @Input() saveIcon = 'fas fa-save'
+  @Input() closeLabel = 'Fechar'
+  @Input() closeIcon = 'fas fa-times'
+  
   @Output() eventClose = new EventEmitter<void>()
   @Output() eventSave = new EventEmitter<void>()
 

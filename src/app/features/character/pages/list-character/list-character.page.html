@@ -64,8 +64,6 @@
         } @else { @for (character of paginatedCharacters; track character.id) {
         <aso-character-card
           [character]="character"
-          (edit)="onEditCharacter(character)"
-          (delete)="onDeleteCharacter(character)"
         ></aso-character-card>
         } @empty {
         <div class="empty-list">

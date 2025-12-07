@@ -99,7 +99,11 @@ export class CharacterDialogImageComponent implements OnInit, OnDestroy {
     const selectedImage = this.getSelectedImage()
 
     if (selectedImage) {
-      this.dialogRef.close(selectedImage)
+      // Retorna objeto com id (para salvar) e url (para preview)
+      this.dialogRef.close({ 
+        id: selectedImage.id, 
+        url: selectedImage.url 
+      })
 
       this.messageService.add({
         severity: 'success',

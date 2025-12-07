@@ -171,9 +171,17 @@
 
 .character-actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   padding: 1rem;
   font-size: 1.1rem;
+
+  ::ng-deep aso-button {
+    width: 100%;
+    
+    button {
+      width: 100%;
+    }
+  }
 
   .action-button {
     display: flex;

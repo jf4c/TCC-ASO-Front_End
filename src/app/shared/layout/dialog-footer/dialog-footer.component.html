@@ -2,16 +2,16 @@
   <ng-content class="dialog-footer-content"></ng-content>
   <div class="flex items-center">
     <aso-button
-      icon="fas fa-times"
-      label="Fechar"
+      [icon]="closeIcon"
+      [label]="closeLabel"
       severity="danger"
       variant="outlined"
       [styleClass]="{ fontSize: '1.2rem'}"
       (eventClick)="onClose()"
     />
     <aso-button
-      [icon]="'fas fa-save'"
-      label="Salvar"
+      [icon]="saveIcon"
+      [label]="saveLabel"
       severity="success"
       variant="outlined"
       class="ml-2"

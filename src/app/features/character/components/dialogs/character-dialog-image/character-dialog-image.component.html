@@ -45,7 +45,11 @@
   </p-tabpanels>
 </p-tabs>
 <p-toast></p-toast>
-<aso-dialog-footer (eventClose)="onClose()" (eventSave)="onSave()">
+<aso-dialog-footer 
+  saveLabel="Selecionar" 
+  saveIcon="fas fa-check" 
+  (eventClose)="onClose()" 
+  (eventSave)="onSave()">
   <p-fileupload
     mode="basic"
     [auto]="true"

@@ -2,9 +2,13 @@ import { HttpClient } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
 import {
   Character,
+  CharacterDetail,
   CreateCharacterRequest,
+  UpdateCharacterRequest,
   GetPaginatedCharacterRequest,
   GetPaginatedCharacterResponse,
+  LevelUpRequest,
+  LevelUpResponse,
 } from '../interface/character.model'
 import { Observable } from 'rxjs'
 import { environment } from '../../../../environments/environment'
@@ -18,6 +22,22 @@ export class CharacterService {
 
   createCharacter(character: CreateCharacterRequest): Observable<void> {
     return this.http.post<void>(this.apiUrl, character)
+  }
+
+  getCharacterById(id: string): Observable<CharacterDetail> {
+    return this.http.get<CharacterDetail>(`${this.apiUrl}/${id}`)
+  }
+
+  updateCharacter(id: string, data: UpdateCharacterRequest): Observable<CharacterDetail> {
+    return this.http.patch<CharacterDetail>(`${this.apiUrl}/${id}`, data)
+  }
+
+  deleteCharacter(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`)
+  }
+
+  levelUp(id: string, data: LevelUpRequest): Observable<LevelUpResponse> {
+    return this.http.post<LevelUpResponse>(`${this.apiUrl}/${id}/level-up`, data)
   }
 
   getPaginatedCharacter(
