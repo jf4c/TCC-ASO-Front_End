@@ -169,12 +169,12 @@ export class ViewCharacterPage implements OnInit {
     this.isLoading.set(true);
     this.characterService.getCharacterById(id).subscribe({
       next: (character) => {
-        console.log('=== RESPOSTA DA API ===');
-        console.log('Character completo:', character);
-        console.log('Image path:', character.image);
-        console.log('Ancestry:', character.ancestry);
-        console.log('Class:', character.class);
-        console.log('======================');
+
+
+
+
+
+
         this.character.set(character);
         this.populateForm(character);
         this.isLoading.set(false);
@@ -285,19 +285,19 @@ export class ViewCharacterPage implements OnInit {
       return;
     }
 
-    console.log('=== PAYLOAD DE ATUALIZAÇÃO ===');
-    console.log(JSON.stringify(payload, null, 2));
-    console.log('=============================');
+
+
+
 
     this.characterService.updateCharacter(id, payload).subscribe({
       next: (updated) => {
-        console.log('=== RESPOSTA DO UPDATE ===');
-        console.log('Updated character:', updated);
-        console.log('Name:', updated.name);
-        console.log('Image:', updated.image);
-        console.log('Ancestry:', updated.ancestry);
-        console.log('Class:', updated.class);
-        console.log('========================');
+
+
+
+
+
+
+
         
         this.character.set(updated);
         this.isEditMode.set(false);

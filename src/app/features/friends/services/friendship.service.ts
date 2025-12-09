@@ -51,12 +51,11 @@ export class FriendshipService {
       return of([]);
     }
 
-    console.log('🔍 Buscando jogadores:', trimmedNickname);
+
 
     return this.http.get<PlayerSearchResult[]>(`${this.apiUrl}/search`, {
       params: { searchTerm: trimmedNickname }
     }).pipe(
-      tap(results => console.log('✅ Resultados da busca:', results)),
       catchError((error) => {
         console.error('❌ Erro na busca:', error);
         return of([]);
@@ -68,11 +67,11 @@ export class FriendshipService {
    * Envia convite de amizade
    */
   sendFriendRequest(addresseeId: string): Observable<Friendship> {
-    console.log('📤 Enviando convite para:', addresseeId);
+
     
     return this.http.post<Friendship>(`${this.apiUrl}/send`, { addresseeId }).pipe(
       tap(friendship => {
-        console.log('✅ Convite enviado:', friendship);
+
         this.refreshCounts();
       }),
       catchError((error) => {
@@ -88,7 +87,7 @@ export class FriendshipService {
   getReceivedRequests(): Observable<FriendshipWithPlayer[]> {
     return this.http.get<FriendshipWithPlayer[]>(`${this.apiUrl}/requests/received`).pipe(
       tap(requests => {
-        console.log('📥 Convites recebidos:', requests);
+
         this.pendingReceivedSubject.next(requests);
       }),
       catchError(this.handleError('getReceivedRequests', []))
@@ -101,7 +100,7 @@ export class FriendshipService {
   getSentRequests(): Observable<FriendshipWithPlayer[]> {
     return this.http.get<FriendshipWithPlayer[]>(`${this.apiUrl}/requests/sent`).pipe(
       tap(requests => {
-        console.log('📤 Convites enviados:', requests);
+
         this.pendingSentSubject.next(requests);
       }),
       catchError(this.handleError('getSentRequests', []))
@@ -112,11 +111,11 @@ export class FriendshipService {
    * Aceita convite de amizade
    */
   acceptRequest(friendshipId: string): Observable<Friendship> {
-    console.log('✅ Aceitando convite:', friendshipId);
+
     
     return this.http.post<Friendship>(`${this.apiUrl}/${friendshipId}/accept`, {}).pipe(
       tap(friendship => {
-        console.log('✅ Convite aceito:', friendship);
+
         this.refreshAll();
       }),
       catchError((error) => {
@@ -130,11 +129,11 @@ export class FriendshipService {
    * Rejeita convite de amizade
    */
   rejectRequest(friendshipId: string): Observable<void> {
-    console.log('❌ Rejeitando convite:', friendshipId);
+
     
     return this.http.post<void>(`${this.apiUrl}/${friendshipId}/reject`, {}).pipe(
       tap(() => {
-        console.log('❌ Convite rejeitado');
+
         this.refreshAll();
       }),
       catchError((error) => {
@@ -150,7 +149,7 @@ export class FriendshipService {
   getFriends(): Observable<Friend[]> {
     return this.http.get<Friend[]>(`${this.apiUrl}/friends`).pipe(
       tap(friends => {
-        console.log('👥 Amigos:', friends);
+
         this.friendsSubject.next(friends);
       }),
       catchError(this.handleError('getFriends', []))
@@ -161,11 +160,11 @@ export class FriendshipService {
    * Remove amizade ou cancela convite
    */
   removeFriendship(friendshipId: string): Observable<void> {
-    console.log('🗑️ Removendo amizade:', friendshipId);
+
     
     return this.http.delete<void>(`${this.apiUrl}/${friendshipId}`).pipe(
       tap(() => {
-        console.log('🗑️ Amizade removida');
+
         this.refreshAll();
       }),
       catchError((error) => {
@@ -181,7 +180,7 @@ export class FriendshipService {
   getCounts(): Observable<FriendshipCount> {
     return this.http.get<FriendshipCount>(`${this.apiUrl}/counts`).pipe(
       tap(counts => {
-        console.log('📊 Contadores:', counts);
+
         this.countsSubject.next(counts);
       }),
       catchError(this.handleError('getCounts', {
@@ -196,7 +195,7 @@ export class FriendshipService {
    * Atualiza todos os dados (amigos, convites e contadores)
    */
   refreshAll(): void {
-    console.log('🔄 Atualizando todos os dados de amizade...');
+
     this.getFriends().subscribe();
     this.getReceivedRequests().subscribe();
     this.getSentRequests().subscribe();

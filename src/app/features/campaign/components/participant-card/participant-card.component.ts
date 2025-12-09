@@ -17,7 +17,6 @@ export class ParticipantCardComponent implements OnInit {
   @Input({ required: true }) participant!: CampaignParticipant
 
   ngOnInit(): void {
-    console.log('ParticipantCard received:', this.participant)
   }
 
   getRoleText(): string {

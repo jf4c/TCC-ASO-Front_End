@@ -66,8 +66,6 @@
           <aso-campaign-card
             [campaign]="campaign"
             (view)="onViewCampaign($event)"
-            (edit)="onEditCampaign($event)"
-            (join)="onJoinCampaign($event)"
           />
           }
         </div>
@@ -89,6 +87,21 @@
         </div>
         }
       </div>
+      
+      <!-- Paginação -->
+      @if (campaigns.length > 0) {
+      <div class="mb-8">
+        <p-paginator
+          (onPageChange)="onPageChange($event)"
+          [first]="first"
+          [rows]="pageSize"
+          [totalRecords]="totalCampaigns"
+          [showCurrentPageReport]="false"
+          [showPageLinks]="true"
+          [showJumpToPageDropdown]="false"
+        />
+      </div>
+      }
       }
     </aso-card>
   </form>

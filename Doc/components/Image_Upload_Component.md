@@ -30,12 +30,10 @@ export class CreateWorldPage {
 
   onImageUploaded(url: string): void {
     this.worldImageUrl.set(url);
-    console.log('Imagem carregada:', url);
   }
 
   onImageRemoved(): void {
     this.worldImageUrl.set(null);
-    console.log('Imagem removida');
   }
 }
 ```
@@ -323,7 +321,6 @@ export class CreateWorldPage {
   onSubmit(): void {
     if (this.worldForm.valid) {
       const worldData = this.worldForm.value;
-      console.log('Criar mundo:', worldData);
       // worldData.imageUrl já contém a URL da imagem
     }
   }

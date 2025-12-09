@@ -1,0 +1,133 @@
+<div class="character-dialog">
+  @if (character) {
+  <div class="character-preview">
+    <!-- Imagem e Info Básica -->
+    <div class="character-header">
+      <div 
+        class="character-image" 
+        [ngStyle]="{'background-image': getImageUrl(character.image) ? 'url(' + getImageUrl(character.image) + ')' : 'none'}">
+        @if (!character.image) {
+        <div class="image-placeholder">
+          <i class="pi pi-user"></i>
+        </div>
+        }
+      </div>
+      
+      <div class="character-info">
+        <h2 class="character-name">{{ character.name }}</h2>
+        
+        <div class="info-row">
+          <div class="info-item">
+            <span class="label">Raça:</span>
+            <span class="value">{{ character.ancestry.name }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Classe:</span>
+            <span class="value">{{ character.class.name }}</span>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat">
+            <span class="stat-label">Nível</span>
+            <span class="stat-value">{{ character.level }}</span>
+          </div>
+          <div class="stat stat-hp">
+            <i class="pi pi-heart-fill"></i>
+            <span class="stat-value">{{ 10 + character.level * 5 }}</span>
+          </div>
+          <div class="stat stat-mana">
+            <i class="pi pi-bolt"></i>
+            <span class="stat-value">{{ 8 + character.level * 3 }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Atributos -->
+    <div class="section">
+      <h3 class="section-title">
+        <i class="pi pi-star"></i>
+        Atributos
+      </h3>
+      <div class="attributes-grid">
+        <div class="attribute">
+          <span class="attr-name">FOR</span>
+          <span class="attr-value">{{ character.attributes.strength }}</span>
+          <span class="attr-mod">{{ formatModifier(character.attributes.strength) }}</span>
+        </div>
+        <div class="attribute">
+          <span class="attr-name">DES</span>
+          <span class="attr-value">{{ character.attributes.dexterity }}</span>
+          <span class="attr-mod">{{ formatModifier(character.attributes.dexterity) }}</span>
+        </div>
+        <div class="attribute">
+          <span class="attr-name">CON</span>
+          <span class="attr-value">{{ character.attributes.constitution }}</span>
+          <span class="attr-mod">{{ formatModifier(character.attributes.constitution) }}</span>
+        </div>
+        <div class="attribute">
+          <span class="attr-name">INT</span>
+          <span class="attr-value">{{ character.attributes.intelligence }}</span>
+          <span class="attr-mod">{{ formatModifier(character.attributes.intelligence) }}</span>
+        </div>
+        <div class="attribute">
+          <span class="attr-name">SAB</span>
+          <span class="attr-value">{{ character.attributes.wisdom }}</span>
+          <span class="attr-mod">{{ formatModifier(character.attributes.wisdom) }}</span>
+        </div>
+        <div class="attribute">
+          <span class="attr-name">CAR</span>
+          <span class="attr-value">{{ character.attributes.charisma }}</span>
+          <span class="attr-mod">{{ formatModifier(character.attributes.charisma) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Perícias -->
+    <div class="section">
+      <h3 class="section-title">
+        <i class="pi pi-bolt"></i>
+        Perícias
+      </h3>
+      <div class="skills-list">
+        @for (skill of character.skills; track skill.id) {
+        <span class="skill-tag">{{ skill.name }}</span>
+        }
+      </div>
+    </div>
+
+    <!-- História -->
+    <div class="section">
+      <h3 class="section-title">
+        <i class="pi pi-book"></i>
+        História
+      </h3>
+      @if (character.backstory) {
+      <p class="backstory">{{ character.backstory }}</p>
+      } @else {
+      <p class="backstory-empty">Este personagem ainda não possui uma história.</p>
+      }
+    </div>
+  </div>
+
+  <div class="dialog-footer">
+    <button
+      pButton
+      icon="pi pi-times"
+      label="Fechar"
+      class="p-button-outlined p-button-secondary"
+      (click)="onClose()"
+    ></button>
+    @if (showSelectButton) {
+    <button
+      pButton
+      icon="pi pi-check"
+      label="Selecionar"
+      class="p-button-success"
+      (click)="onSelect()"
+    ></button>
+    }
+  </div>
+  }
+</div>

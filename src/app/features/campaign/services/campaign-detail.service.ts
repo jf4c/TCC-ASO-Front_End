@@ -422,7 +422,6 @@ export class CampaignDetailService {
     characterId: string,
   ): Observable<boolean> {
     // Mock implementation
-    console.log(
       'Aprovando personagem:',
       characterId,
       'na campanha:',
@@ -436,7 +435,6 @@ export class CampaignDetailService {
     characterId: string,
   ): Observable<boolean> {
     // Mock implementation
-    console.log(
       'Rejeitando personagem:',
       characterId,
       'na campanha:',
@@ -447,13 +445,11 @@ export class CampaignDetailService {
 
   invitePlayer(campaignId: string, email: string): Observable<boolean> {
     // Mock implementation
-    console.log('Convidando jogador:', email, 'para campanha:', campaignId)
     return of(true).pipe(delay(500))
   }
 
   leaveCampaign(campaignId: string): Observable<boolean> {
     // Mock implementation
-    console.log('Saindo da campanha:', campaignId)
     return of(true).pipe(delay(300))
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap, catchError, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import {
@@ -37,7 +37,6 @@ export class CampaignService {
   createCampaign(data: CreateCampaignRequest): Observable<Campaign> {
     return this.http.post<Campaign>(this.apiUrl, data).pipe(
       tap(campaign => {
-        console.log('Campanha criada:', campaign);
         this.refreshCampaigns();
       }),
       catchError((error) => {
@@ -62,21 +61,16 @@ export class CampaignService {
   }
 
   getCampaigns(params?: { status?: CampaignStatus; role?: 'creator' | 'gameMaster' | 'player' }): Observable<CampaignListItem[]> {
-    let url = this.apiUrl;
-    const queryParams: string[] = [];
+    let httpParams = new HttpParams();
 
     if (params?.status !== undefined) {
-      queryParams.push(`status=${params.status}`);
+      httpParams = httpParams.set('status', params.status.toString());
     }
     if (params?.role) {
-      queryParams.push(`role=${params.role}`);
+      httpParams = httpParams.set('role', params.role);
     }
 
-    if (queryParams.length > 0) {
-      url += `?${queryParams.join('&')}`;
-    }
-
-    return this.http.get<CampaignListItem[]>(url).pipe(
+    return this.http.get<CampaignListItem[]>(this.apiUrl, { params: httpParams }).pipe(
       tap(campaigns => this.campaignsSubject.next(campaigns)),
       catchError((error) => throwError(() => error))
     );
@@ -89,8 +83,39 @@ export class CampaignService {
     );
   }
 
+  updateCampaign(campaignId: string, data: { name: string; description?: string }): Observable<CampaignDetail> {
+    return this.http.patch<CampaignDetail>(`${this.apiUrl}/${campaignId}`, data).pipe(
+      tap(campaign => this.currentCampaignSubject.next(campaign)),
+      catchError((error) => {
+        console.error('Erro ao atualizar campanha:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  deleteCampaign(campaignId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${campaignId}`).pipe(
+      tap(() => this.refreshCampaigns()),
+      catchError((error) => {
+        console.error('Erro ao deletar campanha:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   getAvailableFriends(campaignId: string): Observable<AvailableFriend[]> {
     return this.http.get<AvailableFriend[]>(`${this.apiUrl}/${campaignId}/available-friends`);
+  }
+
+  getAvailableCharactersForPlayer(campaignId: string, playerId: string): Observable<AvailableCharacter[]> {
+    return this.http.get<AvailableCharacter[]>(`${this.apiUrl}/${campaignId}/Player/${playerId}/available-characters`);
+  }
+
+  assignCharacterToParticipant(campaignId: string, playerId: string, characterId: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${campaignId}/characters`, { playerId, characterId }).pipe(
+      tap(() => this.refreshCurrentCampaign(campaignId)),
+      catchError((error) => throwError(() => error))
+    );
   }
 
   setGameMaster(campaignId: string, playerId: string | null): Observable<void> {
@@ -141,6 +166,34 @@ export class CampaignService {
         console.error('Erro ao atualizar imagem da campanha:', error);
         return throwError(() => error);
       })
+    );
+  }
+
+  /**
+   * Verifica se o player logado é o GameMaster ou Creator da campanha
+   */
+  isMaster(campaignId: string): Observable<{ isMaster: boolean }> {
+    return this.http.get<{ isMaster: boolean }>(`${this.apiUrl}/${campaignId}/is-master`);
+  }
+
+  addPlayer(campaignId: string, playerId: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${campaignId}/players`, { playerId }).pipe(
+      tap(() => this.refreshCurrentCampaign(campaignId)),
+      catchError((error) => throwError(() => error))
+    );
+  }
+
+  addCharacter(campaignId: string, playerId: string, characterId: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${campaignId}/characters`, { playerId, characterId }).pipe(
+      tap(() => this.refreshCurrentCampaign(campaignId)),
+      catchError((error) => throwError(() => error))
+    );
+  }
+
+  removePlayer(campaignId: string, playerId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${campaignId}/participants/${playerId}`).pipe(
+      tap(() => this.refreshCurrentCampaign(campaignId)),
+      catchError((error) => throwError(() => error))
     );
   }
 }

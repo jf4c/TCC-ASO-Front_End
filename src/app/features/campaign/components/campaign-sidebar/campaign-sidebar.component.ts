@@ -21,9 +21,21 @@ import { CampaignCharactersCardComponent } from '../campaign-characters-card/cam
 export class CampaignSidebarComponent {
   master = input<CampaignParticipant | null>(null)
   players = input.required<CampaignParticipant[]>()
+  maxPlayers = input.required<number>()
+  isGameMaster = input<boolean>(false)
   characterSelected = output<CharacterInCampaign>()
+  playerSelected = output<CampaignParticipant>()
+  addPlayer = output<void>()
 
   onCharacterSelected(character: CharacterInCampaign): void {
     this.characterSelected.emit(character)
+  }
+
+  onPlayerSelected(player: CampaignParticipant): void {
+    this.playerSelected.emit(player)
+  }
+
+  onAddPlayer(): void {
+    this.addPlayer.emit()
   }
 }

@@ -117,11 +117,9 @@ export class CreateCharacterPage implements OnInit {
 
   onSaveCharacter(): void {
     this.formSubmitted = true
-    console.log('Form Submitted:', this.characterForm.value)
     if (this.characterForm.valid) {
       const characterPayload: CreateCharacterRequest = this.createPayload()
       this.isCreating = true
-      console.log('Creating character with payload:', characterPayload)
       this.characterService.createCharacter(characterPayload).subscribe({
         next: () => {
           this.showSuccess()
@@ -192,7 +190,6 @@ export class CreateCharacterPage implements OnInit {
         label: skill.name,
         value: skill.id,
       }))
-      console.log('Mapped skills for checkbox:', this.skills)
     })
 
     this.ancestryService.getLoading$().subscribe((loading) => {

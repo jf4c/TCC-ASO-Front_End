@@ -219,6 +219,8 @@
                         >
                           <aso-character-card 
                             [character]="toCharacterCard(character)"
+                            [useDialog]="true"
+                            (viewDetails)="onViewCharacterDetails($event)"
                           />
                           @if (character.isInCampaign) {
                             <div class="overlay-disabled">

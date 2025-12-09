@@ -12,7 +12,7 @@ export function initializeUserSync(
   return async (): Promise<void> => {
     // Verifica se está logado
     if (!authService.isLoggedIn()) {
-      console.log('⏭️ Usuário não está logado, pulando sincronização');
+
       return
     }
 
@@ -22,15 +22,12 @@ export function initializeUserSync(
     // Se não tem usuário em cache, sincroniza com backend
     if (!cachedUser) {
       try {
-        console.log('🔄 Sincronizando usuário com o backend...')
         await firstValueFrom(authService.syncUserWithBackend())
-        console.log('✅ Usuário sincronizado com sucesso!')
       } catch (error) {
         console.error('❌ Erro ao sincronizar usuário:', error)
         // Não bloqueia a inicialização do app
       }
     } else {
-      console.log('✅ Usuário recuperado do cache:', cachedUser.nickName)
     }
   }
 }

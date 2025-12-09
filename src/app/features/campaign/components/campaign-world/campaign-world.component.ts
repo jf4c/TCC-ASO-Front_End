@@ -153,11 +153,7 @@ export class CampaignWorldComponent {
   constructor() {
     effect(() => {
       const worldData = this.displayWorld()
-      console.log('CampaignWorld data:', worldData)
       if (worldData) {
-        console.log('Lore entries:', worldData.lore?.length || 0)
-        console.log('Location entries:', worldData.locations?.length || 0)
-        console.log('Pantheon entries:', worldData.pantheon?.length || 0)
       }
     })
   }

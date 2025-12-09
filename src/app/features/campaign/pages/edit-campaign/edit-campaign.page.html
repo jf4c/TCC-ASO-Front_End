@@ -1,0 +1,94 @@
+<p-toast position="top-right" />
+
+<section class="edit-campaign-page">
+  <div class="edit-campaign-page__header">
+    <button 
+      pButton 
+      icon="pi pi-arrow-left" 
+      class="p-button-text p-button-lg"
+      (click)="onCancel()"
+      label="Voltar"
+    ></button>
+    <h1>Editar Campanha</h1>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state">
+      <i class="pi pi-spin pi-spinner text-4xl"></i>
+      <p class="mt-4 text-lg">Carregando...</p>
+    </div>
+  } @else if (campaign) {
+    <form [formGroup]="editForm" class="edit-campaign-page__form">
+      <div class="form-section">
+        <h2>Informações da Campanha</h2>
+
+        <div class="form-field">
+          <label for="name">
+            Nome da Campanha <span class="required">*</span>
+          </label>
+          <input 
+            pInputText 
+            id="name" 
+            formControlName="name"
+            placeholder="Ex: A Maldição do Lich"
+          />
+          @if (editForm.get('name')?.invalid && editForm.get('name')?.touched) {
+            @if (editForm.get('name')?.errors?.['required']) {
+              <small class="error">Nome é obrigatório</small>
+            }
+            @if (editForm.get('name')?.errors?.['minlength']) {
+              <small class="error">Nome deve ter no mínimo 3 caracteres</small>
+            }
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="description">Descrição</label>
+          <textarea
+            pInputTextarea
+            id="description"
+            formControlName="description"
+            rows="5"
+            placeholder="Descreva a campanha..."
+          ></textarea>
+        </div>
+
+        <div class="form-field">
+          <label for="gameMaster">
+            Game Master <span class="required">*</span>
+          </label>
+          <p-dropdown
+            id="gameMaster"
+            formControlName="newGameMasterId"
+            [options]="participantsOptions"
+            placeholder="Selecione o Game Master"
+            [style]="{ width: '100%' }"
+          ></p-dropdown>
+          <small class="help">Selecione quem será o Game Master da campanha</small>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button 
+          pButton 
+          type="button"
+          label="Cancelar" 
+          icon="pi pi-times"
+          class="p-button-outlined p-button-secondary"
+          (click)="onCancel()"
+          [disabled]="loading"
+        ></button>
+        <button 
+          pButton 
+          type="button"
+          label="Salvar Alterações" 
+          icon="pi pi-check"
+          class="p-button-success"
+          (click)="onSave()"
+          [disabled]="loading || editForm.invalid"
+          [loading]="loading"
+        ></button>
+      </div>
+    </form>
+  }
+</section>

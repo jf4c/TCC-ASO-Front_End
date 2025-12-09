@@ -21,6 +21,15 @@
 
     .header-title {
       letter-spacing: 0.5px;
+      flex: 1;
+    }
+
+    .player-count {
+      background: rgba(0, 0, 0, 0.2);
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
     }
   }
 
@@ -36,10 +45,12 @@
       gap: 1rem;
       padding: 0.75rem;
       border-radius: 6px;
-      transition: background-color 0.2s ease;
+      transition: all 0.2s ease;
+      cursor: pointer;
 
       &:hover {
         background-color: rgba(255, 255, 255, 0.05);
+        transform: translateX(4px);
       }
 
       .player-avatar {
@@ -54,6 +65,36 @@
         color: var(--text-primary);
         font-weight: 500;
         font-size: 1rem;
+      }
+    }
+
+    .add-player {
+      border: 2px dashed var(--accent-primary);
+      background-color: rgba(212, 175, 55, 0.05);
+
+      &:hover {
+        background-color: rgba(212, 175, 55, 0.15);
+        border-color: var(--accent-secondary);
+      }
+
+      .add-player-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--accent-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--accent-primary);
+
+        i {
+          font-size: 1.5rem;
+          color: var(--text-quaternary);
+        }
+      }
+
+      .player-name {
+        color: var(--accent-primary);
       }
     }
   }

@@ -4,6 +4,11 @@ import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { ButtonModule } from 'primeng/button'
 import { DialogModule } from 'primeng/dialog'
+import { ConfirmDialogModule } from 'primeng/confirmdialog'
+import { TabViewModule } from 'primeng/tabview'
+import { ToastModule } from 'primeng/toast'
+import { ConfirmationService, MessageService } from 'primeng/api'
+import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog'
 import {
   CampaignDetail,
   UserRole,
@@ -13,12 +18,16 @@ import {
   CharacterStatus
 } from '../../interfaces/campaign-detail.model'
 import { CampaignService } from '../../services/campaign.service'
+import { CharacterService } from '../../../character/services/character.service'
 import { ParticipantRole } from '../../interfaces/campaign-participant.interface'
+import { AuthService } from '../../../../core/auth/auth.service'
 import { CampaignBannerComponent } from '../../components/campaign-banner/campaign-banner.component'
 import { CampaignSidebarComponent } from '../../components/campaign-sidebar/campaign-sidebar.component'
-import { CharacterDetailDialogComponent } from '../../components/character-detail-dialog/character-detail-dialog.component'
+import { CharacterDetailDialogComponent } from '../../../character/components/dialogs/character-detail-dialog/character-detail-dialog.component'
+import { PlayerInfoDialogComponent } from '../../components/player-info-dialog/player-info-dialog.component'
 import { CampaignJournalComponent } from '../../components/campaign-journal/campaign-journal.component'
 import { ImageUploadComponent } from '@shared/components/image-upload/image-upload.component'
+import { CharacterSelectionDialogComponent } from '../../components/dialogs/character-selection-dialog/character-selection-dialog.component'
 
 @Component({
   selector: 'aso-view-campaign',
@@ -28,12 +37,16 @@ import { ImageUploadComponent } from '@shared/components/image-upload/image-uplo
     FormsModule,
     ButtonModule,
     DialogModule,
+    DynamicDialogModule,
+    ConfirmDialogModule,
+    TabViewModule,
+    ToastModule,
     CampaignBannerComponent,
     CampaignSidebarComponent,
-    CharacterDetailDialogComponent,
     CampaignJournalComponent,
     ImageUploadComponent,
   ],
+  providers: [ConfirmationService, MessageService, DialogService],
   templateUrl: './view-campaign.page.html',
   styleUrl: './view-campaign.page.scss',
 })
@@ -41,6 +54,11 @@ export class ViewCampaignPage implements OnInit {
   private route = inject(ActivatedRoute)
   private router = inject(Router)
   private campaignService = inject(CampaignService)
+  private characterService = inject(CharacterService)
+  private authService = inject(AuthService)
+  private confirmationService = inject(ConfirmationService)
+  private messageService = inject(MessageService)
+  private dialogService = inject(DialogService)
 
   campaign = signal<CampaignDetail | null>(null)
   isLoading = signal(true)
@@ -55,6 +73,7 @@ export class ViewCampaignPage implements OnInit {
   generatedStory = signal<string>('')
   showImageDialog = signal(false)
   isUpdatingImage = signal(false)
+  isGameMaster = signal(false)
 
   // Computed property para campaignId
   campaignId = computed(() => {
@@ -67,10 +86,10 @@ export class ViewCampaignPage implements OnInit {
     const campaign = this.campaign()
     if (!campaign) return null
 
-    // O Game Master é o participante cujo userId é igual ao creatorId da campanha
-    const creatorId = (campaign as any).creatorId
+    // O Game Master é o participante cujo userId é igual ao masterId da campanha
+    const masterId = (campaign as any).masterId
     const gameMaster = campaign.participants.find(
-      (p) => p.userId === creatorId
+      (p) => p.userId === masterId
     )
     
     return gameMaster || null
@@ -80,12 +99,11 @@ export class ViewCampaignPage implements OnInit {
     const campaign = this.campaign()
     if (!campaign) return []
 
-    // Filtra participantes que NÃO são o criador e possuem personagem
-    const creatorId = (campaign as any).creatorId
+    // Filtra participantes que NÃO são o master
+    const masterId = (campaign as any).masterId
     const players = campaign.participants.filter(
-      (p) => p.userId !== creatorId && !!p.character
+      (p) => p.userId !== masterId
     )
-    console.log('Players computed:', players.length, players)
     return players
   })
 
@@ -105,6 +123,9 @@ export class ViewCampaignPage implements OnInit {
       next: (campaign) => {
         this.campaign.set(campaign as any)
         this.isLoading.set(false)
+        
+        // Buscar se é master via endpoint
+        this.checkIfMaster(campaignId)
       },
       error: (err) => {
         console.error('Erro ao carregar detalhes da campanha:', err)
@@ -114,23 +135,69 @@ export class ViewCampaignPage implements OnInit {
     })
   }
 
-  onEditCampaign(): void {
-    const campaignId = this.campaign()?.id
-    if (campaignId) {
-      // Por enquanto redireciona para a mesma página (view)
-      // TODO: Criar página específica de edição
-      console.log('Editar campanha:', campaignId)
+  private checkIfMaster(campaignId: string): void {
+    this.campaignService.isMaster(campaignId).subscribe({
+      next: (response) => {
+        this.isGameMaster.set(response.isMaster);
+      },
+      error: (err) => {
+        console.error('Erro ao verificar se é master:', err);
+        this.isGameMaster.set(false);
+      }
+    });
+  }
+
+  onDeleteCampaign(): void {
+    if (!this.isGameMaster()) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Acesso Negado',
+        detail: 'Apenas o Game Master pode deletar esta campanha'
+      })
+      return
     }
+
+    this.confirmationService.confirm({
+      message: 'Tem certeza que deseja excluir esta campanha? Esta ação não pode ser desfeita.',
+      header: 'Confirmar Exclusão',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sim, Deletar',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => {
+        const campaignId = this.campaign()?.id
+        if (!campaignId) return
+
+        this.campaignService.deleteCampaign(campaignId).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Sucesso',
+              detail: 'Campanha excluída com sucesso'
+            })
+            setTimeout(() => {
+              this.router.navigate(['/campanhas'])
+            }, 1500)
+          },
+          error: (err) => {
+            console.error('Erro ao deletar campanha:', err)
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: 'Não foi possível deletar a campanha'
+            })
+          }
+        })
+      }
+    })
   }
 
   onInvitePlayer(): void {
     // TODO: Implementar modal de convite
-    console.log('Convidar jogador')
   }
 
   onLeaveCampaign(): void {
     // TODO: Implementar confirmação e lógica de saída
-    console.log('Sair da campanha')
   }
 
   onCreateCharacter(): void {
@@ -146,20 +213,42 @@ export class ViewCampaignPage implements OnInit {
     this.router.navigate(['/campanhas'])
   }
 
-  openCharacterDialog(character: CharacterInCampaign): void {
-    this.selectedCharacter.set(character)
-  }
-
-  closeCharacterDialog(): void {
-    this.selectedCharacter.set(null)
-  }
-
   onCharacterSelected(character: CharacterInCampaign): void {
-    this.selectedCharacter.set(character)
-  }
+    // Buscar dados completos do personagem
+    this.characterService.getCharacterById(character.id).subscribe({
+      next: (fullCharacter) => {
+        const ref = this.dialogService.open(CharacterDetailDialogComponent, {
+          header: fullCharacter.name,
+          width: '70vw',
+          modal: true,
+          contentStyle: { 'overflow': 'visible', 'padding': '1.5rem' },
+          data: {
+            character: fullCharacter,
+            showSelectButton: false
+          },
+          breakpoints: {
+            '960px': '85vw',
+            '640px': '95vw',
+          },
+        });
 
-  onCloseDialog(): void {
-    this.selectedCharacter.set(null)
+        // Força scroll para o topo quando o dialog abre
+        setTimeout(() => {
+          const dialogContent = document.querySelector('.p-dialog-content');
+          if (dialogContent) {
+            dialogContent.scrollTop = 0;
+          }
+        }, 100);
+      },
+      error: (error) => {
+        console.error('Erro ao carregar personagem:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Não foi possível carregar os dados do personagem'
+        });
+      }
+    });
   }
 
   onGenerateStory(): void {
@@ -349,5 +438,87 @@ export class ViewCampaignPage implements OnInit {
         alert('Erro ao remover imagem. Tente novamente.')
       },
     })
+  }
+
+  /**
+   * Abre o diálogo com informações do jogador
+   */
+  onOpenPlayerInfo(participant: CampaignParticipant): void {
+    const ref = this.dialogService.open(PlayerInfoDialogComponent, {
+      header: 'Informações do Jogador',
+      width: '600px',
+      modal: true,
+      data: {
+        participant,
+        campaignId: this.campaignId(),
+        isGameMaster: this.isGameMaster()
+      }
+    });
+
+    ref.onClose.subscribe((result: any) => {
+      if (result?.characterAssigned) {
+        this.loadCampaignDetail();
+      } else if (result?.action === 'selectCharacter') {
+        this.openCharacterSelection(result.characters, result.participant);
+      } else if (result?.action === 'playerRemoved') {
+        setTimeout(() => {
+          this.loadCampaignDetail();
+        }, 300);
+      }
+    });
+  }
+
+  /**
+   * Abre dialog para adicionar novo jogador à campanha
+   */
+  onAddPlayer(): void {
+    // TODO: Recriar dialog de adicionar player
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Em desenvolvimento',
+      detail: 'Funcionalidade em desenvolvimento'
+    });
+  }
+
+  private openCharacterSelection(characters: any[], participant: CampaignParticipant): void {
+    const ref = this.dialogService.open(CharacterSelectionDialogComponent, {
+      header: 'Selecionar Personagem',
+      width: '900px',
+      modal: true,
+      data: {
+        characters,
+        participant
+      }
+    });
+
+    ref.onClose.subscribe((result: any) => {
+      if (result?.characterId) {
+        this.assignCharacter(result.participant.userId, result.characterId);
+      }
+    });
+  }
+
+  private assignCharacter(userId: string, characterId: string): void {
+    this.campaignService.assignCharacterToParticipant(
+      this.campaignId(),
+      userId,
+      characterId
+    ).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Personagem atribuído com sucesso!'
+        });
+        this.loadCampaignDetail();
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Não foi possível atribuir o personagem'
+        });
+      }
+    });
   }
 }

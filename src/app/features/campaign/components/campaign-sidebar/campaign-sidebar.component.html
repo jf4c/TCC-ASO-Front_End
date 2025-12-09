@@ -6,9 +6,13 @@
   }
 
   <!-- Lista de Jogadores -->
-  @if (players().length > 0) {
-  <aso-campaign-players-card [players]="players()" />
-  }
+  <aso-campaign-players-card 
+    [players]="players()" 
+    [maxPlayers]="maxPlayers()"
+    [isGameMaster]="isGameMaster()"
+    (playerSelected)="onPlayerSelected($event)"
+    (addPlayer)="onAddPlayer()"
+  />
 
   <!-- Seção de Personagens -->
   <aso-campaign-characters-card

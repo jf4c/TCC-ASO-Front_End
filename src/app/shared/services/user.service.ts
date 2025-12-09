@@ -27,28 +27,28 @@ export class UserService {
       'Content-Type': 'application/json'
     });
 
-    console.log('� Verificando se player já existe...');
+
     
     // Primeiro tenta buscar player existente
     return this.http.get<User>(`${this.apiUrl}/Player`, { headers }).pipe(
       tap(user => {
-        console.log('✅ Player encontrado no banco:', user);
+
         this.currentUserSubject.next(user);
         localStorage.setItem('currentUser', JSON.stringify(user));
-        console.log('� Usuário salvo no localStorage');
+
       }),
       catchError((error: HttpErrorResponse) => {
         // Se retornou 404, player não existe - criar novo
         if (error.status === 404) {
-          console.log('⚠️ Player não encontrado (404), criando novo...');
-          console.log('📤 Enviando requisição para POST /api/Player...');
+
+
           
           return this.http.post<User>(`${this.apiUrl}/Player`, {}, { headers }).pipe(
             tap(user => {
-              console.log('✅ Novo player criado:', user);
+
               this.currentUserSubject.next(user);
               localStorage.setItem('currentUser', JSON.stringify(user));
-              console.log('💾 Usuário salvo no localStorage');
+
             }),
             catchError((postError: HttpErrorResponse) => {
               console.error('❌ Erro ao criar player:');

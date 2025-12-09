@@ -34,7 +34,7 @@ export interface CampaignListItem {
 
 export interface CreateCampaignParticipantInput {
   playerId: string;
-  characterId: string;
+  characterId?: string;
 }
 
 export interface CreateCampaignRequest {

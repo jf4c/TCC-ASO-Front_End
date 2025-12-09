@@ -21,13 +21,29 @@
     (changeImage)="onChangeCampaignImage()"
   />
 
+  <!-- Botões de ação do Game Master -->
+  @if (isGameMaster()) {
+    <div class="gm-actions">
+      <p-button 
+        label="Excluir Campanha" 
+        icon="pi pi-trash" 
+        severity="danger"
+        (onClick)="onDeleteCampaign()"
+      />
+    </div>
+  }
+
   <!-- Layout principal com duas colunas -->
   <div class="campaign-layout">
     <!-- Coluna lateral esquerda -->
     <aso-campaign-sidebar
       [master]="master()"
       [players]="players()"
+      [maxPlayers]="campaign()!.maxPlayers"
+      [isGameMaster]="isGameMaster()"
       (characterSelected)="onCharacterSelected($event)"
+      (playerSelected)="onOpenPlayerInfo($event)"
+      (addPlayer)="onAddPlayer()"
     />
 
     <!-- Área de conteúdo principal -->
@@ -215,12 +231,6 @@
     </div>
   </div>
 
-  <!-- Dialog de Personagem -->
-  <aso-character-detail-dialog
-    [character]="selectedCharacter()"
-    (closeDialog)="onCloseDialog()"
-  />
-
   <!-- Dialog de Upload de Imagem -->
   <p-dialog
     [header]="campaign()?.image ? 'Trocar Imagem da Campanha' : 'Adicionar Imagem da Campanha'"
@@ -262,3 +272,6 @@
   </div>
   }
 </div>
+
+<p-confirmDialog />
+<p-toast />

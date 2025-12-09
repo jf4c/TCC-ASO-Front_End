@@ -1,6 +1,7 @@
 import { Campaign, UserRole } from './campaign.model'
 
 export interface CampaignDetail extends Campaign {
+  gameMasterId: string
   participants: CampaignParticipant[]
   sessions: CampaignSession[]
   settings: CampaignSettings

@@ -28,9 +28,7 @@ export function initializeKeycloak(
     // Se autenticado, sincroniza usuário com backend
     if (authenticated) {
       try {
-        console.log('🔄 Keycloak autenticado, sincronizando usuário...')
         await firstValueFrom(authService.syncUserWithBackend())
-        console.log('✅ Usuário sincronizado após inicialização do Keycloak')
       } catch (error) {
         console.error('❌ Erro ao sincronizar usuário:', error)
         // Não bloqueia a inicialização

@@ -58,8 +58,8 @@ export class CharacterService {
    */
   getCharactersByPlayer(
     playerId: string,
-  ): Observable<GetPaginatedCharacterResponse> {
-    return this.http.get<GetPaginatedCharacterResponse>(
+  ): Observable<Character[]> {
+    return this.http.get<Character[]>(
       `${this.apiUrl}/player/${playerId}`,
     )
   }

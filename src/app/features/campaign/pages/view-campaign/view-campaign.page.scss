@@ -4,6 +4,23 @@
   padding-top: 2rem;
 }
 
+.gm-actions {
+  max-width: 1200px;
+  margin: 1rem auto;
+  padding: 0 1rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    
+    ::ng-deep .p-button {
+      width: 100%;
+    }
+  }
+}
+
 .loading-state {
   display: flex;
   flex-direction: column;
@@ -589,3 +606,4 @@
     }
   }
 }
+

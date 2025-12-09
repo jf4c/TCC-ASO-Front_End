@@ -89,7 +89,27 @@ export class AuthService {
   syncUserWithBackend(): Observable<any> {
     return from(this.getToken()).pipe(
       switchMap(token => this.userService.syncUser(token)),
-      tap(user => console.log('Usuário sincronizado:', user))
     )
+  }
+
+  /**
+   * Obtém o ID do player atual do backend
+   */
+  getPlayerId(): string | null {
+    const user = this.userService.getCurrentUser()
+    return user?.id || null
+  }
+
+  /**
+   * Obtém o subject (sub) do token Keycloak como fallback
+   */
+  getKeycloakSubject(): string | null {
+    try {
+      const tokenParsed = this.keycloakService.getKeycloakInstance().tokenParsed
+      return tokenParsed?.sub || null
+    } catch (error) {
+      console.error('Erro ao obter subject do Keycloak:', error)
+      return null
+    }
   }
 }

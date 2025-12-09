@@ -89,7 +89,6 @@ export class CharacterDialogImageComponent implements OnInit, OnDestroy {
   }
 
   showInfo() {
-    console.log('showInfo')
   }
 
   onClose(): void {

@@ -6,6 +6,7 @@ import { ViewCharacterPage } from '@features/character/pages/view-character/view
 import { ListCampaignPage } from '@features/campaign/pages/list-campaign/list-campaign.page'
 import { ViewCampaignPage } from '@features/campaign/pages/view-campaign/view-campaign.page'
 import { CreateCampaignPage } from '@features/campaign/pages/create-campaign/create-campaign.page'
+import { EditCampaignPage } from '@features/campaign/pages/edit-campaign/edit-campaign.page'
 import { ListWorldsPage } from '@features/world/pages/list-worlds/list-worlds.page'
 import { ViewWorldPage } from '@features/world/pages/view-world/view-world.page'
 import { FriendsListPage } from '@features/friends/pages/friends-list/friends-list.page'
@@ -33,7 +34,7 @@ export const routes: Routes = [
   },
   {
     path: 'campanhas/:id/editar',
-    component: ViewCampaignPage,
+    component: EditCampaignPage,
     canActivate: [authGuard],
   },
   {

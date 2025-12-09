@@ -1,13 +1,13 @@
 <!-- Lista de Jogadores -->
-@if (players().length > 0) {
 <div class="players-card">
   <div class="card-header">
     <i class="pi pi-users"></i>
     <span class="header-title">JOGADORES</span>
+    <span class="player-count">{{ players().length }}/{{ maxPlayers() }}</span>
   </div>
   <div class="players-list">
     @for (player of players(); track player.id) {
-    <div class="player-item">
+    <div class="player-item" (click)="onPlayerClick(player)">
       <img
         [src]="player.userAvatar || 'assets/Character/unknown.png'"
         [alt]="player.userName"
@@ -16,6 +16,15 @@
       <span class="player-name">{{ player.userName }}</span>
     </div>
     }
+    
+    <!-- Botão de adicionar jogador -->
+    @if (canAddPlayers()) {
+    <div class="player-item add-player" (click)="onAddPlayer()">
+      <div class="add-player-avatar">
+        <i class="pi pi-plus"></i>
+      </div>
+      <span class="player-name">Adicionar Jogador</span>
+    </div>
+    }
   </div>
 </div>
-}

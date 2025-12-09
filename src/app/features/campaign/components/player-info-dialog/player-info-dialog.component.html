@@ -1,0 +1,103 @@
+<div class="player-dialog">
+  @if (participant) {
+    <!-- Header com Avatar e Nome -->
+    <div class="player-header">
+      <div class="avatar-container">
+        @if (participant.userAvatar) {
+          <img [src]="participant.userAvatar" alt="Avatar" class="player-avatar" />
+        } @else {
+          <div class="player-avatar-placeholder">
+            <i class="pi pi-user"></i>
+          </div>
+        }
+      </div>
+      <div class="player-details">
+        <h2 class="player-name">{{ participant.userName }}</h2>
+        <p class="join-info">
+          <i class="pi pi-calendar"></i>
+          Entrou em {{ participant.joinedAt | date: 'dd/MM/yyyy' }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Informações do Personagem -->
+    <div class="character-section">
+      <div class="section-title">
+        <i class="pi pi-user"></i>
+        <h3>Personagem</h3>
+      </div>
+
+      @if (participant.character) {
+        <!-- Personagem Atribuído -->
+        <div class="character-card">
+          @if (participant.character.image) {
+            <img [src]="participant.character.image" alt="{{ participant.character.name }}" class="character-image" />
+          } @else {
+            <div class="character-image-placeholder">
+              <i class="pi pi-user"></i>
+            </div>
+          }
+          <div class="character-info">
+            <h4 class="character-name">{{ participant.character.name }}</h4>
+            <p class="character-race-class">
+              {{ participant.character.race }} • {{ participant.character.class }}
+            </p>
+            <p class="character-level">
+              <i class="pi pi-star-fill"></i>
+              Nível {{ participant.character.level }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Ações -->
+        <div class="actions">
+          @if (isGameMaster) {
+            <button
+              pButton
+              label="Alterar Personagem"
+              icon="pi pi-refresh"
+              (click)="onChangeCharacter()"
+              [loading]="loading"
+            ></button>
+          }
+        </div>
+      } @else {
+        <!-- Sem Personagem -->
+        <div class="no-character">
+          <i class="pi pi-exclamation-circle"></i>
+          <p>Este jogador ainda não possui um personagem atribuído nesta campanha.</p>
+          @if (isGameMaster) {
+            <button
+              pButton
+              label="Atribuir Personagem"
+              icon="pi pi-plus"
+              (click)="onChangeCharacter()"
+              [loading]="loading"
+            ></button>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Footer -->
+    <div class="dialog-footer">
+      @if (isGameMaster) {
+        <button
+          pButton
+          label="Remover Jogador"
+          icon="pi pi-trash"
+          severity="danger"
+          (click)="onRemovePlayer()"
+          [loading]="loading"
+        ></button>
+      }
+      <button
+        pButton
+        label="Fechar"
+        icon="pi pi-times"
+        class="p-button-text"
+        (click)="onClose()"
+      ></button>
+    </div>
+  }
+</div>

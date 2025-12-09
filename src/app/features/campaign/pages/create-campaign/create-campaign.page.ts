@@ -11,6 +11,7 @@ import { ToastModule } from 'primeng/toast';
 import { StepsModule } from 'primeng/steps';
 import { CardModule } from 'primeng/card';
 import { MessageService, MenuItem } from 'primeng/api';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { CampaignService } from '../../services/campaign.service';
 import { FriendshipService } from '../../../friends/services/friendship.service';
 import { CharacterService } from '../../../character/services/character.service';
@@ -20,6 +21,7 @@ import { AvailableFriend, AvailableCharacter } from '../../interfaces/campaign-p
 import { Friend } from '../../../friends/interfaces/friend.interface';
 import { CharacterCardComponent } from '../../../character/components/character-card/character-card.component';
 import { Character } from '../../../character/interface/character.model';
+import { CharacterDetailDialogComponent } from '../../../character/components/dialogs/character-detail-dialog/character-detail-dialog.component';
 
 @Component({
   selector: 'aso-create-campaign',
@@ -37,7 +39,7 @@ import { Character } from '../../../character/interface/character.model';
     CardModule,
     CharacterCardComponent
   ],
-  providers: [MessageService],
+  providers: [MessageService, DialogService],
   templateUrl: './create-campaign.page.html',
   styleUrl: './create-campaign.page.scss',
 })
@@ -49,6 +51,9 @@ export class CreateCampaignPage implements OnInit {
   private characterService = inject(CharacterService);
   private messageService = inject(MessageService);
   private authService = inject(AuthService);
+  private dialogService = inject(DialogService);
+  
+  dialogRef: DynamicDialogRef | undefined;
 
   // Wizard Steps
   activeStep = 0;
@@ -168,24 +173,13 @@ export class CreateCampaignPage implements OnInit {
         return this.characterService
           .getCharactersByPlayer(player.friend.id)
           .toPromise()
-          .then(response => {
-            // Backend pode retornar array direto ou objeto com results
-            let charactersData: any[] = [];
-            
-            if (response) {
-              if (Array.isArray(response)) {
-                charactersData = response;
-              } else if (response.results && Array.isArray(response.results)) {
-                charactersData = response.results;
-              }
-            }
-            
-            if (charactersData.length > 0) {
+          .then(characters => {
+            if (characters && characters.length > 0) {
               // Mapear os personagens para o formato esperado
-              const characters: AvailableCharacter[] = charactersData.map(char => ({
+              const mappedCharacters: AvailableCharacter[] = characters.map(char => ({
                 id: char.id,
                 name: char.name,
-                race: char.ancestry || char.race,
+                race: char.ancestry,
                 class: char.class,
                 level: char.level,
                 image: char.image,
@@ -194,7 +188,7 @@ export class CreateCampaignPage implements OnInit {
                 isInCampaign: false
               }));
               
-              this.playerCharacters.set(player.friend.id, characters);
+              this.playerCharacters.set(player.friend.id, mappedCharacters);
             } else {
               this.playerCharacters.set(player.friend.id, []);
             }
@@ -285,10 +279,17 @@ export class CreateCampaignPage implements OnInit {
     this.loading = true;
 
     // Monta o array de participantes para o payload
-    const participants = this.selectedPlayers.map(player => ({
-      playerId: player.friend.id,
-      characterId: this.selectedCharacters.get(player.friend.id) || ''
-    }));
+    const participants = this.selectedPlayers.map(player => {
+      const characterId = this.selectedCharacters.get(player.friend.id);
+      const participant: any = { playerId: player.friend.id };
+      
+      // Só adiciona characterId se existir
+      if (characterId) {
+        participant.characterId = characterId;
+      }
+      
+      return participant;
+    });
 
     const request: CreateCampaignRequest = {
       name: this.campaignForm.get('name')?.value,
@@ -396,13 +397,30 @@ export class CreateCampaignPage implements OnInit {
           detail: 'História da campanha gerada com IA!'
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao gerar história:', error);
-      this.storyErrorMessage = 'Erro ao gerar história. Tente novamente.';
+      
+      // Tenta extrair a mensagem do erro em diferentes formatos
+      let errorMessage = 'Erro ao gerar história. Tente novamente.';
+      
+      if (error?.error) {
+        if (typeof error.error === 'string') {
+          errorMessage = error.error;
+        } else if (error.error.message) {
+          errorMessage = error.error.message;
+        } else if (error.error.title) {
+          errorMessage = error.error.title;
+        }
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+      
+      this.storyErrorMessage = errorMessage;
       this.messageService.add({
         severity: 'error',
-        summary: 'Erro',
-        detail: 'Não foi possível gerar a história da campanha'
+        summary: 'Erro ao gerar história',
+        detail: errorMessage,
+        life: 5000
       });
     } finally {
       this.isGeneratingStory = false;
@@ -430,6 +448,53 @@ export class CreateCampaignPage implements OnInit {
 
   hasSelectedCharacters(): boolean {
     return this.selectedCharacters.size > 0;
+  }
+
+  /**
+   * Abre dialog com detalhes do personagem
+   */
+  onViewCharacterDetails(character: Character): void {
+    // Busca detalhes completos do personagem
+    this.characterService.getCharacterById(character.id).subscribe({
+      next: (characterDetail) => {
+        this.dialogRef = this.dialogService.open(CharacterDetailDialogComponent, {
+          header: 'Detalhes do Personagem',
+          width: '70vw',
+          modal: true,
+          closable: true,
+          data: {
+            character: characterDetail,
+            showSelectButton: true
+          },
+          breakpoints: {
+            '960px': '85vw',
+            '640px': '95vw',
+          },
+        });
+
+        // Escuta o resultado do dialog
+        this.dialogRef.onClose.subscribe((result) => {
+          if (result?.selected && result?.character) {
+            // Encontra o playerId deste personagem
+            for (const [playerId, characters] of this.playerCharacters.entries()) {
+              const foundChar = characters.find(c => c.id === result.character.id);
+              if (foundChar && !foundChar.isInCampaign) {
+                this.selectCharacter(playerId, result.character.id);
+                break;
+              }
+            }
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Erro ao carregar detalhes do personagem:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Não foi possível carregar os detalhes do personagem'
+        });
+      }
+    });
   }
 
   isGenerateStoryDisabled(): boolean {

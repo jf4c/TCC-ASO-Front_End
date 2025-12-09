@@ -1,0 +1,32 @@
+<div class="character-selection-dialog">
+  <p class="dialog-description">
+    Selecione um personagem para <strong>{{ participant?.userName }}</strong>:
+  </p>
+
+  <div class="characters-grid">
+    <div 
+      *ngFor="let character of characters" 
+      class="character-card-wrapper"
+      [class.selected]="selectedCharacterId === character.id"
+      (click)="selectCharacter(character.id)"
+    >
+      <aso-character-card 
+        [character]="character"
+        [useDialog]="false"
+      />
+    </div>
+  </div>
+
+  <div class="dialog-footer">
+    <p-button 
+      label="Cancelar" 
+      severity="secondary"
+      (onClick)="onCancel()"
+    />
+    <p-button 
+      label="Confirmar" 
+      (onClick)="onConfirm()"
+      [disabled]="!selectedCharacterId"
+    />
+  </div>
+</div>

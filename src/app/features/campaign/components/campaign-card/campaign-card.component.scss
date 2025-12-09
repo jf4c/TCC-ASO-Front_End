@@ -27,7 +27,7 @@
 
   .image-placeholder {
     width: 100%;
-    height: 200px;
+    height: 150px;
     background-color: var(--bg-tertiary);
     display: flex;
     align-items: center;
@@ -100,7 +100,7 @@
 }
 
 .campaign-content {
-  padding: 1.5rem;
+  padding: 1rem;
 
   .campaign-title {
     font-size: 1.25rem;
@@ -150,11 +150,12 @@
   .campaign-actions {
     display: flex;
     gap: 0.5rem;
-    justify-content: flex-end;
+    justify-content: center;
 
     .action-btn {
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 0.5rem;
       padding: 0.5rem 1rem;
       border-radius: 6px;
@@ -163,6 +164,7 @@
       cursor: pointer;
       transition: all 0.3s ease;
       border: 2px solid;
+      width: 100%;
 
       &.primary {
         background-color: var(--accent-primary);

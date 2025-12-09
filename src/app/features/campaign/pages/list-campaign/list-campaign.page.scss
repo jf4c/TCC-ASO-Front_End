@@ -68,13 +68,14 @@
   }
 
   .campaigns-grid {
-    max-width: 1200px;
+    width: 100%;
 
     .grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 1rem;
       width: 100%;
+      max-width: 1100px;
     }
 
     @media (max-width: 1024px) {

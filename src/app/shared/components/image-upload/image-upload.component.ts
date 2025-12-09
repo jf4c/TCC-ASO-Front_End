@@ -96,7 +96,7 @@ export class ImageUploadComponent {
         this.previewUrl.set(preview);
       },
       error: (err) => {
-        console.error('Erro ao gerar preview:', err);
+        // Erro ao gerar preview
       },
     });
 
@@ -115,7 +115,6 @@ export class ImageUploadComponent {
           }
         },
         error: (err) => {
-          console.error('Erro ao fazer upload:', err);
           this.error.set(
             err.error?.error || 'Erro ao fazer upload. Tente novamente.'
           );

@@ -44,24 +44,6 @@
         <i class="pi pi-eye"></i>
         Ver Detalhes
       </button>
-
-      @if (campaign.myRole === 'creator' || campaign.myRole === 'gameMaster') {
-      <button
-        class="action-btn edit-btn outlined"
-        (click)="onEditClick($event)"
-      >
-        <i class="pi pi-pencil"></i>
-        Editar
-      </button>
-      } @else {
-      <button
-        class="action-btn join-btn outlined"
-        (click)="onJoinClick($event)"
-      >
-        <i class="pi pi-sign-in"></i>
-        Entrar
-      </button>
-      }
     </div>
   </div>
 </div>

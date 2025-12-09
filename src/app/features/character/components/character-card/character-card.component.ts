@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core'
+import { Component, inject, Input, Output, EventEmitter } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { Router } from '@angular/router'
 import { Character } from '@features/character/interface/character.model'
@@ -16,11 +16,19 @@ export class CharacterCardComponent {
   private readonly router = inject(Router)
   
   @Input() character!: Character
+  @Input() useDialog = false; // Se true, emite evento; se false, navega
+  @Output() viewDetails = new EventEmitter<Character>();
 
   /**
-   * Navega para tela de detalhes do personagem
+   * Ao clicar em "Ver Detalhes"
+   * - Se useDialog=true: emite evento para a página decidir (abrir dialog)
+   * - Se useDialog=false: navega para página de detalhes
    */
   onViewDetails() {
-    this.router.navigate(['/personagens', this.character.id])
+    if (this.useDialog) {
+      this.viewDetails.emit(this.character);
+    } else {
+      this.router.navigate(['/personagens', this.character.id]);
+    }
   }
 }

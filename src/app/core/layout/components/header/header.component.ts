@@ -38,20 +38,17 @@ export class HeaderComponent implements OnInit {
       // Busca dados do player do backend
       this.userService.currentUser$.subscribe(user => {
         if (user) {
-          console.log('👤 Dados completos do user:', user)
           
           // Backend retorna: Email, NickName, FirstName, LastName (PascalCase)
           this.username = user.nickName || 'Usuário'
           this.playerName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Player'
           
-          console.log('✅ Valores finais - username:', this.username, '| playerName:', this.playerName)
         }
       })
 
       // Se não tiver em cache, tenta pegar do localStorage
       const cachedUser = this.userService.getCurrentUser()
       if (cachedUser) {
-        console.log('💾 User do localStorage:', cachedUser)
         this.username = cachedUser.nickName || 'Usuário'
         this.playerName = `${cachedUser.firstName || ''} ${cachedUser.lastName || ''}`.trim() || 'Player'
       }
