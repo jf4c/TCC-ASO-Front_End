@@ -1,5 +1,8 @@
 <!-- Diário e Planejamento da Campanha -->
 <div class="campaign-journal-section">
+  <p-toast />
+  <p-confirmDialog />
+
   <p-tabView styleClass="journal-tabs">
     <!-- Aba Diário de Aventuras -->
     <p-tabPanel header="Diário de Aventuras">
@@ -16,303 +19,195 @@
             label="Adicionar Ato"
             icon="pi pi-plus"
             severity="warn"
-            (eventClick)="addJournalEntry()"
+            (eventClick)="addAct()"
             class="add-entry-btn"
           ></aso-button>
         </div>
 
-        <!-- Lista de entradas do diário -->
-        <div class="journal-entries">
-          <p-accordion
-            [multiple]="true"
-            styleClass="journal-accordion"
-            (onClose)="onAccordionToggle($event)"
-            (onOpen)="onAccordionToggle($event)"
-          >
-            @for (entry of journalEntries(); track entry.id) {
-            <p-accordionTab>
-              <ng-template pTemplate="header">
-                <div class="accordion-entry-header">
-                  @if (editingJournalTitle() === entry.id) {
-                  <aso-input
-                    [ngModel]="editingTitleValue()"
-                    (ngModelChange)="editingTitleValue.set($event)"
-                    class="entry-title-input"
-                    (keyup.enter)="saveJournalTitle(entry.id)"
-                    (keyup.escape)="cancelJournalTitleEdit()"
-                    (click)="$event.stopPropagation()"
-                    (keydown)="$event.stopPropagation()"
-                    (keyup)="$event.stopPropagation()"
-                    (keypress)="$event.stopPropagation()"
-                    (input)="$event.stopPropagation()"
-                    (keydown.space)="$event.stopPropagation()"
-                    (keyup.space)="$event.stopPropagation()"
-                  ></aso-input>
-                  } @else {
-                  <span class="entry-title">{{ entry.title }}</span>
-                  }
-                  <div class="entry-actions">
-                    @if (editingJournalTitle() === entry.id) {
-                    <aso-button
-                      icon="pi pi-check"
-                      variant="text"
-                      size="small"
-                      severity="success"
-                      (eventClick)="saveJournalTitle(entry.id); $event.stopPropagation()"
-                    ></aso-button>
-                    <aso-button
-                      icon="pi pi-times"
-                      variant="text"
-                      size="small"
-                      severity="secondary"
-                      (eventClick)="cancelJournalTitleEdit(); $event.stopPropagation()"
-                    ></aso-button>
-                    } @else {
-                    <aso-button
-                      icon="pi pi-plus"
-                      variant="text"
-                      size="small"
-                      (eventClick)="addChapter(entry.id); $event.stopPropagation()"
-                    ></aso-button>
-                    <aso-button
-                      icon="pi pi-pencil"
-                      variant="text"
-                      size="small"
-                      (eventClick)="editJournalTitle(entry.id); $event.stopPropagation()"
-                    ></aso-button>
-                    <aso-button
-                      icon="pi pi-trash"
-                      variant="text"
-                      size="small"
-                      severity="danger"
-                      (eventClick)="deleteJournalEntry(entry.id); $event.stopPropagation()"
-                    ></aso-button>
-                    }
-                  </div>
-                </div>
-              </ng-template>
-
-              <!-- Conteúdo da entrada -->
-              <div class="accordion-entry-content">
-                @if (editingJournal() === entry.id) {
-                <div class="edit-mode">
-                  <aso-textarea
-                    [ngModel]="entry.content"
-                    #contentTextarea
-                    placeholder="Descreva os eventos deste ato da aventura..."
-                    class="w-full entry-textarea"
-                  ></aso-textarea>
-                  <div class="edit-actions">
-                    <aso-button
-                      label="Salvar"
-                      icon="pi pi-check"
-                      severity="success"
-                      size="small"
-                      (eventClick)="saveJournalEntry(entry.id, contentTextarea.value)"
-                    ></aso-button>
-                    <aso-button
-                      label="Cancelar"
-                      icon="pi pi-times"
-                      severity="secondary"
-                      size="small"
-                      (eventClick)="editingJournal.set(null)"
-                    ></aso-button>
-                  </div>
-                </div>
-                } @else {
-
-                <!-- Seção de Capítulos -->
-                <div class="chapters-section">
-                  <!-- Lista de Capítulos -->
-                  @if (entry.chapters.length > 0) {
-                  <div class="chapters-list">
-                    @for (chapter of entry.chapters; track chapter.id) {
-                    <div class="chapter-item">
-                      <div class="chapter-header">
-                        <h4 class="chapter-title">{{ chapter.title }}</h4>
-                        <div class="chapter-actions">
-                          <aso-button
-                            icon="pi pi-pencil"
-                            variant="text"
-                            size="small"
-                            severity="secondary"
-                            (eventClick)="editChapter(entry.id, chapter.id)"
-                            class="chapter-edit-btn"
-                          ></aso-button>
-                          <aso-button
-                            icon="pi pi-trash"
-                            variant="text"
-                            size="small"
-                            severity="danger"
-                            (eventClick)="deleteChapter(entry.id, chapter.id)"
-                            class="chapter-delete-btn"
-                          ></aso-button>
-                        </div>
-                      </div>
-                      <div class="chapter-content">
-                        @if (chapter.content) {
-                        <p class="chapter-text">{{ chapter.content }}</p>
-                        } @else {
-                        <p class="chapter-placeholder">
-                          Clique no ícone de edição para adicionar o conteúdo
-                          deste capítulo...
-                        </p>
-                        }
-                      </div>
-                    </div>
-                    }
-                  </div>
-                  } @else {
-                  <div class="no-chapters">
-                    <p class="no-chapters-text">
-                      Nenhum capítulo adicionado ainda. Clique no botão
-                      "Adicionar Capítulo" para começar a escrever sua história.
-                    </p>
-                  </div>
-                  }
-                </div>
-
-                }
-              </div>
-            </p-accordionTab>
-            }
-          </p-accordion>
-
-          <!-- Campo para novo ato - APÓS os accordions -->
-          @if (pendingNewAct() === 'creating') {
-          <div class="new-act-input">
-            <div class="new-act-form">
-              <aso-input
-                [ngModel]="newActTitle()"
-                placeholder="Digite o título do ato..."
-                class="pending-act-input w-full"
-                (ngModelChange)="newActTitle.set($event)"
-                (keyup.enter)="confirmNewAct()"
-                (keyup.escape)="cancelNewAct()"
-                (click)="$event.stopPropagation()"
-                (keydown)="$event.stopPropagation()"
-                (keyup)="$event.stopPropagation()"
-                (keypress)="$event.stopPropagation()"
-                (input)="$event.stopPropagation()"
-                (focus)="$event.stopPropagation()"
-                #newActInput
-              ></aso-input>
-              <div class="new-act-actions">
-                <aso-button
-                  icon="pi pi-check"
-                  severity="success"
-                  size="small"
-                  (eventClick)="confirmNewAct()"
-                ></aso-button>
-                <aso-button
-                  icon="pi pi-times"
-                  severity="secondary"
-                  size="small"
-                  (eventClick)="cancelNewAct()"
-                ></aso-button>
-              </div>
+        <!-- Novo Ato Inline -->
+        <div class="new-act-input" *ngIf="pendingNewAct()">
+          <div class="new-act-form">
+            <aso-input
+              [(ngModel)]="newActTitle"
+              placeholder="Digite o título do novo ato (ex: ATO I: O CHAMADO PARA A AVENTURA)"
+              inputId="newActInput"
+              (keyup.enter)="confirmNewAct()"
+              (keyup.escape)="cancelNewAct()"
+            />
+            <div class="new-act-actions">
+              <aso-button
+                icon="pi pi-check"
+                severity="success"
+                size="small"
+                (eventClick)="confirmNewAct()"
+              />
+              <aso-button
+                icon="pi pi-times"
+                severity="secondary"
+                size="small"
+                (eventClick)="cancelNewAct()"
+              />
             </div>
           </div>
-          }
         </div>
+
+        <!-- Loading -->
+        <div class="loading-container" *ngIf="loading()">
+          <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+          <p>Carregando diário...</p>
+        </div>
+
+        <!-- Lista de atos -->
+        <div class="empty-state" *ngIf="!loading() && acts().length === 0">
+          <i class="pi pi-book" style="font-size: 3rem; opacity: 0.3"></i>
+          <p>Nenhum ato registrado ainda</p>
+          <p class="empty-hint">Clique em "Adicionar Ato" para começar a saga</p>
+        </div>
+
+        <div class="journal-entries" *ngIf="!loading() && acts().length > 0">
+          <p-accordion [multiple]="true" styleClass="journal-accordion">
+            <p-accordionTab *ngFor="let act of acts(); trackBy: trackByActId">
+                  <ng-template pTemplate="header">
+                    <div class="accordion-entry-header">
+                      <h3 class="entry-title">{{ act.title }}</h3>
+                      <div class="entry-actions">
+                        <aso-button
+                          icon="pi pi-plus"
+                          variant="text"
+                          size="small"
+                          (eventClick)="addChapter(act); $event.stopPropagation()"
+                        ></aso-button>
+                        <aso-button
+                          icon="pi pi-pencil"
+                          variant="text"
+                          size="small"
+                          (eventClick)="editAct(act); $event.stopPropagation()"
+                        ></aso-button>
+                        <aso-button
+                          icon="pi pi-trash"
+                          variant="text"
+                          size="small"
+                          severity="danger"
+                          (eventClick)="deleteAct(act); $event.stopPropagation()"
+                        ></aso-button>
+                      </div>
+                    </div>
+                  </ng-template>
+
+                  <!-- Capítulos do ato -->
+                  <div class="act-content">
+                    <div class="act-chapters">
+                      <div class="empty-chapters" *ngIf="act.chapters.length === 0">
+                        <p>Nenhum capítulo neste ato ainda</p>
+                        <aso-button
+                          label="Adicionar Primeiro Capítulo"
+                          icon="pi pi-plus"
+                          size="small"
+                          (eventClick)="addChapter(act)"
+                        ></aso-button>
+                      </div>
+                      <ng-container *ngIf="act.chapters.length > 0">
+                        <div class="chapter-entry" *ngFor="let chapter of act.chapters; trackBy: trackByChapterId">
+                          <div class="chapter-header">
+                            <h4 class="chapter-title">{{ chapter.title }}</h4>
+                            <div class="chapter-actions">
+                              <aso-button
+                                icon="pi pi-pencil"
+                                variant="text"
+                                size="small"
+                                (eventClick)="editChapter(act.id, chapter)"
+                              ></aso-button>
+                              <aso-button
+                                icon="pi pi-trash"
+                                variant="text"
+                                size="small"
+                                severity="danger"
+                                (eventClick)="deleteChapter(act.id, chapter.id)"
+                              ></aso-button>
+                            </div>
+                          </div>
+                          <div class="chapter-content">
+                            <p>{{ chapter.content || 'Sem conteúdo' }}</p>
+                          </div>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </p-accordionTab>
+              </p-accordion>
+            </div>
       </div>
     </p-tabPanel>
 
     <!-- Aba Planejamento do Mestre -->
     <p-tabPanel header="Planejamento do Mestre">
       <ng-template pTemplate="header">
-        <i class="pi pi-cog"></i>
+        <i class="pi pi-lightbulb"></i>
         <span>Planejamento do Mestre</span>
       </ng-template>
 
       <div class="planning-content">
-        <!-- Cabeçalho da seção -->
         <div class="planning-header">
-          <h2 class="planning-title">NOTAS PARA A PRÓXIMA SESSÃO</h2>
+          <h3>Notas Privadas do Mestre</h3>
           <aso-button
-            label="Adicionar Ideia"
+            label="Nova Nota"
             icon="pi pi-plus"
-            severity="warn"
-            (eventClick)="addPlanningNote()"
-            class="add-note-btn"
+            severity="help"
+            (eventClick)="addMasterNote()"
           ></aso-button>
         </div>
 
-        <!-- Input para nova nota -->
-        @if (newPlanningContent()) {
-        <div class="new-note-input">
-          <aso-textarea
-            [(ngModel)]="newPlanningContent"
-            placeholder="Digite sua ideia ou nota de planejamento..."
-            class="w-full"
-            (keyup.enter)="addPlanningNote()"
-          ></aso-textarea>
+        <div class="planning-hint">
+          <i class="pi pi-info-circle"></i>
+          <span
+            >Use esta seção para anotar ideias, NPCs importantes, plot twists
+            planejados, ou qualquer informação que não deve ser compartilhada com
+            os jogadores.</span
+          >
         </div>
-        }
 
-        <!-- Lista de notas de planejamento -->
-        <div class="planning-notes">
-          @if (planningNotes().length > 0) { @for (note of planningNotes();
-          track note.id) {
-          <div class="planning-note-card">
-            @if (editingPlanning() === note.id) {
-            <div class="edit-mode">
-              <aso-textarea
-                [ngModel]="note.content"
-                #noteTextarea
-                class="w-full note-textarea"
-              ></aso-textarea>
-              <div class="edit-actions">
-                <aso-button
-                  icon="pi pi-check"
-                  severity="success"
-                  size="small"
-                  (eventClick)="savePlanningNote(note.id, noteTextarea.value)"
-                ></aso-button>
-                <aso-button
-                  icon="pi pi-times"
-                  severity="secondary"
-                  size="small"
-                  (eventClick)="editingPlanning.set(null)"
-                ></aso-button>
-              </div>
-            </div>
-            } @else {
-            <div class="view-mode">
-              <p class="note-text">{{ note.content }}</p>
+        <!-- Lista de notas -->
+        <div class="empty-state" *ngIf="masterNotes().length === 0">
+          <i class="pi pi-lightbulb" style="font-size: 3rem; opacity: 0.3"></i>
+          <p>Nenhuma nota de planejamento ainda</p>
+          <p class="empty-hint">Comece a organizar suas ideias para a campanha</p>
+        </div>
+        <div class="planning-notes" *ngIf="masterNotes().length > 0">
+          <div class="planning-note" *ngFor="let note of masterNotes(); trackBy: trackByNoteId">
+            <div class="note-header">
+              <span class="note-date">{{
+                note.createdAt | date: 'dd/MM/yyyy HH:mm'
+              }}</span>
               <div class="note-actions">
                 <aso-button
                   icon="pi pi-pencil"
                   variant="text"
                   size="small"
-                  (eventClick)="editPlanningNote(note.id)"
+                  (eventClick)="editMasterNote(note)"
                 ></aso-button>
                 <aso-button
                   icon="pi pi-trash"
                   variant="text"
                   size="small"
                   severity="danger"
-                  (eventClick)="deletePlanningNote(note.id)"
+                  (eventClick)="deleteMasterNote(note.id)"
                 ></aso-button>
               </div>
             </div>
-            }
+            <div class="note-content">
+              <p>{{ note.content }}</p>
+            </div>
           </div>
-          } } @else {
-          <div class="empty-planning">
-            <i class="pi pi-lightbulb"></i>
-            <p>Ainda não há notas de planejamento. Adicione suas ideias!</p>
-          </div>
-          }
         </div>
 
-        <!-- Botão para sugestões de IA (futuro) -->
+        <!-- Botão para sugestões de IA -->
         <div class="ai-suggestions">
           <aso-button
             label="Pedir Sugestões para IA"
-            icon="pi pi-android"
+            icon="pi pi-sparkles"
             variant="outlined"
             class="w-full ai-btn"
+            (eventClick)="requestAISuggestions()"
           ></aso-button>
         </div>
       </div>
@@ -320,14 +215,26 @@
   </p-tabView>
 </div>
 
-<!-- Dialog de capítulos -->
+<!-- Dialog de Ato -->
+<aso-act-dialog
+  [visible]="actDialogVisible()"
+  [data]="actDialogData()"
+  (save)="onActSave($event)"
+  (cancelDialog)="onActCancel()"
+/>
+
+<!-- Dialog de Capítulo -->
 <aso-chapter-dialog
   [visible]="chapterDialogVisible()"
   [data]="chapterDialogData()"
   (save)="onChapterSave($event)"
   (cancelDialog)="onChapterCancel()"
-></aso-chapter-dialog>
+/>
 
-<!-- Dialog de confirmação e Toast -->
-<p-confirmDialog></p-confirmDialog>
-<p-toast></p-toast>
+<!-- Dialog de Nota do Mestre -->
+<aso-master-note-dialog
+  [visible]="masterNoteDialogVisible()"
+  [data]="masterNoteDialogData()"
+  (save)="onMasterNoteSave($event)"
+  (cancelDialog)="onMasterNoteCancel()"
+/>

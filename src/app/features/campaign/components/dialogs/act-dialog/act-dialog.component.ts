@@ -4,39 +4,35 @@ import { FormsModule } from '@angular/forms'
 import { DialogModule } from 'primeng/dialog'
 
 import { InputComponent } from '../../../../../shared/components/input/input.component'
-import { TextareaComponent } from '../../../../../shared/components/textarea/textarea.component'
 import { ButtonComponent } from '../../../../../shared/components/button/button.component'
-import { Chapter } from '../../../interfaces/chapter.interface'
+import { Act } from '../../../interfaces/act.interface'
 
-export interface ChapterDialogData {
-  actId: string
-  chapter?: Chapter
+export interface ActDialogData {
+  act?: Act
   isEditing: boolean
 }
 
 @Component({
-  selector: 'aso-chapter-dialog',
+  selector: 'aso-act-dialog',
   standalone: true,
   imports: [
     CommonModule,
     FormsModule,
     DialogModule,
     InputComponent,
-    TextareaComponent,
     ButtonComponent,
   ],
-  templateUrl: './chapter-dialog.component.html',
-  styleUrl: './chapter-dialog.component.scss',
+  templateUrl: './act-dialog.component.html',
+  styleUrl: './act-dialog.component.scss',
 })
-export class ChapterDialogComponent {
+export class ActDialogComponent {
   visible = input.required<boolean>()
-  data = input<ChapterDialogData | null>(null)
+  data = input<ActDialogData | null>(null)
 
-  save = output<{ title: string; content: string }>()
+  save = output<{ title: string }>()
   cancelDialog = output<void>()
 
-  chapterTitle = signal<string>('')
-  chapterContent = signal<string>('')
+  actTitle = signal<string>('')
   showValidation = signal<boolean>(false)
 
   dialogTitle = signal<string>('')
@@ -44,7 +40,7 @@ export class ChapterDialogComponent {
   maxTitleLength = 200
 
   isValid = () => {
-    const title = this.chapterTitle().trim()
+    const title = this.actTitle().trim()
     return title.length > 0 && title.length <= this.maxTitleLength
   }
 
@@ -54,16 +50,14 @@ export class ChapterDialogComponent {
       const dialogData = this.data()
       if (dialogData) {
         this.showValidation.set(false) // Reset validation
-        if (dialogData.isEditing && dialogData.chapter) {
+        if (dialogData.isEditing && dialogData.act) {
           // Modo de edição
-          this.chapterTitle.set(dialogData.chapter.title)
-          this.chapterContent.set(dialogData.chapter.content)
-          this.dialogTitle.set('Editar Capítulo')
+          this.actTitle.set(dialogData.act.title)
+          this.dialogTitle.set('Editar Ato')
         } else {
           // Modo de criação
-          this.chapterTitle.set('')
-          this.chapterContent.set('')
-          this.dialogTitle.set('Novo Capítulo')
+          this.actTitle.set('')
+          this.dialogTitle.set('Novo Ato')
         }
       }
     })
@@ -76,8 +70,7 @@ export class ChapterDialogComponent {
     }
 
     this.save.emit({
-      title: this.chapterTitle().trim(),
-      content: this.chapterContent().trim(),
+      title: this.actTitle().trim(),
     })
 
     // Reset validation after successful save
@@ -90,6 +83,6 @@ export class ChapterDialogComponent {
   }
 
   getRemainingChars(): number {
-    return this.maxTitleLength - this.chapterTitle().length
+    return this.maxTitleLength - this.actTitle().length
   }
 }

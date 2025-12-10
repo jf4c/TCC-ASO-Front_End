@@ -76,6 +76,36 @@
     }
   }
 
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    gap: 1rem;
+    color: var(--text-secondary);
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    text-align: center;
+    color: var(--text-secondary);
+
+    p {
+      margin: 0.5rem 0;
+      font-size: 1.1rem;
+    }
+
+    .empty-hint {
+      font-size: 0.9rem;
+      color: var(--text-tertiary);
+    }
+  }
+
   .new-entry-input {
     margin-bottom: 1.5rem;
 
@@ -202,6 +232,7 @@
           font-weight: 600;
           margin: 0;
           flex: 1;
+          color: white;
         }
 
         .entry-title-input {
@@ -254,6 +285,161 @@
 
       .accordion-entry-content {
         padding: 1.5rem;
+      }
+
+      .act-content {
+        padding: 0;
+
+        .act-chapters {
+          .empty-chapters {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+            
+            p {
+              margin-bottom: 1rem;
+            }
+          }
+
+          .chapter-entry {
+            background: transparent;
+            border: none;
+            border-left: 3px solid var(--accent-secondary);
+            padding: 0 0 1.5rem 1.5rem;
+            margin-bottom: 1.5rem;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+
+            .chapter-header {
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+              margin-bottom: 0.75rem;
+
+              .chapter-title {
+                font-family: "Cinzel", serif;
+                font-size: 1rem;
+                font-weight: 600;
+                color: #f0e68c;
+                margin: 0;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+              }
+
+              .chapter-actions {
+                display: flex;
+                gap: 0.25rem;
+
+                ::ng-deep .p-button {
+                  width: 1.75rem;
+                  height: 1.75rem;
+                  padding: 0;
+                  color: var(--text-secondary);
+
+                  &:hover {
+                    background: rgba(139, 69, 19, 0.1);
+                  }
+
+                  &.p-button-danger:hover {
+                    color: var(--accent-danger);
+                  }
+                }
+              }
+            }
+
+            .chapter-content {
+              p {
+                margin: 0;
+                color: #ffffff;
+                line-height: 1.6;
+                font-size: 0.95rem;
+                text-align: justify;
+              }
+            }
+          }
+
+          .chapter-card {
+            background: white;
+            border: 2px solid var(--accent-secondary);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+
+            &:hover {
+              box-shadow: 0 4px 8px rgba(139, 69, 19, 0.2);
+              transform: translateY(-2px);
+            }
+
+            .chapter-header {
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+              margin-bottom: 0.75rem;
+
+              .chapter-title {
+                font-family: "Cinzel", serif;
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: var(--accent-primary);
+                margin: 0;
+                flex: 1;
+              }
+
+              .chapter-actions {
+                display: flex;
+                gap: 0.5rem;
+
+                ::ng-deep .p-button {
+                  width: 2rem;
+                  height: 2rem;
+                  padding: 0;
+
+                  &.p-button-text {
+                    color: var(--accent-primary);
+
+                    &:hover {
+                      background: rgba(139, 69, 19, 0.1);
+                    }
+
+                    &.p-button-danger {
+                      color: var(--accent-danger);
+
+                      &:hover {
+                        background: rgba(220, 53, 69, 0.1);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+
+            .chapter-content {
+              color: var(--text-primary);
+              line-height: 1.6;
+              margin-bottom: 0.75rem;
+
+              p {
+                margin: 0;
+                white-space: pre-wrap;
+              }
+            }
+
+            .chapter-footer {
+              display: flex;
+              justify-content: flex-end;
+              padding-top: 0.5rem;
+              border-top: 1px solid var(--accent-tertiary);
+
+              .chapter-date {
+                color: var(--text-secondary);
+                font-size: 0.85rem;
+              }
+            }
+          }
+        }
 
         .chapters-section {
           .chapters-list {
@@ -502,7 +688,7 @@
     padding-bottom: 1rem;
     border-bottom: 2px solid var(--accent-danger);
 
-    .planning-title {
+    h3 {
       font-family: "Cinzel", serif;
       font-size: 1.8rem;
       font-weight: 700;
@@ -520,6 +706,100 @@
         &:hover {
           background: var(--accent-secondary);
           border-color: var(--accent-secondary);
+        }
+      }
+    }
+  }
+
+  .planning-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(139, 69, 19, 0.1);
+    border-left: 4px solid var(--accent-primary);
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+
+    i {
+      color: var(--accent-primary);
+      margin-top: 0.2rem;
+    }
+
+    span {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+  }
+
+  .planning-notes {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .planning-note {
+      background: transparent;
+      border: none;
+      border-left: 3px solid var(--accent-primary);
+      padding: 0 0 1rem 1.5rem;
+      box-shadow: none;
+      transition: none;
+
+      &:hover {
+        box-shadow: none;
+        transform: none;
+      }
+
+      .note-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0;
+        border-bottom: none;
+
+        .note-date {
+          color: var(--text-secondary);
+          font-size: 0.85rem;
+        }
+
+        .note-actions {
+          display: flex;
+          gap: 0.5rem;
+
+          ::ng-deep .p-button {
+            width: 2rem;
+            height: 2rem;
+            padding: 0;
+
+            &.p-button-text {
+              color: var(--text-secondary);
+
+              &:hover {
+                background: rgba(139, 69, 19, 0.1);
+              }
+
+              &.p-button-danger {
+                color: var(--accent-danger);
+
+                &:hover {
+                  background: rgba(220, 53, 69, 0.1);
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .note-content {
+        p {
+          font-family: "Georgia", serif;
+          font-size: 0.95rem;
+          line-height: 1.6;
+          color: var(--text-primary);
+          margin: 0;
+          white-space: pre-wrap;
         }
       }
     }
@@ -645,13 +925,16 @@
     border-top: 1px solid var(--bg-tertiary);
 
     .ai-btn {
-      ::ng-deep.p-button {
-        border-color: var(--text-secondary);
-        color: var(--text-secondary);
+      ::ng-deep .p-button {
+        border-color: var(--accent-primary);
+        color: var(--accent-primary);
         font-weight: 600;
+        padding: 0.75rem 1.5rem;
 
         &:hover:not(:disabled) {
-          background: var(--accent-tertiary);
+          background: var(--accent-primary);
+          border-color: var(--accent-primary);
+          color: white;
         }
 
         &:disabled {

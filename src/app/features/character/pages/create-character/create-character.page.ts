@@ -97,11 +97,15 @@ export class CreateCharacterPage implements OnInit {
   }
 
   onGenerateRandomCharacter(): void {
+    console.log('Gerando personagem aleatório...')
+    console.log('Ancestries:', this.ancestries)
+    console.log('Classes:', this.classes)
     this.formFactoryService.onGenerateRandomCharacter(
       this.characterForm,
       this.ancestries,
       this.classes,
     )
+    console.log('Formulário após geração:', this.characterForm.value)
     this.showInfoRandom()
   }
 

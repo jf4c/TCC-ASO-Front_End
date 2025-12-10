@@ -41,7 +41,11 @@
   max-width: 800px;
 }
 
-.back-button-container {
-  width: 80%;
-  padding: 0 1rem;
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 93%;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }

@@ -1,7 +1,6 @@
 <aso-card class="character-sheet">
-  <div class="w-full text-center">
-    <h3 class="card-title headline">Ficha de Personagem</h3>
-  </div>
+  <h3 class="card-title headline">Ficha de Personagem</h3>
+  
   <div class="character-image">
     <p-image
       [src]="characterForm.get('image')?.value?.url || 'assets/Character/unknown.png'"
@@ -59,11 +58,10 @@
   </div>
 
   <aso-button
-    class="button-create w-full mt-5 font-semibold"
+    class="button-create mt-5 font-semibold"
     [label]="'Salvar Personagem'"
     [icon]="'fas fa-save'"
     [severity]="'info'"
     (eventClick)="onSaveCharacter()"
-    [styleClass]="{ width: '100%' }"
   />
 </aso-card>

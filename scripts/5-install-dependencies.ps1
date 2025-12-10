@@ -38,18 +38,24 @@ try {
     exit 1
 }
 
+# Determinar caminho do projeto
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$projectRoot = Split-Path -Parent $scriptDir
+
 # Verificar se package.json existe
 Write-Host ""
 Write-Host "[3/4] Verificando projeto..." -ForegroundColor Yellow
-if (-not (Test-Path "package.json")) {
-    Write-Host "  ✗ package.json não encontrado" -ForegroundColor Red
+$packageJsonPath = Join-Path $projectRoot "package.json"
+if (-not (Test-Path $packageJsonPath)) {
+    Write-Host "  ✗ package.json não encontrado em: $projectRoot" -ForegroundColor Red
     Write-Host "  Certifique-se de estar na raiz do projeto" -ForegroundColor Yellow
     exit 1
 }
 Write-Host "  ✓ package.json encontrado" -ForegroundColor Green
 
 # Verificar se node_modules já existe
-if (Test-Path "node_modules") {
+$nodeModulesPath = Join-Path $projectRoot "node_modules"
+if (Test-Path $nodeModulesPath) {
     Write-Host "  ⚠ node_modules já existe" -ForegroundColor Yellow
     $response = Read-Host "  Deseja reinstalar as dependências? (s/n)"
     if ($response -ne "s" -and $response -ne "S") {
@@ -65,14 +71,17 @@ if (Test-Path "node_modules") {
     }
     
     Write-Host "  Removendo node_modules antigo..." -ForegroundColor Yellow
-    Remove-Item -Recurse -Force "node_modules" -ErrorAction SilentlyContinue
-    Remove-Item -Force "package-lock.json" -ErrorAction SilentlyContinue
+    Remove-Item -Recurse -Force $nodeModulesPath -ErrorAction SilentlyContinue
+    Remove-Item -Force (Join-Path $projectRoot "package-lock.json") -ErrorAction SilentlyContinue
 }
 
 # Instalar dependências
 Write-Host ""
 Write-Host "[4/4] Instalando dependências..." -ForegroundColor Yellow
 Write-Host "  Isso pode levar alguns minutos..." -ForegroundColor Yellow
+
+# Mudar para o diretório do projeto
+Push-Location $projectRoot
 Write-Host ""
 
 try {
@@ -87,11 +96,11 @@ try {
         Write-Host "Informações do projeto:" -ForegroundColor Cyan
         
         # Contar pacotes instalados
-        $packageCount = (Get-ChildItem "node_modules" -Directory).Count
+        $packageCount = (Get-ChildItem (Join-Path $projectRoot "node_modules") -Directory).Count
         Write-Host "  Pacotes instalados: $packageCount" -ForegroundColor White
         
         # Tamanho do node_modules
-        $nodeModulesSize = (Get-ChildItem "node_modules" -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB
+        $nodeModulesSize = (Get-ChildItem (Join-Path $projectRoot "node_modules") -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB
         Write-Host "  Tamanho node_modules: $([math]::Round($nodeModulesSize, 2)) MB" -ForegroundColor White
         
         Write-Host ""
@@ -101,10 +110,14 @@ try {
         Write-Host ""
         Write-Host "  ✗ Erro durante instalação" -ForegroundColor Red
         Write-Host "  Verifique os logs acima para mais detalhes" -ForegroundColor Yellow
+        Pop-Location
         exit 1
     }
 } catch {
     Write-Host ""
-    Write-Host "  ✗ Erro ao instalar dependências: $_" -ForegroundColor Red
+    Write-Host "  ✗ Erro inesperado: $_" -ForegroundColor Red
+    Pop-Location
     exit 1
+} finally {
+    Pop-Location
 }

@@ -30,8 +30,7 @@ export function initializeKeycloak(
       try {
         await firstValueFrom(authService.syncUserWithBackend())
       } catch (error) {
-        console.error('❌ Erro ao sincronizar usuário:', error)
-        // Não bloqueia a inicialização
+        console.error('Erro ao sincronizar usuário:', error)
       }
     }
 

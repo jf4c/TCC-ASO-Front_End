@@ -26,6 +26,7 @@ export class HeaderComponent implements OnInit {
   playerName = ''
   userPhotoUrl: string | null = null
   pendingRequestsCount = 0
+  isLoadingUser = false
   
   // Menu states
   isUserMenuOpen = false
@@ -35,23 +36,13 @@ export class HeaderComponent implements OnInit {
     this.isLoggedIn = this.authService.isLoggedIn()
 
     if (this.isLoggedIn) {
-      // Busca dados do player do backend
+      // Simplesmente inscreve no observable do usuário
       this.userService.currentUser$.subscribe(user => {
         if (user) {
-          
-          // Backend retorna: Email, NickName, FirstName, LastName (PascalCase)
           this.username = user.nickName || 'Usuário'
           this.playerName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Player'
-          
         }
       })
-
-      // Se não tiver em cache, tenta pegar do localStorage
-      const cachedUser = this.userService.getCurrentUser()
-      if (cachedUser) {
-        this.username = cachedUser.nickName || 'Usuário'
-        this.playerName = `${cachedUser.firstName || ''} ${cachedUser.lastName || ''}`.trim() || 'Player'
-      }
 
       // Subscrever aos contadores de amizade
       this.friendshipService.counts$.subscribe(counts => {

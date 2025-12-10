@@ -1,0 +1,50 @@
+.master-note-dialog {
+  :host ::ng-deep .p-dialog {
+    width: 600px;
+    max-width: 90vw;
+  }
+}
+
+.dialog-content {
+  padding: 1rem 0;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.required {
+  color: var(--error-color);
+}
+
+.field-hint {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  i {
+    color: var(--primary-color);
+  }
+}
+
+.error-message {
+  color: var(--error-color);
+  font-size: 0.85rem;
+  margin-top: -0.25rem;
+}
+
+.dialog-footer {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}

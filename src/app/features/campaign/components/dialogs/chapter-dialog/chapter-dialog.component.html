@@ -21,14 +21,17 @@
         class="w-full"
         required
       ></aso-input>
-      @if (chapterTitle().trim() === '' && showValidation()) {
-      <div class="field-error">
-        <i class="pi pi-exclamation-triangle"></i>
-        O título é obrigatório
+      <div class="char-counter" [class.warning]="getRemainingChars() < 20">
+        {{ getRemainingChars() }} caracteres restantes
       </div>
-      }
-      <div class="field-hint">
-        Dê um nome descritivo para este capítulo da história
+      <div class="field-error" *ngIf="showValidation() && !isValid()">
+        <i class="pi pi-exclamation-triangle"></i>
+        <ng-container *ngIf="chapterTitle().trim().length === 0">
+          O título é obrigatório
+        </ng-container>
+        <ng-container *ngIf="chapterTitle().trim().length > 0">
+          O título não pode ter mais de {{ maxTitleLength }} caracteres
+        </ng-container>
       </div>
     </div>
 

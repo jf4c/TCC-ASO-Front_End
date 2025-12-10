@@ -1,18 +1,11 @@
 <p-toast />
 <div [formGroup]="characterForm">
   <aso-card class="card identy">
-    <div class="flex justify-between w-full">
-      <div class="w-full text-left">
-        <h3 class="card-title headline">Identidade</h3>
-        <p class="subtitle">Defina a essência do seu personagem.</p>
-      </div>
-      <aso-radio-button
-        formControlName="characterType"
-        [options]="characterTypeOptions"
-        [name]="'characterType'"
-        [required]="true"
-      />
+    <div class="w-full text-left">
+      <h3 class="card-title headline">Identidade</h3>
+      <p class="subtitle">Defina a essência do seu personagem.</p>
     </div>
+    
     <aso-input
       formControlName="name"
       placeholder="Ex. Zaratras Tempestuoso"
@@ -128,17 +121,7 @@
         }
       </div>
     </div>
-    <aso-dropdown-input
-      [options]="classes"
-      optionLabel="name"
-      [filter]="true"
-      filterBy="name"
-      [showClear]="true"
-      [placeholder]="getPlaceholder('Selecione uma Campanha')"
-      class="input"
-      label="Campanha"
-      [loading]="loading"
-    />
+    
     <div class="w-full mt-5">
       <div class="flex items-center">
         <aso-button

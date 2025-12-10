@@ -14,10 +14,15 @@ $KEYCLOAK_CONTAINER = "keycloak"
 $KEYCLOAK_URL = "http://localhost:8080"
 $REALM_NAME = "artificial-story-oracle"
 
+# Determinar caminho correto baseado na localização atual
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$projectRoot = Split-Path -Parent $scriptDir
+$themePath = Join-Path $projectRoot $THEME_SOURCE
+
 # Verificar se a pasta do tema existe
 Write-Host "[1/6] Verificando arquivos do tema..." -ForegroundColor Yellow
-if (-not (Test-Path $THEME_SOURCE)) {
-    Write-Host "  ✗ Pasta '$THEME_SOURCE' não encontrada" -ForegroundColor Red
+if (-not (Test-Path $themePath)) {
+    Write-Host "  ✗ Pasta '$THEME_SOURCE' não encontrada em: $themePath" -ForegroundColor Red
     Write-Host "  Certifique-se de estar na raiz do projeto" -ForegroundColor Yellow
     exit 1
 }
@@ -47,7 +52,7 @@ Write-Host ""
 Write-Host "[3/6] Copiando tema para o container..." -ForegroundColor Yellow
 try {
     docker exec $KEYCLOAK_CONTAINER rm -rf "/opt/keycloak/themes/$THEME_NAME" 2>$null
-    docker cp "$THEME_SOURCE" "${KEYCLOAK_CONTAINER}:/opt/keycloak/themes/$THEME_NAME"
+    docker cp "$themePath" "${KEYCLOAK_CONTAINER}:/opt/keycloak/themes/$THEME_NAME"
     Write-Host "  ✓ Tema copiado com sucesso" -ForegroundColor Green
 } catch {
     Write-Host "  ✗ Erro ao copiar tema: $_" -ForegroundColor Red

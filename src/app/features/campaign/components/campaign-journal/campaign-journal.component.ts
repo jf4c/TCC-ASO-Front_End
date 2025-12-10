@@ -1,4 +1,4 @@
-import { Component, input, signal, inject } from '@angular/core'
+import { Component, input, signal, inject, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { TabViewModule } from 'primeng/tabview'
@@ -6,6 +6,7 @@ import { AccordionModule } from 'primeng/accordion'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { ConfirmationService, MessageService } from 'primeng/api'
 import { ToastModule } from 'primeng/toast'
+import { finalize } from 'rxjs'
 
 // Importar componentes reutilizáveis
 import { InputComponent } from '../../../../shared/components/input/input.component'
@@ -15,6 +16,20 @@ import {
   ChapterDialogComponent,
   ChapterDialogData,
 } from '../dialogs/chapter-dialog/chapter-dialog.component'
+import {
+  ActDialogComponent,
+  ActDialogData,
+} from '../dialogs/act-dialog/act-dialog.component'
+import {
+  MasterNoteDialogComponent,
+  MasterNoteDialogData,
+} from '../dialogs/master-note-dialog/master-note-dialog.component'
+
+// Interfaces e Services
+import { Act } from '../../interfaces/act.interface'
+import { Chapter } from '../../interfaces/chapter.interface'
+import { MasterNote } from '../../interfaces/master-note.interface'
+import { JournalService } from '../../services/journal.service'
 
 export interface JournalEntry {
   id: string
@@ -54,173 +69,141 @@ export interface PlanningNote {
     ToastModule,
     // Componentes reutilizáveis
     InputComponent,
-    TextareaComponent,
     ButtonComponent,
     ChapterDialogComponent,
+    ActDialogComponent,
+    MasterNoteDialogComponent,
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './campaign-journal.component.html',
   styleUrl: './campaign-journal.component.scss',
 })
-export class CampaignJournalComponent {
+export class CampaignJournalComponent implements OnInit {
   campaignId = input.required<string>()
 
   private confirmationService = inject(ConfirmationService)
   private messageService = inject(MessageService)
+  private journalService = inject(JournalService)
 
   // Diário de Aventuras
-  journalEntries = signal<JournalEntry[]>([
-    {
-      id: '1',
-      title: 'ATO I: O CHAMADO PARA A AVENTURA',
-      content: '',
-      order: 1,
-      chapters: [
-        {
-          id: 'ch1',
-          title: 'O ENCONTRO NA ESTALAGEM',
-          content:
-            'Nossos heróis, de origens e caminhos distintos, cruzaram seus destinos na taverna "O Javali Sedento". Uma proposta de trabalho misteriosa, deixada por um anão chamado Gundren Rockseeker, prometia uma recompensa generosa para escoltar uma carroça de suprimentos até a vila fronteiriça de Phandalin. Pouco sabiam eles que essa simples tarefa os lançaria em uma teia de intrigas, perigos e a lenda de uma mina perdida há muito tempo.',
-          order: 1,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          id: 'ch2',
-          title: 'A EMBOSCADA DOS GOBLINS',
-          content:
-            'A viagem, inicialmente tranquila, foi brutalmente interrompida por uma emboscada goblin. Após uma batalha acirrada, os aventureiros descobriram que os goblins haviam capturado seu empregador, Gundren, e seu guarda-costas humano, Sildar Hallwinter. A trilha dos goblins os levou a uma caverna escura, o primeiro de muitos desafios.',
-          order: 2,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-      ],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ])
-
-  editingJournal = signal<string | null>(null)
-  editingJournalTitle = signal<string | null>(null)
-  newJournalTitle = signal('')
-  pendingNewAct = signal<string>('') // Para o novo ato em criação
-  newActTitle = signal<string>('') // Título do novo ato sendo digitado
-  editingTitleValue = signal<string>('') // Valor do título sendo editado
+  acts = signal<Act[]>([])
+  masterNotes = signal<MasterNote[]>([])
+  
+  loading = signal<boolean>(false)
+  
+  // Inline add act
+  pendingNewAct = signal<string>('')
+  newActTitle = signal<string>('')
+  
+  // Dialog de atos (apenas para editar)
+  actDialogVisible = signal<boolean>(false)
+  actDialogData = signal<ActDialogData | null>(null)
 
   // Dialog de capítulos
   chapterDialogVisible = signal<boolean>(false)
   chapterDialogData = signal<ChapterDialogData | null>(null)
 
-  // Planejamento do Mestre
-  planningNotes = signal<PlanningNote[]>([])
-  editingPlanning = signal<string | null>(null)
-  newPlanningContent = signal('')
+  // Dialog de notas do mestre
+  masterNoteDialogVisible = signal<boolean>(false)
+  masterNoteDialogData = signal<MasterNoteDialogData | null>(null)
 
-  // Diário de Aventuras Methods
-  addJournalEntry(): void {
-    // Reseta o título e apenas exibe o campo de input
+  ngOnInit(): void {
+    this.loadJournalData()
+  }
+
+  private loadJournalData(): void {
+    this.loading.set(true)
+    this.loadActs()
+    this.loadMasterNotes()
+  }
+
+  private loadActs(): void {
+    this.journalService
+      .getActs(this.campaignId())
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (acts) => {
+          console.log('Acts carregados (raw):', acts)
+          console.log('Quantidade de atos:', acts.length)
+          // Converter strings de data para objetos Date
+          const processedActs = acts.map(act => ({
+            ...act,
+            createdAt: new Date(act.createdAt),
+            updatedAt: new Date(act.updatedAt),
+            chapters: act.chapters?.map(ch => ({
+              ...ch,
+              createdAt: new Date(ch.createdAt),
+              updatedAt: new Date(ch.updatedAt)
+            })) || []
+          }))
+          console.log('Acts processados:', processedActs)
+          this.acts.set(processedActs)
+          console.log('Signal acts() atualizado, valor atual:', this.acts())
+        },
+        error: (error) => {
+          console.error('Erro ao carregar atos:', error)
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Falha ao carregar atos da campanha',
+          })
+          this.loading.set(false)
+        },
+      })
+  }
+
+  private loadMasterNotes(): void {
+    this.journalService.getMasterNotes(this.campaignId()).subscribe({
+      next: (notes) => {
+        this.masterNotes.set(notes)
+      },
+      error: (error) => {
+        console.error('Erro ao carregar notas do mestre:', error)
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Falha ao carregar notas do mestre',
+        })
+      },
+    })
+  }
+
+  // ==================== ACTS ====================
+
+  addAct(): void {
     this.newActTitle.set('')
     this.pendingNewAct.set('creating')
-  }
-
-  editJournal(entryId: string): void {
-    this.editingJournal.set(entryId)
-  }
-
-  editJournalTitle(entryId: string): void {
-    const entry = this.journalEntries().find((e) => e.id === entryId)
-    if (entry) {
-      this.editingTitleValue.set(entry.title)
-    }
-    this.editingJournalTitle.set(entryId)
-  }
-
-  saveJournalTitle(entryId: string, title?: string): void {
-    const titleToSave = title || this.editingTitleValue()
-    if (!titleToSave.trim()) return
-
-    this.journalEntries.update((entries) =>
-      entries.map((entry) =>
-        entry.id === entryId
-          ? { ...entry, title: titleToSave.trim(), updatedAt: new Date() }
-          : entry,
-      ),
-    )
-
-    this.editingJournalTitle.set(null)
-    this.editingTitleValue.set('')
-
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Sucesso',
-      detail: 'Título do ato atualizado com sucesso',
-    })
-  }
-
-  cancelJournalTitleEdit(): void {
-    this.editingJournalTitle.set(null)
-    this.editingTitleValue.set('')
-  }
-
-  onAccordionToggle(event: { originalEvent?: Event; index: number }): void {
-    // Bloqueia o toggle do accordion se estiver editando algum título
-    if (this.editingJournalTitle()) {
-      if (event.originalEvent) {
-        event.originalEvent.preventDefault()
-        event.originalEvent.stopPropagation()
-      }
-    }
-  }
-
-  saveJournal(entryId: string, content: string): void {
-    this.journalEntries.update((entries) =>
-      entries.map((entry) =>
-        entry.id === entryId
-          ? { ...entry, content: content.trim(), updatedAt: new Date() }
-          : entry,
-      ),
-    )
-
-    this.editingJournal.set(null)
-
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Sucesso',
-      detail: 'Entrada do diário salva com sucesso',
-    })
-  }
-
-  cancelJournalEdit(): void {
-    this.editingJournal.set(null)
-  }
-
-  saveJournalEntry(entryId: string, content: string): void {
-    this.saveJournal(entryId, content)
   }
 
   confirmNewAct(): void {
     const actTitle = this.newActTitle().trim()
     if (!actTitle) return
 
-    const newEntry: JournalEntry = {
-      id: Date.now().toString(),
-      title: actTitle,
-      content: '',
-      order: this.journalEntries().length + 1,
-      chapters: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }
-
-    this.journalEntries.update((entries) => [...entries, newEntry])
-    this.pendingNewAct.set('')
-    this.newActTitle.set('')
-
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Sucesso',
-      detail: 'Novo ato adicionado com sucesso',
-    })
+    console.log('Criando ato:', actTitle)
+    this.journalService
+      .createAct(this.campaignId(), { title: actTitle })
+      .subscribe({
+        next: (createdAct) => {
+          console.log('Ato criado:', createdAct)
+          console.log('Chamando loadActs() para atualizar lista...')
+          this.loadActs()
+          this.pendingNewAct.set('')
+          this.newActTitle.set('')
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: 'Ato criado com sucesso',
+          })
+        },
+        error: (error) => {
+          console.error('Erro ao criar ato:', error)
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Falha ao criar ato',
+          })
+        },
+      })
   }
 
   cancelNewAct(): void {
@@ -228,41 +211,132 @@ export class CampaignJournalComponent {
     this.newActTitle.set('')
   }
 
-  deleteJournalEntry(entryId: string): void {
+  editAct(act: Act): void {
+    this.actDialogData.set({
+      act,
+      isEditing: true,
+    })
+    this.actDialogVisible.set(true)
+  }
+
+  onActSave(data: { title: string }): void {
+    const dialogData = this.actDialogData()
+    if (!dialogData) return
+
+    if (dialogData.isEditing && dialogData.act) {
+      // Editar ato existente
+      this.updateAct(dialogData.act.id, data.title)
+    }
+
+    this.closeActDialog()
+  }
+
+  onActCancel(): void {
+    this.closeActDialog()
+  }
+
+  private closeActDialog(): void {
+    this.actDialogVisible.set(false)
+    this.actDialogData.set(null)
+  }
+
+  private createAct(title: string): void {
+    this.journalService
+      .createAct(this.campaignId(), { title })
+      .subscribe({
+        next: () => {
+          this.loadActs()
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: 'Ato criado com sucesso',
+          })
+        },
+        error: (error) => {
+          console.error('Erro ao criar ato:', error)
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Falha ao criar ato',
+          })
+        },
+      })
+  }
+
+  private updateAct(actId: string, title: string): void {
+    this.journalService
+      .updateAct(this.campaignId(), actId, { title })
+      .subscribe({
+        next: () => {
+          this.loadActs()
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: 'Ato atualizado com sucesso',
+          })
+        },
+        error: (error) => {
+          console.error('Erro ao atualizar ato:', error)
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Falha ao atualizar ato',
+          })
+        },
+      })
+  }
+
+  deleteAct(act: Act): void {
+    const chapterCount = act.chapters.length
+    const message =
+      chapterCount > 0
+        ? `Este ato possui ${chapterCount} capítulo(s). Todos serão excluídos permanentemente. Deseja continuar?`
+        : 'Tem certeza que deseja excluir este ato?'
+
     this.confirmationService.confirm({
-      message: 'Tem certeza que deseja excluir este ato?',
-      header: 'Confirmação',
+      message,
+      header: 'Confirmar Exclusão',
       icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sim, excluir',
+      rejectLabel: 'Cancelar',
       accept: () => {
-        this.journalEntries.update((entries) =>
-          entries.filter((entry) => entry.id !== entryId),
-        )
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Ato excluído com sucesso',
-        })
+        this.journalService
+          .deleteAct(this.campaignId(), act.id)
+          .subscribe({
+            next: () => {
+              this.loadActs()
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Sucesso',
+                detail: 'Ato excluído com sucesso',
+              })
+            },
+            error: (error) => {
+              console.error('Erro ao excluir ato:', error)
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Erro',
+                detail: 'Falha ao excluir ato',
+              })
+            },
+          })
       },
     })
   }
 
-  // Métodos para gerenciar capítulos
-  addChapter(entryId: string): void {
+  // ==================== CHAPTERS ====================
+
+  addChapter(act: Act): void {
     this.chapterDialogData.set({
-      entryId,
+      actId: act.id,
       isEditing: false,
     })
     this.chapterDialogVisible.set(true)
   }
 
-  editChapter(entryId: string, chapterId: string): void {
-    const entry = this.journalEntries().find((e) => e.id === entryId)
-    const chapter = entry?.chapters.find((c) => c.id === chapterId)
-
-    if (!entry || !chapter) return
-
+  editChapter(actId: string, chapter: Chapter): void {
     this.chapterDialogData.set({
-      entryId,
+      actId,
       chapter,
       isEditing: true,
     })
@@ -276,14 +350,14 @@ export class CampaignJournalComponent {
     if (dialogData.isEditing && dialogData.chapter) {
       // Editar capítulo existente
       this.updateChapter(
-        dialogData.entryId,
+        dialogData.actId,
         dialogData.chapter.id,
         data.title,
         data.content,
       )
     } else {
       // Criar novo capítulo
-      this.createNewChapter(dialogData.entryId, data.title, data.content)
+      this.createChapter(dialogData.actId, data.title, data.content)
     }
 
     this.closeChapterDialog()
@@ -298,158 +372,266 @@ export class CampaignJournalComponent {
     this.chapterDialogData.set(null)
   }
 
-  private createNewChapter(
-    entryId: string,
+  private createChapter(
+    actId: string,
     title: string,
     content: string,
   ): void {
-    const entry = this.journalEntries().find((e) => e.id === entryId)
-    if (!entry) return
-
-    const newChapter: JournalChapter = {
-      id: Date.now().toString(),
-      title: title.trim(),
-      content: content.trim(),
-      order: entry.chapters.length + 1,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }
-
-    this.journalEntries.update((entries) =>
-      entries.map((e) =>
-        e.id === entryId ? { ...e, chapters: [...e.chapters, newChapter] } : e,
-      ),
-    )
-
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Sucesso',
-      detail: 'Capítulo criado com sucesso',
-    })
+    this.journalService
+      .createChapter(this.campaignId(), actId, { title, content })
+      .subscribe({
+        next: () => {
+          this.loadActs()
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: 'Capítulo criado com sucesso',
+          })
+        },
+        error: (error) => {
+          console.error('Erro ao criar capítulo:', error)
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Falha ao criar capítulo',
+          })
+        },
+      })
   }
 
   private updateChapter(
-    entryId: string,
+    actId: string,
     chapterId: string,
     title: string,
     content: string,
   ): void {
-    this.journalEntries.update((entries) =>
-      entries.map((entry) =>
-        entry.id === entryId
-          ? {
-              ...entry,
-              chapters: entry.chapters.map((chapter) =>
-                chapter.id === chapterId
-                  ? {
-                      ...chapter,
-                      title: title.trim(),
-                      content: content.trim(),
-                      updatedAt: new Date(),
-                    }
-                  : chapter,
-              ),
-            }
-          : entry,
-      ),
-    )
-
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Sucesso',
-      detail: 'Capítulo atualizado com sucesso',
-    })
+    this.journalService
+      .updateChapter(this.campaignId(), actId, chapterId, { title, content })
+      .subscribe({
+        next: () => {
+          this.loadActs()
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: 'Capítulo atualizado com sucesso',
+          })
+        },
+        error: (error) => {
+          console.error('Erro ao atualizar capítulo:', error)
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Falha ao atualizar capítulo',
+          })
+        },
+      })
   }
 
-  deleteChapter(entryId: string, chapterId: string): void {
+  deleteChapter(actId: string, chapterId: string): void {
     this.confirmationService.confirm({
       message: 'Tem certeza que deseja excluir este capítulo?',
-      header: 'Confirmação',
+      header: 'Confirmar Exclusão',
       icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sim, excluir',
+      rejectLabel: 'Cancelar',
       accept: () => {
-        this.journalEntries.update((entries) =>
-          entries.map((entry) =>
-            entry.id === entryId
-              ? {
-                  ...entry,
-                  chapters: entry.chapters.filter((c) => c.id !== chapterId),
-                }
-              : entry,
-          ),
-        )
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Capítulo excluído com sucesso',
-        })
+        this.journalService
+          .deleteChapter(this.campaignId(), actId, chapterId)
+          .subscribe({
+            next: () => {
+              this.loadActs()
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Sucesso',
+                detail: 'Capítulo excluído com sucesso',
+              })
+            },
+            error: (error) => {
+              console.error('Erro ao excluir capítulo:', error)
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Erro',
+                detail: 'Falha ao excluir capítulo',
+              })
+            },
+          })
       },
     })
   }
 
-  // Planejamento Methods
-  addPlanningNote(): void {
-    if (!this.newPlanningContent().trim()) return
+  // ==================== MASTER NOTES ====================
 
-    const newNote: PlanningNote = {
-      id: Date.now().toString(),
-      content: this.newPlanningContent().trim(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
+  addMasterNote(): void {
+    this.masterNoteDialogData.set({
+      isEditing: false,
+    })
+    this.masterNoteDialogVisible.set(true)
+  }
+
+  editMasterNote(note: MasterNote): void {
+    this.masterNoteDialogData.set({
+      note,
+      isEditing: true,
+    })
+    this.masterNoteDialogVisible.set(true)
+  }
+
+  onMasterNoteSave(data: { content: string }): void {
+    const dialogData = this.masterNoteDialogData()
+    if (!dialogData) return
+
+    if (dialogData.isEditing && dialogData.note) {
+      // Editar nota existente
+      this.updateMasterNote(dialogData.note.id, data.content)
+    } else {
+      // Criar nova nota
+      this.createMasterNote(data.content)
     }
 
-    this.planningNotes.update((notes) => [...notes, newNote])
-    this.newPlanningContent.set('')
-
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Sucesso',
-      detail: 'Nota de planejamento adicionada com sucesso',
-    })
+    this.closeMasterNoteDialog()
   }
 
-  editPlanningNote(noteId: string): void {
-    this.editingPlanning.set(noteId)
+  onMasterNoteCancel(): void {
+    this.closeMasterNoteDialog()
   }
 
-  savePlanningNote(noteId: string, content: string): void {
-    if (!content.trim()) return
-
-    this.planningNotes.update((notes) =>
-      notes.map((note) =>
-        note.id === noteId
-          ? { ...note, content: content.trim(), updatedAt: new Date() }
-          : note,
-      ),
-    )
-
-    this.editingPlanning.set(null)
-
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Sucesso',
-      detail: 'Nota de planejamento atualizada com sucesso',
-    })
+  private closeMasterNoteDialog(): void {
+    this.masterNoteDialogVisible.set(false)
+    this.masterNoteDialogData.set(null)
   }
 
-  cancelPlanningEdit(): void {
-    this.editingPlanning.set(null)
+  private createMasterNote(content: string): void {
+    this.journalService
+      .createMasterNote(this.campaignId(), { content })
+      .subscribe({
+        next: () => {
+          this.loadMasterNotes()
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: 'Nota criada com sucesso',
+          })
+        },
+        error: (error) => {
+          console.error('Erro ao criar nota:', error)
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Falha ao criar nota',
+          })
+        },
+      })
   }
 
-  deletePlanningNote(noteId: string): void {
+  private updateMasterNote(noteId: string, content: string): void {
+    this.journalService
+      .updateMasterNote(this.campaignId(), noteId, { content })
+      .subscribe({
+        next: () => {
+          this.loadMasterNotes()
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: 'Nota atualizada com sucesso',
+          })
+        },
+        error: (error) => {
+          console.error('Erro ao atualizar nota:', error)
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Falha ao atualizar nota',
+          })
+        },
+      })
+  }
+
+  deleteMasterNote(noteId: string): void {
     this.confirmationService.confirm({
-      message: 'Tem certeza que deseja excluir esta nota de planejamento?',
-      header: 'Confirmação',
+      message: 'Tem certeza que deseja excluir esta nota?',
+      header: 'Confirmar Exclusão',
       icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sim, excluir',
+      rejectLabel: 'Cancelar',
       accept: () => {
-        this.planningNotes.update((notes) =>
-          notes.filter((note) => note.id !== noteId),
-        )
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Nota de planejamento excluída com sucesso',
-        })
+        this.journalService
+          .deleteMasterNote(this.campaignId(), noteId)
+          .subscribe({
+            next: () => {
+              this.loadMasterNotes()
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Sucesso',
+                detail: 'Nota excluída com sucesso',
+              })
+            },
+            error: (error) => {
+              console.error('Erro ao excluir nota:', error)
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Erro',
+                detail: 'Falha ao excluir nota',
+              })
+            },
+          })
       },
     })
+  }
+
+  // Métodos legados removidos - TODO: remover código antigo abaixo
+
+  // ==================== IA ====================
+
+  requestAISuggestions(): void {
+    this.loading.set(true)
+    this.journalService
+      .generateStorySuggestions(this.campaignId())
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (response) => {
+          // Criar nova nota do mestre com a sugestão da IA
+          this.journalService
+            .createMasterNote(this.campaignId(), { content: response.suggestions })
+            .subscribe({
+              next: () => {
+                this.loadMasterNotes()
+                this.messageService.add({
+                  severity: 'success',
+                  summary: 'Sugestão da IA',
+                  detail: 'Nova nota criada com sugestões da IA',
+                })
+              },
+              error: (error) => {
+                console.error('Erro ao criar nota com sugestão:', error)
+                this.messageService.add({
+                  severity: 'error',
+                  summary: 'Erro',
+                  detail: 'Falha ao salvar sugestão da IA',
+                })
+              },
+            })
+        },
+        error: (error) => {
+          console.error('Erro ao gerar sugestões:', error)
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Falha ao gerar sugestões de história',
+          })
+        },
+      })
+  }
+
+  // TrackBy functions for performance
+  trackByActId(index: number, act: Act): string {
+    return act.id
+  }
+
+  trackByChapterId(index: number, chapter: Chapter): string {
+    return chapter.id
+  }
+
+  trackByNoteId(index: number, note: MasterNote): string {
+    return note.id
   }
 }
