@@ -1,0 +1,64 @@
+<div class="profile-container">
+  <p-toast />
+  
+  <div class="profile-header">
+    <button class="back-button" (click)="goBack()">
+      <i class="pi pi-arrow-left"></i>
+      Voltar
+    </button>
+    <h1>Meu Perfil</h1>
+  </div>
+
+  @if (user()) {
+    <div class="profile-content">
+      <!-- Avatar Section -->
+      <div class="avatar-section">
+        <aso-image-upload
+          uploadType="player"
+          [currentImageUrl]="user()!.avatar"
+          [aspectRatio]="'1:1'"
+          label="Foto de Perfil"
+          (imageUploaded)="onImageUploaded($event)"
+          (imageRemoved)="onImageRemoved()"
+        />
+      </div>
+
+      <!-- User Info Section -->
+      <div class="info-section">
+        <div class="info-card">
+          <div class="info-header">
+            <i class="pi pi-user"></i>
+            <h2>Informações Pessoais</h2>
+          </div>
+          
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Apelido</label>
+              <p>{{ user()!.nickName }}</p>
+            </div>
+            
+            <div class="info-item">
+              <label>Nome</label>
+              <p>{{ user()!.firstName }} {{ user()!.lastName }}</p>
+            </div>
+            
+            <div class="info-item">
+              <label>E-mail</label>
+              <p>{{ user()!.email }}</p>
+            </div>
+            
+            <div class="info-item">
+              <label>ID do Jogador</label>
+              <p class="player-id">{{ user()!.id }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="loading-state">
+      <i class="pi pi-spinner pi-spin"></i>
+      <p>Carregando perfil...</p>
+    </div>
+  }
+</div>

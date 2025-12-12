@@ -104,14 +104,26 @@ export class ViewCharacterPage implements OnInit {
   // Computed properties para acessar dados do backend
   health = computed(() => {
     const char = this.character();
-    // TODO: Calcular HP baseado em constituição e nível quando backend não retornar
-    return char ? 10 + char.level * 5 : 0;
+    if (!char) return 0;
+    
+    // HP Total = HP Inicial + modCON + [(HP por Nível + modCON) × (Nível - 1)]
+    const initialHp = char.class.initialHp;
+    const hpPerLevel = char.class.hpPerLevel;
+    const conMod = char.modifiers.constitution;
+    const level = char.level;
+    
+    return initialHp + conMod + ((hpPerLevel + conMod) * (level - 1));
   });
 
   mana = computed(() => {
     const char = this.character();
-    // TODO: Calcular Mana baseado em inteligência e nível quando backend não retornar
-    return char ? 5 + char.level * 3 : 0;
+    if (!char) return 0;
+    
+    // MP Total = MP por Nível × Nível
+    const mpPerLevel = char.class.mpPerLevel;
+    const level = char.level;
+    
+    return mpPerLevel * level;
   });
 
   modifiers = computed(() => {
@@ -125,14 +137,14 @@ export class ViewCharacterPage implements OnInit {
       modCharisma: 0,
     };
     
-    // Calcula modificadores (valor - 10) / 2
+    // O backend já retorna os modificadores calculados
     return {
-      modStrength: Math.floor((char.attributes.strength - 10) / 2),
-      modDexterity: Math.floor((char.attributes.dexterity - 10) / 2),
-      modConstitution: Math.floor((char.attributes.constitution - 10) / 2),
-      modIntelligence: Math.floor((char.attributes.intelligence - 10) / 2),
-      modWisdom: Math.floor((char.attributes.wisdom - 10) / 2),
-      modCharisma: Math.floor((char.attributes.charisma - 10) / 2),
+      modStrength: char.modifiers.strength,
+      modDexterity: char.modifiers.dexterity,
+      modConstitution: char.modifiers.constitution,
+      modIntelligence: char.modifiers.intelligence,
+      modWisdom: char.modifiers.wisdom,
+      modCharisma: char.modifiers.charisma,
     };
   });
 
@@ -488,7 +500,7 @@ export class ViewCharacterPage implements OnInit {
       name: char.name,
       ancestry: char.ancestry.name,
       class: char.class.name,
-      attributes: Object.entries(char.attributes)
+      attributes: Object.entries(char.modifiers)
         .map(([key, value]) => `${key}: ${value}`)
         .join(', '),
       skills: char.skills.map(s => s.name).join(', '),

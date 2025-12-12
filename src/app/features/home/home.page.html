@@ -4,6 +4,7 @@
   </section>
   <section class="features">
     <aso-feature-card
+      route="/campanhas/criar"
       icon="📖"
       title="Criar Aventura"
       description="Crie e desenvolva sua campanhas de RPG com facilidade e criatividade."
@@ -14,12 +15,6 @@
       icon="🧙🏼‍♂️"
       title="Criar Personagem"
       description="Crie e gerencie a historia de seu personagem com auxilio da IA."
-    ></aso-feature-card>
-
-    <aso-feature-card
-      icon="🌎"
-      title="Criar mundos"
-      description="Crie e desenvolva mundos ricos e detalhados para suas aventuras."
     ></aso-feature-card>
   </section>
 
@@ -73,7 +68,7 @@
         <div class="character-info">
           <h3 class="character-name">{{ character.name }}</h3>
           <p class="character-details">
-            {{ character.race }} · {{ character.class }} · Nível {{ character.level }}
+            {{ character.ancestry }} · {{ character.class.name }} · Nível {{ character.level }}
           </p>
         </div>
       </div>
@@ -103,7 +98,7 @@
       @for (campaign of recentCampaigns(); track campaign.id) {
       <div class="campaign-card" (click)="onViewCampaign(campaign.id)">
         <div class="campaign-image">
-          <img src="assets/d20.jpg" alt="Campaign" />
+          <img [src]="getCampaignImage(campaign)" alt="Campaign" />
           <div class="campaign-status" [class]="'status-' + campaign.status">
             {{ getStatusText(campaign.status) }}
           </div>

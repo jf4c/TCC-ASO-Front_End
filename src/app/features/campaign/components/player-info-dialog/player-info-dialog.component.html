@@ -4,7 +4,7 @@
     <div class="player-header">
       <div class="avatar-container">
         @if (participant.userAvatar) {
-          <img [src]="participant.userAvatar" alt="Avatar" class="player-avatar" />
+          <img [src]="getPlayerAvatar()" alt="Avatar" class="player-avatar" />
         } @else {
           <div class="player-avatar-placeholder">
             <i class="pi pi-user"></i>
@@ -40,7 +40,7 @@
           <div class="character-info">
             <h4 class="character-name">{{ participant.character.name }}</h4>
             <p class="character-race-class">
-              {{ participant.character.race }} • {{ participant.character.class }}
+              {{ participant.character.ancestry.name }} • {{ participant.character.class.name }}
             </p>
             <p class="character-level">
               <i class="pi pi-star-fill"></i>

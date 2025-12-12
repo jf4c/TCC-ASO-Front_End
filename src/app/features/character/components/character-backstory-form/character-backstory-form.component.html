@@ -1,10 +1,6 @@
 <div [formGroup]="characterForm">
   <aso-backstory-editor
-    [characterName]="characterName()"
-    [ancestryName]="ancestryName()"
-    [className]="className()"
-    [attributes]="attributes()"
-    [skills]="skills()"
+    [characterForm]="characterForm"
     (backstoryChange)="onBackstoryChange($event)"
   />
 </div>

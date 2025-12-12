@@ -47,7 +47,8 @@ export class FriendSearchPage implements OnInit {
       })
     ).subscribe({
       next: (results) => {
-        this.results = results;
+        // Filtra os resultados para não mostrar quem já é amigo
+        this.results = results.filter(player => !player.isFriend);
         this.loading = false;
       },
       error: () => {

@@ -6,6 +6,7 @@ import { CampaignParticipant } from '../../interfaces/campaign-detail.model';
 import { CampaignService } from '../../services/campaign.service';
 import { CharacterService } from '../../../character/services/character.service';
 import { MessageService } from 'primeng/api';
+import { UploadService } from '@shared/services/upload.service';
 
 @Component({
   selector: 'aso-player-info-dialog',
@@ -20,11 +21,19 @@ export class PlayerInfoDialogComponent implements OnInit {
   private campaignService = inject(CampaignService);
   private characterService = inject(CharacterService);
   private messageService = inject(MessageService);
+  private uploadService = inject(UploadService);
 
   participant: CampaignParticipant | null = null;
   campaignId = '';
   isGameMaster = false;
   loading = false;
+
+  getPlayerAvatar(): string {
+    if (this.participant?.userAvatar) {
+      return this.uploadService.getImageUrl(this.participant.userAvatar) || 'assets/Character/unknown.png'
+    }
+    return 'assets/Character/unknown.png'
+  }
 
   ngOnInit(): void {
     this.participant = this.config.data?.participant;

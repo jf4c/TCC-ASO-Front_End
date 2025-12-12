@@ -5,11 +5,26 @@ import { Ancestry } from '@features/character/interface/ancestry.model'
 export interface Character {
   id: string
   name: string
-  class: string
+  class: {
+    id: string
+    name: string
+    initialHp: number
+    hpPerLevel: number
+    initialMp: number
+    mpPerLevel: number
+  }
   ancestry: string
   level: number
   health: number
   mana: number
+  modifiers: {
+    strength: number
+    dexterity: number
+    constitution: number
+    intelligence: number
+    wisdom: number
+    charisma: number
+  }
   image?: string | null
 }
 
@@ -26,8 +41,12 @@ export interface CharacterDetail {
   class: {
     id: string
     name: string
+    initialHp: number
+    hpPerLevel: number
+    initialMp: number
+    mpPerLevel: number
   }
-  attributes: {
+  modifiers: {
     strength: number
     dexterity: number
     constitution: number
@@ -50,7 +69,6 @@ export interface CharacterDetailViewModel extends CharacterDetail {
   className: string
   health: number
   mana: number
-  modifiers: Modifiers
   campaignId?: string | null
   campaignName?: string | null
   isInCampaign: boolean

@@ -286,7 +286,7 @@
                   @if (getSelectedCharacter(player.friend.id); as character) {
                     <div class="character-info">
                       <i class="pi pi-shield"></i>
-                      <span>{{ character.name }} ({{ character.class }} Nv.{{ character.level }})</span>
+                      <span>{{ character.name }} ({{ character.class.name }} Nv.{{ character.level }})</span>
                     </div>
                   } @else {
                     <div class="no-character">

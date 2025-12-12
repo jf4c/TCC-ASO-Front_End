@@ -1,9 +1,10 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core'
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import {
   CampaignListItem,
   CampaignStatus,
 } from '../../interfaces/campaign.interface'
+import { UploadService } from '@shared/services/upload.service'
 
 @Component({
   selector: 'aso-campaign-card',
@@ -13,12 +14,24 @@ import {
   styleUrl: './campaign-card.component.scss',
 })
 export class CampaignCardComponent {
+  private uploadService = inject(UploadService)
+
   @Input({ required: true }) campaign!: CampaignListItem
   @Output() view = new EventEmitter<CampaignListItem>()
   @Output() edit = new EventEmitter<CampaignListItem>()
   @Output() join = new EventEmitter<CampaignListItem>()
 
   readonly CampaignStatus = CampaignStatus
+
+  getCampaignImage(): string {
+    console.log('Campaign bannerImage field:', this.campaign.bannerImage);
+    if (this.campaign.bannerImage) {
+      const fullUrl = this.uploadService.getImageUrl(this.campaign.bannerImage);
+      console.log('Full URL:', fullUrl);
+      return fullUrl || 'assets/d20.jpg'
+    }
+    return 'assets/d20.jpg'
+  }
 
   onViewCampaign(): void {
     this.view.emit(this.campaign)

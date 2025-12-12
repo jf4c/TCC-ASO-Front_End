@@ -36,7 +36,7 @@
   }
 
   <!-- Input oculto -->
-  <input type="file" [id]="'file-input-' + uploadType" accept="image/jpeg,image/jpg,image/png,image/webp"
+  <input type="file" [id]="getFileInputId()" accept="image/jpeg,image/jpg,image/png,image/webp"
     (change)="onSelectFile($event)" style="display: none" />
 
   <!-- Mensagem de erro -->

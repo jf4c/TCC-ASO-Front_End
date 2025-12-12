@@ -408,12 +408,15 @@ export class ViewCampaignPage implements OnInit {
     this.campaignService.updateCampaignImage(id, url).subscribe({
       next: (updatedCampaign) => {
         this.campaign.set(updatedCampaign)
-        this.showImageDialog.set(false)
         this.isUpdatingImage.set(false)
+        this.showImageDialog.set(false)
+        // Recarrega a campanha para garantir dados atualizados
+        this.loadCampaignDetail()
       },
       error: (error) => {
         console.error('Erro ao atualizar imagem:', error)
         this.isUpdatingImage.set(false)
+        this.showImageDialog.set(false)
         alert('Erro ao atualizar imagem. Tente novamente.')
       },
     })
@@ -431,10 +434,14 @@ export class ViewCampaignPage implements OnInit {
       next: (updatedCampaign) => {
         this.campaign.set(updatedCampaign)
         this.isUpdatingImage.set(false)
+        this.showImageDialog.set(false)
+        // Recarrega a campanha para garantir dados atualizados
+        this.loadCampaignDetail()
       },
       error: (error) => {
         console.error('Erro ao remover imagem:', error)
         this.isUpdatingImage.set(false)
+        this.showImageDialog.set(false)
         alert('Erro ao remover imagem. Tente novamente.')
       },
     })

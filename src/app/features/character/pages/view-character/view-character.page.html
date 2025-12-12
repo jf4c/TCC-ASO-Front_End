@@ -184,33 +184,27 @@
         <div class="attributes-grid">
           <div class="attribute-card">
             <label>Força</label>
-            <span class="attribute-value">{{ character()!.attributes.strength }}</span>
-            <small class="modifier">({{ modifiers().modStrength >= 0 ? '+' : '' }}{{ modifiers().modStrength }})</small>
+            <span class="attribute-value">{{ modifiers().modStrength >= 0 ? '+' : '' }}{{ modifiers().modStrength }}</span>
           </div>
           <div class="attribute-card">
             <label>Destreza</label>
-            <span class="attribute-value">{{ character()!.attributes.dexterity }}</span>
-            <small class="modifier">({{ modifiers().modDexterity >= 0 ? '+' : '' }}{{ modifiers().modDexterity }})</small>
+            <span class="attribute-value">{{ modifiers().modDexterity >= 0 ? '+' : '' }}{{ modifiers().modDexterity }}</span>
           </div>
           <div class="attribute-card">
             <label>Constituição</label>
-            <span class="attribute-value">{{ character()!.attributes.constitution }}</span>
-            <small class="modifier">({{ modifiers().modConstitution >= 0 ? '+' : '' }}{{ modifiers().modConstitution }})</small>
+            <span class="attribute-value">{{ modifiers().modConstitution >= 0 ? '+' : '' }}{{ modifiers().modConstitution }}</span>
           </div>
           <div class="attribute-card">
             <label>Inteligência</label>
-            <span class="attribute-value">{{ character()!.attributes.intelligence }}</span>
-            <small class="modifier">({{ modifiers().modIntelligence >= 0 ? '+' : '' }}{{ modifiers().modIntelligence }})</small>
+            <span class="attribute-value">{{ modifiers().modIntelligence >= 0 ? '+' : '' }}{{ modifiers().modIntelligence }}</span>
           </div>
           <div class="attribute-card">
             <label>Sabedoria</label>
-            <span class="attribute-value">{{ character()!.attributes.wisdom }}</span>
-            <small class="modifier">({{ modifiers().modWisdom >= 0 ? '+' : '' }}{{ modifiers().modWisdom }})</small>
+            <span class="attribute-value">{{ modifiers().modWisdom >= 0 ? '+' : '' }}{{ modifiers().modWisdom }}</span>
           </div>
           <div class="attribute-card">
             <label>Carisma</label>
-            <span class="attribute-value">{{ character()!.attributes.charisma }}</span>
-            <small class="modifier">({{ modifiers().modCharisma >= 0 ? '+' : '' }}{{ modifiers().modCharisma }})</small>
+            <span class="attribute-value">{{ modifiers().modCharisma >= 0 ? '+' : '' }}{{ modifiers().modCharisma }}</span>
           </div>
         </div>
         @if (isEditMode()) {
@@ -258,7 +252,7 @@
       [characterName]="character()!.name"
       [ancestryName]="character()!.ancestry.name"
       [className]="character()!.class.name"
-      [attributes]="formatAttributes(character()!.attributes)"
+      [attributes]="formatAttributes(character()!.modifiers)"
       [skills]="formatSkills(character()!.skills)"
       [disabled]="isFieldLocked('backstory')"
       (backstoryChange)="onBackstoryChange($event)"

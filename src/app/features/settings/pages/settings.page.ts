@@ -19,7 +19,8 @@ export class SettingsPage {
   toggleTheme() {
     this.currentTheme = this.currentTheme === 'dark' ? 'light' : 'dark'
     localStorage.setItem('aso-theme', this.currentTheme)
-    document.body.classList.toggle('dark-theme', this.currentTheme === 'dark')
+    document.body.classList.remove('dark-theme', 'light-theme')
+    document.body.classList.add(`${this.currentTheme}-theme`)
   }
 
   logout() {

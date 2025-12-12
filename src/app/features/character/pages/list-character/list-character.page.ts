@@ -147,6 +147,8 @@ export class ListCharacterPage implements OnInit, OnDestroy {
       .getPaginatedCharacter(request)
       .subscribe({
         next: (response: GetPaginatedCharacterResponse) => {
+          console.log('🔍 RETORNO DA API - Lista de Personagens:', response);
+          console.log('🔍 Primeiro personagem completo:', response.results[0]);
           this.paginatedCharacters = response.results
           this.totalRecords = response.rowCount
           this.isLoadingCharacters = false

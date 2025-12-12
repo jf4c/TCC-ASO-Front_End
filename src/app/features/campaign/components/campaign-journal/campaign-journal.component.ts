@@ -80,6 +80,7 @@ export interface PlanningNote {
 })
 export class CampaignJournalComponent implements OnInit {
   campaignId = input.required<string>()
+  isGameMaster = input<boolean>(false)
 
   private confirmationService = inject(ConfirmationService)
   private messageService = inject(MessageService)
@@ -90,6 +91,10 @@ export class CampaignJournalComponent implements OnInit {
   masterNotes = signal<MasterNote[]>([])
   
   loading = signal<boolean>(false)
+  
+  // IA
+  isGeneratingIdeas = signal<boolean>(false)
+  campaignIdeas = signal<string[]>([])
   
   // Inline add act
   pendingNewAct = signal<string>('')
@@ -153,6 +158,10 @@ export class CampaignJournalComponent implements OnInit {
   }
 
   private loadMasterNotes(): void {
+    if (!this.isGameMaster()) {
+      return
+    }
+    
     this.journalService.getMasterNotes(this.campaignId()).subscribe({
       next: (notes) => {
         this.masterNotes.set(notes)
@@ -617,6 +626,69 @@ export class CampaignJournalComponent implements OnInit {
             severity: 'error',
             summary: 'Erro',
             detail: 'Falha ao gerar sugestões de história',
+          })
+        },
+      })
+  }
+
+  // ==================== IA - IDEIAS DE CAMPANHA ====================
+
+  /**
+   * Gera ideias de campanha usando IA baseadas no último ato
+   */
+  generateAIIdeas(): void {
+    const acts = this.acts()
+    
+    if (acts.length === 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Sem Contexto',
+        detail: 'Adicione ao menos um ato para gerar ideias',
+      })
+      return
+    }
+
+    // Pegar o último ato (maior order)
+    const lastAct = acts.reduce((prev, current) => 
+      (current.order > prev.order) ? current : prev
+    )
+
+    // Construir o contexto concatenando o ato e seus capítulos
+    let campaignContext = `Ato: ${lastAct.title}\n`
+    
+    if (lastAct.chapters && lastAct.chapters.length > 0) {
+      campaignContext += '\nCapítulos:\n'
+      lastAct.chapters.forEach((chapter) => {
+        campaignContext += `- ${chapter.title}\n`
+        if (chapter.content) {
+          campaignContext += `  ${chapter.content}\n`
+        }
+      })
+    }
+
+    console.log('Gerando ideias com contexto:', campaignContext)
+
+    this.isGeneratingIdeas.set(true)
+    
+    this.journalService
+      .generateCampaignIdeas(campaignContext)
+      .pipe(finalize(() => this.isGeneratingIdeas.set(false)))
+      .subscribe({
+        next: (response) => {
+          console.log('Ideias recebidas:', response)
+          this.campaignIdeas.set(response.ideas)
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: `${response.ideas.length} ideias geradas!`,
+          })
+        },
+        error: (error) => {
+          console.error('Erro ao gerar ideias:', error)
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Falha ao gerar ideias de campanha',
           })
         },
       })

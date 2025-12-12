@@ -2,6 +2,15 @@
   --color-primary: #007bff;
   --color-secondary: #6c757d;
   --color-success: #28a745;
+  
+  // Valores padrão (dark theme)
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --bg-tertiary: #2d2d2d;
+  --text-primary: #d4af37;
+  --text-secondary: #a0a0a0;
+  --accent-primary: #d4af37;
+  --accent-secondary: #8b6914;
 }
 // --color-[element]-{Local}-{condition}
 // bg -> background
@@ -27,10 +36,15 @@
   --accent-senary: #fffbf0b3;
 
   --accent-danger: #f33f3f;
+  --accent-danger-hover: rgba(255, 0, 0, 0.1);
   --accent-success: #28a745;
   --accent-warning: #ffc107;
 
   --accent-danger-active: #f33f3f;
+  
+  --accent-primary-dark: rgba(139, 105, 20, 0.2);
+  --accent-octonary: #2a2520;
+  --accent-nonary: #3d3730;
 
   //button colors
   --btn: #bababa;
@@ -46,9 +60,73 @@
   --shadow-insert-primary: inset 0 0px 20px 10px rgb(72, 48, 11);
 
   //header and footer colors
-
   --text: #f8f9fa;
   --footer: #343a40;
+  
+  //border colors
+  --border-color: #8b6914;
+  
+  //additional colors
+  --success: #28a745;
+  --danger-color: #f33f3f;
+  --warning-color: #ffc107;
+}
+
+// Light Theme - cores claras inspiradas em pergaminhos antigos
+.light-theme {
+  --bg-primary: #f5f3ed;
+  --bg-secondary: #e8e5db;
+  --bg-tertiary: #d9d5c7;
+  --bg-gradient: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 70%);
+
+  --text-primary: #3d3d3d;
+  --text-secondary: #6b6b6b;
+  --text-tertiary: #c62828;
+  --text-quaternary: #2a2a2a;
+  --text-white: #1a1a1a;
+
+  --accent-primary: #9e9e9e;
+  --accent-secondary: #616161;
+  --accent-tertiary: #9e9e9e1a;
+  --accent-quaternary: #80808086;
+  --accent-quinary: #757575;
+  --accent-senary: #42424233;
+
+  --accent-danger: #d32f2f;
+  --accent-danger-hover: rgba(211, 47, 47, 0.1);
+  --accent-success: #388e3c;
+  --accent-warning: #f57c00;
+
+  --accent-danger-active: #c62828;
+  
+  --accent-primary-dark: rgba(97, 97, 97, 0.1);
+  --accent-octonary: #f9f7f0;
+  --accent-nonary: #f0ede3;
+
+  //button colors
+  --btn: #616161;
+  --btn-details: #757575;
+  --btn-delete: #424242;
+
+  --shadow-primary: 2px 2px 4px rgba(0, 0, 0, 0.08);
+  --shadow-secondary: 2px 2px 4px rgba(0, 0, 0, 0.12);
+  --shadow-tertiary: 2px 2px 3px rgba(211, 47, 47, 0.15);
+  --shadow-quaternary: 2px 4px 8px rgba(0, 0, 0, 0.1);
+  --shadow-quinary: 2px 10px 10px rgba(0, 0, 0, 0.15);
+
+  --shadow-insert-primary: inset 0 0px 20px 10px rgba(158, 158, 158, 0.1);
+
+  //header and footer colors
+  --text: #2a2a2a;
+  --footer: #e8e5db;
+  
+  //border colors
+  --border-color: #d9d5c7;
+  
+  //additional colors
+  --success: #388e3c;
+  --danger-color: #d32f2f;
+  --warning-color: #f57c00;
 }
 
 // #8b6914 - Cor de ouro envelhecido

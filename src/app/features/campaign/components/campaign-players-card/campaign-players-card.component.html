@@ -3,13 +3,13 @@
   <div class="card-header">
     <i class="pi pi-users"></i>
     <span class="header-title">JOGADORES</span>
-    <span class="player-count">{{ players().length }}/{{ maxPlayers() }}</span>
+    <span class="player-count">{{ players().length }}/{{ maxPlayers() - 1 }}</span>
   </div>
   <div class="players-list">
     @for (player of players(); track player.id) {
     <div class="player-item" (click)="onPlayerClick(player)">
       <img
-        [src]="player.userAvatar || 'assets/Character/unknown.png'"
+        [src]="getPlayerAvatar(player)"
         [alt]="player.userName"
         class="player-avatar"
       />

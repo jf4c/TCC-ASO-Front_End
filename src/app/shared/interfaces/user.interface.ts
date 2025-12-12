@@ -5,6 +5,7 @@ export interface User {
   nickName: string;        // Backend retorna NickName
   firstName: string;       // Backend retorna FirstName
   lastName: string;        // Backend retorna LastName
+  avatar?: string | null;  // URL da imagem de perfil
   name?: string;           // Campo calculado localmente se necessário
   emailVerified?: boolean;
   roles?: string[];

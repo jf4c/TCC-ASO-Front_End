@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core'
+import { NgClass } from '@angular/common'
 
 import { ButtonModule } from 'primeng/button'
 import { UploadEvent } from 'primeng/fileupload'
@@ -6,9 +7,12 @@ import { UploadEvent } from 'primeng/fileupload'
 @Component({
   selector: 'aso-button',
   standalone: true,
-  imports: [ButtonModule],
+  imports: [ButtonModule, NgClass],
   templateUrl: './button.component.html',
   styleUrl: './button.component.scss',
+  host: {
+    '[class.full-width]': 'fullWidth'
+  }
 })
 export class ButtonComponent {
   // Propriedades de entrada
@@ -19,6 +23,7 @@ export class ButtonComponent {
   @Input() variant: 'outlined' | 'text' | undefined
   @Input() disabled = false
   @Input() loading = false
+  @Input() fullWidth = false
   @Input() severity:
     | 'success'
     | 'info'

@@ -25,9 +25,17 @@ export interface CampaignParticipant {
 export interface CharacterInCampaign {
   id: string
   name: string
-  class: string
+  class: {
+    id: string
+    name: string
+    initialHp: number
+    hpPerLevel: number
+  }
   race: string
-  ancestry: string
+  ancestry: {
+    id: string
+    name: string
+  }
   level: number
   description?: string
   image?: string

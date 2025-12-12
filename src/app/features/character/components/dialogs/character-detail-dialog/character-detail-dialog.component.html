@@ -53,33 +53,27 @@
       <div class="attributes-grid">
         <div class="attribute">
           <span class="attr-name">FOR</span>
-          <span class="attr-value">{{ character.attributes.strength }}</span>
-          <span class="attr-mod">{{ formatModifier(character.attributes.strength) }}</span>
+          <span class="attr-value">{{ character.modifiers.strength >= 0 ? '+' : '' }}{{ character.modifiers.strength }}</span>
         </div>
         <div class="attribute">
           <span class="attr-name">DES</span>
-          <span class="attr-value">{{ character.attributes.dexterity }}</span>
-          <span class="attr-mod">{{ formatModifier(character.attributes.dexterity) }}</span>
+          <span class="attr-value">{{ character.modifiers.dexterity >= 0 ? '+' : '' }}{{ character.modifiers.dexterity }}</span>
         </div>
         <div class="attribute">
           <span class="attr-name">CON</span>
-          <span class="attr-value">{{ character.attributes.constitution }}</span>
-          <span class="attr-mod">{{ formatModifier(character.attributes.constitution) }}</span>
+          <span class="attr-value">{{ character.modifiers.constitution >= 0 ? '+' : '' }}{{ character.modifiers.constitution }}</span>
         </div>
         <div class="attribute">
           <span class="attr-name">INT</span>
-          <span class="attr-value">{{ character.attributes.intelligence }}</span>
-          <span class="attr-mod">{{ formatModifier(character.attributes.intelligence) }}</span>
+          <span class="attr-value">{{ character.modifiers.intelligence >= 0 ? '+' : '' }}{{ character.modifiers.intelligence }}</span>
         </div>
         <div class="attribute">
           <span class="attr-name">SAB</span>
-          <span class="attr-value">{{ character.attributes.wisdom }}</span>
-          <span class="attr-mod">{{ formatModifier(character.attributes.wisdom) }}</span>
+          <span class="attr-value">{{ character.modifiers.wisdom >= 0 ? '+' : '' }}{{ character.modifiers.wisdom }}</span>
         </div>
         <div class="attribute">
           <span class="attr-name">CAR</span>
-          <span class="attr-value">{{ character.attributes.charisma }}</span>
-          <span class="attr-mod">{{ formatModifier(character.attributes.charisma) }}</span>
+          <span class="attr-value">{{ character.modifiers.charisma >= 0 ? '+' : '' }}{{ character.modifiers.charisma }}</span>
         </div>
       </div>
     </div>

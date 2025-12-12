@@ -5,6 +5,7 @@ import {
   EventEmitter,
   signal,
   inject,
+  effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
@@ -20,6 +21,7 @@ import { UploadService, UploadType } from '../../services/upload.service';
 })
 export class ImageUploadComponent {
   private readonly uploadService = inject(UploadService);
+  private readonly uniqueId = `upload-${Math.random().toString(36).substring(2, 9)}`;
 
   @Input() uploadType: UploadType = 'world';
   @Input() currentImageUrl?: string | null;
@@ -34,11 +36,20 @@ export class ImageUploadComponent {
   error = signal<string | null>(null);
   isDragOver = signal(false);
 
-  ngOnInit(): void {
-    if (this.currentImageUrl) {
-      const fullUrl = this.uploadService.getImageUrl(this.currentImageUrl);
-      this.previewUrl.set(fullUrl);
-    }
+  constructor() {
+    // Atualiza preview quando currentImageUrl mudar
+    effect(() => {
+      if (this.currentImageUrl) {
+        const fullUrl = this.uploadService.getImageUrl(this.currentImageUrl);
+        this.previewUrl.set(fullUrl);
+      } else if (!this.isUploading()) {
+        this.previewUrl.set(null);
+      }
+    });
+  }
+
+  getFileInputId(): string {
+    return `file-input-${this.uniqueId}`;
   }
 
   /**
@@ -139,9 +150,7 @@ export class ImageUploadComponent {
    * Abre seletor de arquivo via botão
    */
   triggerFileInput(): void {
-    const fileInput = document.getElementById(
-      'file-input-' + this.uploadType
-    ) as HTMLInputElement;
+    const fileInput = document.getElementById(this.getFileInputId()) as HTMLInputElement;
     fileInput?.click();
   }
 }

@@ -7,6 +7,7 @@ import { AuthService } from '@core/auth/auth.service'
 import { UserService } from '@shared/services/user.service'
 import { FriendshipService } from '@features/friends/services/friendship.service'
 import { AvatarComponent } from '@shared/components/avatar/avatar.component'
+import { environment } from '../../../../../environments/environment'
 
 @Component({
   selector: 'aso-header',
@@ -41,6 +42,8 @@ export class HeaderComponent implements OnInit {
         if (user) {
           this.username = user.nickName || 'Usuário'
           this.playerName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Player'
+          // Converte path relativo para URL completa
+          this.userPhotoUrl = user.avatar ? this.getImageUrl(user.avatar) : null
         }
       })
 
@@ -99,7 +102,22 @@ export class HeaderComponent implements OnInit {
     const currentTheme = document.body.classList.contains('dark-theme') ? 'dark' : 'light'
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark'
     
-    document.body.classList.toggle('dark-theme', newTheme === 'dark')
+    console.log('🎨 Mudando tema:', currentTheme, '→', newTheme)
+    
+    document.body.classList.remove('dark-theme', 'light-theme')
+    document.body.classList.add(`${newTheme}-theme`)
     localStorage.setItem('aso-theme', newTheme)
+    
+    console.log('✅ Classes do body:', document.body.classList.toString())
+  }
+
+  /**
+   * Converte path relativo para URL completa
+   */
+  private getImageUrl(relativePath: string): string {
+    if (relativePath.startsWith('http')) return relativePath;
+    const cleanPath = relativePath.startsWith('/') ? relativePath : `/${relativePath}`;
+    const baseUrl = environment.apiUrl.replace('/api', '');
+    return `${baseUrl}${cleanPath}`;
   }
 }

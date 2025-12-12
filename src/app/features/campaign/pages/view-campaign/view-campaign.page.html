@@ -17,7 +17,7 @@
   <!-- Header da campanha com imagem de fundo -->
   <aso-campaign-banner 
     [campaign]="campaign()!" 
-    [canEdit]="true"
+    [canEdit]="isGameMaster()"
     (changeImage)="onChangeCampaignImage()"
   />
 
@@ -158,18 +158,24 @@
           } @else if (campaign()!.storyIntroduction) {
             <!-- Modo de Visualização com História -->
             <p class="intro-story">{{ campaign()!.storyIntroduction }}</p>
-            <div class="story-actions">
-              <button class="edit-button" (click)="onEditStory()">
-                <i class="pi pi-pencil"></i>
-                Editar
-              </button>
-            </div>
+            @if (isGameMaster()) {
+              <div class="story-actions">
+                <button class="edit-button" (click)="onEditStory()">
+                  <i class="pi pi-pencil"></i>
+                  Editar
+                </button>
+              </div>
+            }
           } @else {
             <!-- Modo Vazio -->
             <div class="no-story">
               <p class="no-story-message">
                 <i class="pi pi-info-circle"></i>
-                Nenhuma história introdutória ainda. Escreva manualmente ou use a IA para criar uma história épica baseada nos personagens da campanha!
+                @if (isGameMaster()) {
+                  Nenhuma história introdutória ainda. Escreva manualmente ou use a IA para criar uma história épica baseada nos personagens da campanha!
+                } @else {
+                  Nenhuma história introdutória ainda. O mestre ainda não definiu o início da jornada.
+                }
               </p>
               @if (storyError()) {
                 <p class="error-message">
@@ -177,25 +183,27 @@
                   {{ storyError() }}
                 </p>
               }
-              <div class="story-actions">
-                <button
-                  class="generate-button"
-                  (click)="onGenerateStory()"
-                  [disabled]="isGeneratingStory()"
-                >
-                  @if (isGeneratingStory()) {
-                    <i class="pi pi-spinner pi-spin"></i>
-                    Gerando história...
-                  } @else {
-                    <i class="pi pi-sparkles"></i>
-                    Gerar com IA
-                  }
-                </button>
-                <button class="edit-button" (click)="onEditStory()">
-                  <i class="pi pi-pencil"></i>
-                  Escrever Manualmente
-                </button>
-              </div>
+              @if (isGameMaster()) {
+                <div class="story-actions">
+                  <button
+                    class="generate-button"
+                    (click)="onGenerateStory()"
+                    [disabled]="isGeneratingStory()"
+                  >
+                    @if (isGeneratingStory()) {
+                      <i class="pi pi-spinner pi-spin"></i>
+                      Gerando história...
+                    } @else {
+                      <i class="pi pi-sparkles"></i>
+                      Gerar com IA
+                    }
+                  </button>
+                  <button class="edit-button" (click)="onEditStory()">
+                    <i class="pi pi-pencil"></i>
+                    Escrever Manualmente
+                  </button>
+                </div>
+              }
             </div>
           }
         </div>
@@ -227,7 +235,10 @@
       }
 
       <!-- Seção de Diário e Planejamento -->
-      <aso-campaign-journal [campaignId]="campaignId()" />
+      <aso-campaign-journal 
+        [campaignId]="campaignId()" 
+        [isGameMaster]="isGameMaster()"
+      />
     </div>
   </div>
 
@@ -239,6 +250,7 @@
     [style]="{ width: '600px' }"
     [closable]="!isUpdatingImage()"
     [closeOnEscape]="!isUpdatingImage()"
+    (onHide)="onCloseImageDialog()"
   >
     <aso-image-upload
       uploadType="campaign"

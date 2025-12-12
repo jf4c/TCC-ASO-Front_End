@@ -130,4 +130,36 @@ export class UserService {
   isUserSynced(): boolean {
     return !!this.currentUserSubject.value;
   }
+
+  /**
+   * Atualiza o avatar do player
+   */
+  updateAvatar(imageUrl: string): Observable<User> {
+    return this.http.patch<User>(`${this.apiUrl}/Player/avatar`, { AvatarUrl: imageUrl }).pipe(
+      switchMap(() => {
+        // Após atualizar avatar, recarrega os dados completos do player
+        return this.refreshCurrentUser();
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Erro ao atualizar avatar:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Recarrega os dados do player atual
+   */
+  refreshCurrentUser(): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/Player`).pipe(
+      tap(user => {
+        this.currentUserSubject.next(user);
+        localStorage.setItem('currentUser', JSON.stringify(user));
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Erro ao recarregar dados do player:', error);
+        return throwError(() => error);
+      })
+    );
+  }
 }

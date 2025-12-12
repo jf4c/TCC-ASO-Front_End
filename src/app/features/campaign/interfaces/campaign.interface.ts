@@ -10,6 +10,7 @@ export interface Campaign {
   id: string;
   name: string;
   description?: string;
+  image?: string;
   creatorId: string;
   gameMasterId?: string;
   status: CampaignStatus;
@@ -24,6 +25,7 @@ export interface CampaignListItem {
   id: string;
   name: string;
   description?: string;
+  bannerImage?: string;
   status: CampaignStatus;
   createdAt: Date;
   participantsCount: number;

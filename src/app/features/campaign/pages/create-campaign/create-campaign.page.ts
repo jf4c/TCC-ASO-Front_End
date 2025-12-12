@@ -61,7 +61,7 @@ export class CreateCampaignPage implements OnInit {
     { label: 'Informações Básicas' },
     { label: 'Adicionar Jogadores' },
     { label: 'Atribuir Personagens' },
-    { label: 'Revisar' }
+    { label: 'Revisar e Criar' }
   ];
 
   // Forms
@@ -174,21 +174,10 @@ export class CreateCampaignPage implements OnInit {
           .getCharactersByPlayer(player.friend.id)
           .toPromise()
           .then(characters => {
+            console.log('🔍 Personagens retornados da API:', characters);
             if (characters && characters.length > 0) {
-              // Mapear os personagens para o formato esperado
-              const mappedCharacters: AvailableCharacter[] = characters.map(char => ({
-                id: char.id,
-                name: char.name,
-                race: char.ancestry,
-                class: char.class,
-                level: char.level,
-                image: char.image,
-                health: char.health,
-                mana: char.mana,
-                isInCampaign: false
-              }));
-              
-              this.playerCharacters.set(player.friend.id, mappedCharacters);
+              // Os personagens já vêm no formato correto da API
+              this.playerCharacters.set(player.friend.id, characters as any);
             } else {
               this.playerCharacters.set(player.friend.id, []);
             }
@@ -228,14 +217,22 @@ export class CreateCampaignPage implements OnInit {
    * Converte AvailableCharacter para Character (formato do card)
    */
   toCharacterCard(char: AvailableCharacter): Character {
+    // HP Total = HP Inicial + modCON + [(HP por Nível + modCON) × (Nível - 1)]
+    const calculatedHP = char.class.initialHp + char.modifiers.constitution + 
+      ((char.class.hpPerLevel + char.modifiers.constitution) * (char.level - 1));
+    
+    // MP Total = MP por Nível × Nível
+    const calculatedMP = char.class.mpPerLevel * char.level;
+    
     return {
       id: char.id,
       name: char.name,
       class: char.class,
-      ancestry: char.race,
+      ancestry: char.ancestry.name,
       level: char.level,
-      health: char.health || 100,
-      mana: char.mana || 50,
+      health: calculatedHP,
+      mana: calculatedMP,
+      modifiers: char.modifiers,
       image: char.image || '/assets/Character/unknown.png'
     };
   }
@@ -308,46 +305,34 @@ export class CreateCampaignPage implements OnInit {
           summary: 'Sucesso',
           detail: 'Campanha criada com sucesso!'
         });
-        this.navigateToDetail(campaign.id);
+        this.navigateToCampaign();
       },
-      error: (error: any) => {
-        this.loading = false;
+      error: (error) => {
+        console.error('Erro ao criar campanha:', error);
+        let errorMessage = 'Erro ao criar campanha. Tente novamente.';
+        
+        if (error.status === 400 && error.error?.errors) {
+          const errors = error.error.errors;
+          const firstError = Object.values(errors)[0] as string[];
+          errorMessage = firstError[0] || errorMessage;
+        } else if (error.error?.message) {
+          errorMessage = error.error.message;
+        }
+
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
-          detail: error.message || 'Erro ao criar campanha'
+          detail: errorMessage
         });
       }
     });
   }
 
-  private async addParticipants(campaignId: string): Promise<void> {
-    const addPromises = this.selectedPlayers.map(player => {
-      const characterId = this.selectedCharacters.get(player.friend.id);
-      return this.campaignService.addParticipant(campaignId, {
-        playerId: player.friend.id,
-        role: 0, // Player role
-        characterId: characterId
-      }).toPromise();
-    });
-
-    try {
-      await Promise.all(addPromises);
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Sucesso',
-        detail: `${this.selectedPlayers.length} jogadores adicionados`
-      });
-    } catch (error) {
-      console.error('Erro ao adicionar jogadores:', error);
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Atenção',
-        detail: 'Alguns jogadores não foram adicionados'
-      });
-    } finally {
-      this.loading = false;
-      this.navigateToDetail(campaignId);
+  async navigateToCampaign() {
+    if (this.createdCampaignId) {
+      await this.router.navigate(['/campanhas', this.createdCampaignId]);
+    } else {
+      await this.router.navigate(['/campanhas']);
     }
   }
 

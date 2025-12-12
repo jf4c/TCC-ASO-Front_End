@@ -15,7 +15,9 @@ export class AppComponent {
   private router = inject(Router)
 
   constructor() {
-    this.setTheme(this.currentTheme)
+    // Ler tema do localStorage ou usar dark como padrão
+    const savedTheme = (localStorage.getItem('aso-theme') as 'dark' | 'light') || 'dark'
+    this.setTheme(savedTheme)
   }
 
   navigateHome() {

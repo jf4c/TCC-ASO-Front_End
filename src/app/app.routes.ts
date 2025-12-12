@@ -7,11 +7,10 @@ import { ListCampaignPage } from '@features/campaign/pages/list-campaign/list-ca
 import { ViewCampaignPage } from '@features/campaign/pages/view-campaign/view-campaign.page'
 import { CreateCampaignPage } from '@features/campaign/pages/create-campaign/create-campaign.page'
 import { EditCampaignPage } from '@features/campaign/pages/edit-campaign/edit-campaign.page'
-import { ListWorldsPage } from '@features/world/pages/list-worlds/list-worlds.page'
-import { ViewWorldPage } from '@features/world/pages/view-world/view-world.page'
 import { FriendsListPage } from '@features/friends/pages/friends-list/friends-list.page'
 import { FriendSearchPage } from '@features/friends/pages/friend-search/friend-search.page'
 import { FriendRequestsPage } from '@features/friends/pages/friend-requests/friend-requests.page'
+import { ProfilePage } from '@features/profile/profile.page'
 import { authGuard } from '@core/auth/auth.guard'
 
 export const routes: Routes = [
@@ -53,13 +52,8 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
-    path: 'mundos',
-    component: ListWorldsPage,
-    canActivate: [authGuard],
-  },
-  {
-    path: 'mundos/:id',
-    component: ViewWorldPage,
+    path: 'perfil',
+    component: ProfilePage,
     canActivate: [authGuard],
   },
   {

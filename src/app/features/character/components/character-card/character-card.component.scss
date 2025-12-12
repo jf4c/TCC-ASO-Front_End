@@ -34,7 +34,7 @@
   justify-content: space-between;
   border-bottom: 3px solid var(--accent-primary);
   padding: 1rem;
-  background-color: rgb(13, 13, 13);
+  background-color: var(--bg-tertiary);
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 
@@ -114,7 +114,7 @@
 
   .character-health {
     display: flex;
-    align-items: end;
+    align-items: center;
     flex-direction: column;
     font-size: 1.2rem;
     color: var(--text-primary);
@@ -122,7 +122,6 @@
 
     .icon-health {
       font-size: 2rem;
-      // margin-right: 0.5rem;
       color: rgb(255, 0, 0);
     }
 
@@ -142,7 +141,7 @@
 
   .character-mana {
     display: flex;
-    align-items: end;
+    align-items: center;
     flex-direction: column;
     font-size: 1.2rem;
     color: var(--text-primary);
@@ -150,7 +149,6 @@
 
     .icon-mana {
       font-size: 2rem;
-      // margin-right: 0.5rem;
       color: rgb(255, 149, 0);
     }
 

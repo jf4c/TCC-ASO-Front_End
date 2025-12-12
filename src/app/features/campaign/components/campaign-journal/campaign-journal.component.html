@@ -16,6 +16,7 @@
         <div class="saga-header">
           <h2 class="saga-title">A SAGA ATÉ AGORA</h2>
           <aso-button
+            *ngIf="isGameMaster()"
             label="Adicionar Ato"
             icon="pi pi-plus"
             severity="warn"
@@ -70,7 +71,7 @@
                   <ng-template pTemplate="header">
                     <div class="accordion-entry-header">
                       <h3 class="entry-title">{{ act.title }}</h3>
-                      <div class="entry-actions">
+                      <div class="entry-actions" *ngIf="isGameMaster()">
                         <aso-button
                           icon="pi pi-plus"
                           variant="text"
@@ -100,6 +101,7 @@
                       <div class="empty-chapters" *ngIf="act.chapters.length === 0">
                         <p>Nenhum capítulo neste ato ainda</p>
                         <aso-button
+                          *ngIf="isGameMaster()"
                           label="Adicionar Primeiro Capítulo"
                           icon="pi pi-plus"
                           size="small"
@@ -110,7 +112,7 @@
                         <div class="chapter-entry" *ngFor="let chapter of act.chapters; trackBy: trackByChapterId">
                           <div class="chapter-header">
                             <h4 class="chapter-title">{{ chapter.title }}</h4>
-                            <div class="chapter-actions">
+                            <div class="chapter-actions" *ngIf="isGameMaster()">
                               <aso-button
                                 icon="pi pi-pencil"
                                 variant="text"
@@ -140,7 +142,7 @@
     </p-tabPanel>
 
     <!-- Aba Planejamento do Mestre -->
-    <p-tabPanel header="Planejamento do Mestre">
+    <p-tabPanel header="Planejamento do Mestre" *ngIf="isGameMaster()">
       <ng-template pTemplate="header">
         <i class="pi pi-lightbulb"></i>
         <span>Planejamento do Mestre</span>
@@ -149,12 +151,22 @@
       <div class="planning-content">
         <div class="planning-header">
           <h3>Notas Privadas do Mestre</h3>
-          <aso-button
-            label="Nova Nota"
-            icon="pi pi-plus"
-            severity="help"
-            (eventClick)="addMasterNote()"
-          ></aso-button>
+          <div class="planning-header-actions">
+            <aso-button
+              [label]="isGeneratingIdeas() ? 'Gerando...' : 'Ideias de IA'"
+              [icon]="isGeneratingIdeas() ? 'pi pi-spin pi-spinner' : 'pi pi-sparkles'"
+              severity="secondary"
+              (eventClick)="generateAIIdeas()"
+              [disabled]="isGeneratingIdeas()"
+              [loading]="isGeneratingIdeas()"
+            ></aso-button>
+            <aso-button
+              label="Nova Nota"
+              icon="pi pi-plus"
+              severity="help"
+              (eventClick)="addMasterNote()"
+            ></aso-button>
+          </div>
         </div>
 
         <div class="planning-hint">
@@ -196,6 +208,20 @@
             </div>
             <div class="note-content">
               <p>{{ note.content }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exibir ideias geradas -->
+        <div class="ai-ideas-display" *ngIf="campaignIdeas().length > 0">
+          <h4 class="ideas-title">
+            <i class="pi pi-sparkles"></i>
+            Ideias Geradas pela IA
+          </h4>
+          <div class="ideas-list">
+            <div class="idea-item" *ngFor="let idea of campaignIdeas(); let i = index">
+              <span class="idea-number">{{ i + 1 }}</span>
+              <p class="idea-text">{{ idea }}</p>
             </div>
           </div>
         </div>

@@ -48,8 +48,26 @@ export interface AvailableFriend {
 export interface AvailableCharacter {
   id: string;
   name: string;
-  race: string;
-  class: string;
+  ancestry: {
+    id: string;
+    name: string;
+  };
+  class: {
+    id: string;
+    name: string;
+    initialHp: number;
+    hpPerLevel: number;
+    initialMp: number;
+    mpPerLevel: number;
+  };
+  modifiers: {
+    strength: number;
+    dexterity: number;
+    constitution: number;
+    intelligence: number;
+    wisdom: number;
+    charisma: number;
+  };
   level: number;
   isInCampaign: boolean;
   image?: string | null;

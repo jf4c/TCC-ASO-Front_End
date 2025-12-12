@@ -5,13 +5,29 @@ import { FeatureCardComponent } from './components/feature-card/feature-card.com
 import { CampaignService } from '@features/campaign/services/campaign.service'
 import { CharacterService } from '@features/character/services/character.service'
 import { CampaignStatus } from '@features/campaign/interfaces/campaign.interface'
+import { UploadService } from '@shared/services/upload.service'
 
 interface FavoriteCharacter {
   id: string
   name: string
-  race: string
-  class: string
+  ancestry: string
+  class: {
+    id: string
+    name: string
+    initialHp: number
+    hpPerLevel: number
+    initialMp: number
+    mpPerLevel: number
+  }
   level: number
+  modifiers: {
+    strength: number
+    dexterity: number
+    constitution: number
+    intelligence: number
+    wisdom: number
+    charisma: number
+  }
   image?: string | null
 }
 
@@ -19,6 +35,7 @@ interface RecentCampaign {
   id: string
   name: string
   description?: string
+  bannerImage?: string
   status: CampaignStatus
   participantsCount: number
   maxPlayers: number
@@ -35,6 +52,7 @@ export class HomePage implements OnInit {
   private readonly campaignService = inject(CampaignService)
   private readonly characterService = inject(CharacterService)
   private readonly router = inject(Router)
+  private readonly uploadService = inject(UploadService)
 
   favoriteCharacters = signal<FavoriteCharacter[]>([])
   recentCampaigns = signal<RecentCampaign[]>([])
@@ -53,9 +71,10 @@ export class HomePage implements OnInit {
         const characters = response.results.map((c) => ({
           id: c.id,
           name: c.name,
-          race: c.ancestry,
+          ancestry: c.ancestry,
           class: c.class,
           level: c.level,
+          modifiers: c.modifiers,
           image: c.image,
         }))
         this.favoriteCharacters.set(characters)
@@ -97,6 +116,13 @@ export class HomePage implements OnInit {
         ])
       },
     })
+  }
+
+  getCampaignImage(campaign: RecentCampaign): string {
+    if (campaign.bannerImage) {
+      return this.uploadService.getImageUrl(campaign.bannerImage) || 'assets/d20.jpg'
+    }
+    return 'assets/d20.jpg'
   }
 
   /**

@@ -13,7 +13,7 @@ export interface UploadProgress {
   url?: string;
 }
 
-export type UploadType = 'world' | 'campaign' | 'character' | 'avatar';
+export type UploadType = 'world' | 'campaign' | 'character' | 'avatar' | 'player';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +21,20 @@ export type UploadType = 'world' | 'campaign' | 'character' | 'avatar';
 export class UploadService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
+
+  /**
+   * Mapeia o tipo de upload para o endpoint correto
+   */
+  private getUploadEndpoint(type: UploadType): string {
+    const endpointMap: Record<UploadType, string> = {
+      'world': 'Uploads/world',
+      'campaign': 'Uploads/campaign',
+      'character': 'Uploads/character',
+      'avatar': 'Uploads/avatar',
+      'player': 'Uploads/avatar' // player usa o mesmo endpoint de avatar
+    };
+    return `${this.apiUrl}/${endpointMap[type]}`;
+  }
 
   /**
    * Faz upload de uma imagem para o tipo especificado
@@ -33,7 +47,7 @@ export class UploadService {
     formData.append('image', file);
 
     return this.http
-      .post<UploadResponse>(`${this.apiUrl}/Uploads/${type}`, formData)
+      .post<UploadResponse>(this.getUploadEndpoint(type), formData)
       .pipe(
         catchError((error) => {
           console.error(`Erro ao fazer upload de ${type}:`, error);
@@ -53,7 +67,7 @@ export class UploadService {
     formData.append('image', file);
 
     return this.http
-      .post<UploadResponse>(`${this.apiUrl}/Uploads/${type}`, formData, {
+      .post<UploadResponse>(this.getUploadEndpoint(type), formData, {
         reportProgress: true,
         observe: 'events',
       })
@@ -109,7 +123,13 @@ export class UploadService {
   getImageUrl(relativePath: string | null | undefined): string | null {
     if (!relativePath) return null;
     if (relativePath.startsWith('http')) return relativePath;
-    return `${this.apiUrl}${relativePath}`;
+    
+    // Remove barra inicial se existir para evitar duplicação
+    const cleanPath = relativePath.startsWith('/') ? relativePath : `/${relativePath}`;
+    
+    // Remove /api do final da apiUrl e adiciona o caminho
+    const baseUrl = this.apiUrl.replace('/api', '');
+    return `${baseUrl}${cleanPath}`;
   }
 
   /**

@@ -1,9 +1,9 @@
 <div class="character-card">
   <div class="character-header">
     <div class="character-info">
-      <h3 class="character-name">{{ character.name }}</h3>
+      <h3 class="character-name">{{ character.name.length > 11 ? (character.name.substring(0, 11) + '...') : character.name }}</h3>
       <span class="character-class-ancestry">
-        {{ character.class }} | {{ character.ancestry }}
+        {{ character.class.name }} | {{ character.ancestry }}
       </span>
     </div>
     <div class="character-level">
@@ -23,13 +23,13 @@
     <div class="character-stats">
       <div class="character-health">
         <span class="material-icons icon-health">favorite</span>
-        <span class="character-health-value">{{ character.health }}</span>
+        <span class="character-health-value">{{ getCalculatedHP() }}</span>
         <span class="tooltip-text tooltip-health">Vida</span>
       </div>
 
       <div class="character-mana">
         <span class="material-icons icon-mana">flash_on</span>
-        <span class="character-mana-value">{{ character.mana }}</span>
+        <span class="character-mana-value">{{ getCalculatedMP() }}</span>
         <span class="tooltip-text tooltip-mana">Mana</span>
       </div>
     </div>

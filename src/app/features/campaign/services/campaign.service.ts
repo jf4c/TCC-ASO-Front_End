@@ -103,6 +103,18 @@ export class CampaignService {
     );
   }
 
+  /**
+   * Atualiza o banner de uma campanha
+   */
+  updateCampaignBanner(campaignId: string, bannerImageUrl: string): Observable<Campaign> {
+    return this.http.patch<Campaign>(`${this.apiUrl}/${campaignId}/banner`, { BannerImageUrl: bannerImageUrl }).pipe(
+      catchError((error) => {
+        console.error('Erro ao atualizar banner da campanha:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   getAvailableFriends(campaignId: string): Observable<AvailableFriend[]> {
     return this.http.get<AvailableFriend[]>(`${this.apiUrl}/${campaignId}/available-friends`);
   }
@@ -160,7 +172,7 @@ export class CampaignService {
    * Atualiza a imagem da campanha
    */
   updateCampaignImage(campaignId: string, imageUrl: string | null): Observable<CampaignDetail> {
-    return this.http.patch<CampaignDetail>(`${this.apiUrl}/${campaignId}/image`, { imageUrl }).pipe(
+    return this.http.patch<CampaignDetail>(`${this.apiUrl}/${campaignId}/banner`, { BannerImageUrl: imageUrl }).pipe(
       tap((campaign) => this.currentCampaignSubject.next(campaign)),
       catchError((error) => {
         console.error('Erro ao atualizar imagem da campanha:', error);

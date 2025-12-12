@@ -215,4 +215,14 @@ export class JournalService {
       {},
     )
   }
+
+  /**
+   * Gera ideias de campanha baseadas no contexto fornecido
+   */
+  generateCampaignIdeas(campaignContext: string): Observable<{ ideas: string[] }> {
+    return this.http.post<{ ideas: string[] }>(
+      `${environment.apiUrl}/oracle/campaign-ideas`,
+      { campaignContext }
+    )
+  }
 }
